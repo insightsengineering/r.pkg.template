@@ -1,0 +1,11 @@
+url: https://insightsengineering.github.io/r.pkg.template
+
+template:
+  params:
+    bootswatch: cerulean
+    ganalytics: UA-125641273-1
+
+navbar:
+  right:
+    - icon: fa-github
+      href: https://github.com/insightsengineering/r.pkg.template

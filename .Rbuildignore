@@ -1,0 +1,11 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^_pkgdown\.yml$
+^vignettes/hello\.Rmd$
+^docs$
+^\.github$
+README.*
+^\.lintr$
+^staged_dependencies\.yaml$
+^\.gitlab-ci\.yml$
+coverage.*
