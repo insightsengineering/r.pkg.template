@@ -15,7 +15,6 @@ Imports:
     stringr
 Suggests:
     knitr,
-    test.nest (>= 0.2.11),
     testthat (>= 2.0)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
