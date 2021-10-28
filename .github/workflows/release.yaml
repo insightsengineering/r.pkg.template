@@ -1,0 +1,24 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Generate Changelog
+        run: |
+          RELEASE_VERSION=$(awk -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION)
+          REPOSITORY_NAME="${{ github.event.repository.name }}"
+          (awk "/^#+.*${REPOSITORY_NAME//./\.}.*${RELEASE_VERSION//./\.}$/{flag=1;next}/^#+.*${REPOSITORY_NAME//./\.}.*/{flag=0}flag" NEWS.md |grep -v "^$" || echo "* ${RELEASE_VERSION}") > RELEASE_BODY.txt
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: RELEASE_BODY.txt
+          token: ${{ secrets.REPO_GITHUB_TOKEN }}

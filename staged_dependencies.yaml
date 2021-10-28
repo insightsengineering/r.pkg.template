@@ -1,0 +1,5 @@
+current_repo:
+  repo: insightsengineering/r.pkg.template
+  host: https://github.com
+upstream_repos:
+downstream_repos:

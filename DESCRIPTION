@@ -1,0 +1,29 @@
+Type: Package
+Package: r.pkg.template
+Title: R Package Template
+Version: 0.0.0.9000
+Authors@R: 
+    person("NEST", , , "nestcicd@roche.com", role = c("aut", "cre"))
+Description: R package template with Github Actions workflows included.
+License: Apache License 2.0 | file LICENSE
+URL: https://github.com/insightsengineering/r.pkg.template/
+BugReports: https://github.com/insightsengineering/r.pkg.template/issues
+Depends: 
+    R (>= 3.6)
+Imports:
+    plumber,
+    shiny,
+    stringr
+Suggests:
+    knitr,
+    shinytest,
+    testthat (>= 2.0),
+    future,
+    httr
+VignetteBuilder: 
+    knitr
+biocViews:
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
