@@ -17,7 +17,9 @@ Imports:
 Suggests:
     knitr,
     shinytest,
-    testthat (>= 2.0)
+    testthat (>= 2.0),
+    future,
+    httr
 VignetteBuilder: 
     knitr
 biocViews:
