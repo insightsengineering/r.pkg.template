@@ -7,5 +7,4 @@
 README.*
 ^\.lintr$
 ^staged_dependencies\.yaml$
-^\.gitlab-ci\.yml$
 coverage.*

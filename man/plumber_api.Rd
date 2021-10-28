@@ -6,13 +6,13 @@
 \usage{
 plumber_api(...)
 }
+\arguments{
+\item{...}{Additional arguments to plumber::pr_run()}
+}
 \value{
 Plumber API showcasing the personal greeting feature.
 }
 \description{
 Greet a person and appropriately capitalize their name
 as a Plumber API.
-}
-\examples{
-plumber_api()
 }
