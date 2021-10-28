@@ -16,5 +16,11 @@ test_that("The Shiny App returns a proper greeting", {
 
     # test
     expect_equal(output, "Hello, John")
+
+    # wait for the process to close gracefully
+    # this allows covr to write out the coverage results
+    p <- app$.__enclos_env__$private$shinyProcess
+    p$interrupt()
+    p$wait()
   }
 )

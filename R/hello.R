@@ -30,9 +30,9 @@ shiny_app <- function() {
   )
 
   server <- function(input, output, session) {
-    output$greeting <- renderText({
-      req(input$greet)
-      hello(isolate(input$name))
+    output$greeting <- shiny::renderText({
+      shiny::req(input$greet)
+      hello(shiny::isolate(input$name))
     })
   }
 
@@ -41,14 +41,16 @@ shiny_app <- function() {
 
 #' Personal greeting as a Plumber API
 #'
+#' @importFrom utils packageName
+#'
 #' @description Greet a person and appropriately capitalize their name
 #'              as a Plumber API.
+#'
+#' @param ... Additional arguments to plumber::pr_run()
 #'
 #' @return Plumber API showcasing the personal greeting feature.
 #' @export
 #'
-#' @examples
-#' plumber_api()
 plumber_api <- function(...) {
   plumber::pr_run(
     plumber::plumb_api(package = packageName(), name = "hello"),
