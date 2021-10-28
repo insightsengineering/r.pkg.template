@@ -13,3 +13,45 @@ hello <- function(name = "your name") {
   name <- stringr::str_to_title(name)
   print(paste("Hello,", name))
 }
+
+#' Personal greeting as a Shiny app
+#'
+#' @description Greet a person and appropriately capitalize their name
+#'              as a Shiny app.
+#'
+#' @return Shiny app showcasing the personal greeting feature.
+#' @export
+#'
+shiny_app <- function() {
+  ui <- shiny::fluidPage(
+    shiny::textInput("name", "What is your name?"),
+    shiny::actionButton("greet", "Greet"),
+    shiny::textOutput("greeting")
+  )
+
+  server <- function(input, output, session) {
+    output$greeting <- renderText({
+      req(input$greet)
+      hello(isolate(input$name))
+    })
+  }
+
+  shiny::shinyApp(ui, server)
+}
+
+#' Personal greeting as a Plumber API
+#'
+#' @description Greet a person and appropriately capitalize their name
+#'              as a Plumber API.
+#'
+#' @return Plumber API showcasing the personal greeting feature.
+#' @export
+#'
+#' @examples
+#' plumber_api()
+plumber_api <- function(...) {
+  plumber::pr_run(
+    plumber::plumb_api(package = packageName(), name = "hello"),
+    ...
+  )
+}
