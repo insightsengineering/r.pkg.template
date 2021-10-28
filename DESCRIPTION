@@ -1,7 +1,7 @@
 Type: Package
 Package: r.pkg.template
 Title: R Package Template
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     person("NEST", , , "nestcicd@roche.com", role = c("aut", "cre"))
 Description: R package template with Github Actions workflows included.
@@ -15,11 +15,11 @@ Imports:
     shiny,
     stringr
 Suggests:
+    future,
+    httr,
     knitr,
     shinytest,
-    testthat (>= 2.0),
-    future,
-    httr
+    testthat (>= 2.0)
 VignetteBuilder: 
     knitr
 biocViews:
