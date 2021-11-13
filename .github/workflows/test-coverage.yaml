@@ -79,7 +79,7 @@ jobs:
         uses: 5monkeys/cobertura-action@v12
         with:
           path: coverage.xml
-          repo_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           minimum_coverage: 80
           fail_below_threshold: false
           skip_covered: true

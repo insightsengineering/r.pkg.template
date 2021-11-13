@@ -105,7 +105,7 @@ jobs:
         with:
           ref: "${{ github.ref }}"
           check-name: 'Release 🚀'
-          repo-token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
 
       - name: Download artifact ⏬
@@ -116,7 +116,7 @@ jobs:
       - name: Upload binaries to release ⤴
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: pkgdown.zip
           asset_name: pkgdown.zip
           tag: ${{ github.ref }}
