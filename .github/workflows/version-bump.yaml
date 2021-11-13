@@ -6,17 +6,6 @@ on:
     branches:
       - main
   workflow_call:
-    inputs:
-      commit_user_name:
-        description: Username of the entity pushing the version bump commit
-        type: string
-        default: insights-engineering-bot
-        required: false
-      commit_user_email:
-        description: Email ID of the entity pushing the version bump commit
-        type: string
-        default: 68416928+insights-engineering-bot@users.noreply.github.com
-        required: false
     secrets:
       REPO_GITHUB_TOKEN:
         description: Github token with write access to the repo
@@ -78,5 +67,6 @@ jobs:
           commit_message: "[ci skip] Bump version to ${{ env.NEW_PKG_VERSION }}"
           branch: main
           file_pattern: NEWS.md DESCRIPTION
-          commit_user_name: ${{ inputs.commit_user_name }}
-          commit_user_email: ${{ inputs.commit_user_email }}
+          commit_user_name: insights-engineering-bot
+          commit_user_email: >-
+            68416928+insights-engineering-bot@users.noreply.github.com

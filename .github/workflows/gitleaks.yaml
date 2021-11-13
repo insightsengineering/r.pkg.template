@@ -16,7 +16,7 @@ on:
         description: Additional arguments to pass to gitleaks
         required: false
         type: string
-        default: "-v --no-git"
+        default: ""
 
 jobs:
   gitleaks:
@@ -36,5 +36,5 @@ jobs:
         shell: bash
 
       - name: Run gitleaks ☔
-        run: gitleaks ${{ inputs.additional_args }} --path .
+        run: gitleaks -v --no-git ${{ inputs.additional_args }} --path .
         shell: bash

@@ -20,12 +20,6 @@ on:
       - LICENSE.*
       - NAMESPACE
   workflow_call:
-    inputs:
-      docs_zip_file_name:
-        description: Name of the compressed zip file containing the rendered pkgdown documentation
-        required: false
-        type: string
-        default: pkgdown.zip
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -83,7 +77,7 @@ jobs:
       - name: Create documentation artifact 📂
         run: |
           pushd ${{ github.event.repository.name }}/docs/
-          zip -r9 $OLDPWD/${{ inputs.docs_zip_file_name }} *
+          zip -r9 $OLDPWD/pkgdown.zip *
           popd
         shell: bash
 
@@ -91,8 +85,8 @@ jobs:
         if: github.ref != 'refs/heads/main'
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ inputs.docs_zip_file_name }}
-          path: ${{ inputs.docs_zip_file_name }}
+          name: pkgdown.zip
+          path: pkgdown.zip
 
       - name: Publish docs 📢
         if: github.ref == 'refs/heads/main'
@@ -123,13 +117,13 @@ jobs:
       - name: Download artifact ⏬
         uses: actions/download-artifact@v2
         with:
-          name: ${{ inputs.docs_zip_file_name }}
+          name: pkgdown.zip
 
       - name: Upload binaries to release ⤴
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ inputs.docs_zip_file_name }}
-          asset_name: ${{ inputs.docs_zip_file_name }}
+          file: pkgdown.zip
+          asset_name: pkgdown.zip
           tag: ${{ github.ref }}
           overwrite: false

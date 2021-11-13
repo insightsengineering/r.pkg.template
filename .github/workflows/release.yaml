@@ -6,12 +6,6 @@ on:
     tags:
       - "v*"
   workflow_call:
-    inputs:
-      changelog_file:
-        description: Name of the file containing the changelog
-        required: false
-        type: string
-        default: NEWS.md
 
 jobs:
   release:
@@ -27,7 +21,7 @@ jobs:
         run: |
           RELEASE_VERSION=$(awk -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION)
           REPOSITORY_NAME="${{ github.event.repository.name }}"
-          (awk "/^#+.*${REPOSITORY_NAME//./\.}.*${RELEASE_VERSION//./\.}$/{flag=1;next}/^#+.*${REPOSITORY_NAME//./\.}.*/{flag=0}flag" ${{ inputs.changelog_file }} | grep -v "^$" || echo "* ${RELEASE_VERSION}") > RELEASE_BODY.txt
+          (awk "/^#+.*${REPOSITORY_NAME//./\.}.*${RELEASE_VERSION//./\.}$/{flag=1;next}/^#+.*${REPOSITORY_NAME//./\.}.*/{flag=0}flag" NEWS.md | grep -v "^$" || echo "* ${RELEASE_VERSION}") > RELEASE_BODY.txt
 
       - name: Create release 🌟
         uses: softprops/action-gh-release@v1
