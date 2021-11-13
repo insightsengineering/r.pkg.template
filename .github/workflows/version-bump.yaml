@@ -5,13 +5,34 @@ on:
   push:
     branches:
       - main
+  workflow_call:
+    inputs:
+      image:
+        description: Image to run the workflow on
+        type: string
+        default: docker.io/rocker/tidyverse:4.1.2
+        required: false
+      commit_user_name:
+        description: Username of the entity pushing the version bump commit
+        type: string
+        default: insights-engineering-bot
+        required: false
+      commit_user_email:
+        description: Email ID of the entity pushing the version bump commit
+        type: string
+        default: 68416928+insights-engineering-bot@users.noreply.github.com
+        required: false
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: Github token with write access to the repo
+        required: false
 
 jobs:
   version-bump:
     name: Bump version ⤴
     runs-on: ubuntu-latest
     container:
-      image: docker.io/rocker/tidyverse:4.1.2
+      image: ${{ inputs.image }}
 
     steps:
       - name: Checkout repo 🛎
@@ -62,6 +83,5 @@ jobs:
           commit_message: "[ci skip] Bump version to ${{ env.NEW_PKG_VERSION }}"
           branch: main
           file_pattern: NEWS.md DESCRIPTION
-          commit_user_name: insights-engineering-bot
-          commit_user_email: >-
-            68416928+insights-engineering-bot@users.noreply.github.com
+          commit_user_name: ${{ inputs.commit_user_name }}
+          commit_user_email: ${{ inputs.commit_user_email }}

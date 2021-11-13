@@ -10,6 +10,52 @@ on:
     branches:
       - main
       - pre-release
+  workflow_call:
+    inputs:
+      DEFAULT_BRANCH:
+        description: Superlinter input variable with the same name
+        required: false
+        type: string
+        default: main
+      FILTER_REGEX_EXCLUDE:
+        description: Superlinter input variable with the same name
+        required: false
+        type: string
+        default: NEWS.md
+      VALIDATE_ALL_CODEBASE:
+        description: Superlinter input variable with the same name
+        required: false
+        type: boolean
+        default: false
+      VALIDATE_BASH:
+        description: Superlinter input variable with the same name
+        required: false
+        type: boolean
+        default: true
+      VALIDATE_DOCKERFILE:
+        description: Superlinter input variable with the same name
+        required: false
+        type: boolean
+        default: true
+      VALIDATE_MARKDOWN:
+        description: Superlinter input variable with the same name
+        required: false
+        type: boolean
+        default: true
+      VALIDATE_MARKDOWN:
+        description: Superlinter input variable with the same name
+        required: false
+        type: boolean
+        default: true
+      VALIDATE_YAML:
+        description: Superlinter input variable with the same name
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      GITHUB_TOKEN:
+        description: Github token to post action status
+        required: false
 
 jobs:
   lint:
@@ -25,12 +71,12 @@ jobs:
       - name: Lint Code Base 🧶
         uses: github/super-linter/slim@v4
         env:
-          DEFAULT_BRANCH: main
-          FILTER_REGEX_EXCLUDE: NEWS.md
+          DEFAULT_BRANCH: ${{ inputs.DEFAULT_BRANCH }}
+          FILTER_REGEX_EXCLUDE: ${{ inputs.FILTER_REGEX_EXCLUDE }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ALL_CODEBASE: false
-          VALIDATE_BASH: true
-          VALIDATE_DOCKERFILE: true
-          VALIDATE_MARKDOWN: true
-          VALIDATE_R: true
-          VALIDATE_YAML: true
+          VALIDATE_ALL_CODEBASE: ${{ inputs.VALIDATE_ALL_CODEBASE }}
+          VALIDATE_BASH: ${{ inputs.VALIDATE_BASH }}
+          VALIDATE_DOCKERFILE: ${{ inputs.VALIDATE_DOCKERFILE }}
+          VALIDATE_MARKDOWN: ${{ inputs.VALIDATE_MARKDOWN }}
+          VALIDATE_R: ${{ inputs.VALIDATE_R }}
+          VALIDATE_YAML: ${{ inputs.VALIDATE_YAML }}

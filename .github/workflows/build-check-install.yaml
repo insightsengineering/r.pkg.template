@@ -12,6 +12,12 @@ on:
     branches:
       - main
       - pre-release
+  workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with read access to repositories, required for staged.dependencies installation
+        required: false
 
 jobs:
   build-install-check:
@@ -148,10 +154,10 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
 
-      - name: Set release version from tag 📐
+      - name: Set release version and package build filename 📐
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
 
-      - name: Get package name 📦
+      - name: Get package build filename 📦
         run: echo "PKGBUILD=${{ github.event.repository.name }}_${{ env.RELEASE_VERSION }}.tar.gz" >> $GITHUB_ENV
 
       - name: Download artifact ⏬

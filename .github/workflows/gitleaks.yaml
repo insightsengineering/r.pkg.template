@@ -10,6 +10,13 @@ on:
     branches:
       - main
       - pre-release
+  workflow_call:
+    inputs:
+      additional_args:
+        description: Additional arguments to pass to gitleaks
+        required: false
+        type: string
+        default: "-v --no-git"
 
 jobs:
   gitleaks:
@@ -29,5 +36,5 @@ jobs:
         shell: bash
 
       - name: Run gitleaks ☔
-        run: gitleaks -v --path . --no-git
+        run: gitleaks ${{ inputs.additional_args }} --path .
         shell: bash

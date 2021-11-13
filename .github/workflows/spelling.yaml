@@ -10,13 +10,20 @@ on:
     branches:
       - main
       - pre-release
+  workflow_call:
+    inputs:
+      image:
+        description: Image to run the workflow on
+        type: string
+        default: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
+        required: false
 
 jobs:
   spelling:
     name: Check spelling 🔠
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
+      image: ${{ inputs.image }}
 
     steps:
       - name: Checkout Code 🛎

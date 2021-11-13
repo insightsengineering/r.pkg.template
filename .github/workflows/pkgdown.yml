@@ -19,13 +19,30 @@ on:
       - man/**
       - LICENSE.*
       - NAMESPACE
+  workflow_call:
+    inputs:
+      docs_zip_file_name:
+        description: Name of the compressed zip file containing the rendered pkgdown documentation
+        required: false
+        type: string
+        default: pkgdown.zip
+      image:
+        description: Image to run the workflow on
+        type: string
+        default: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
+        required: false
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with read access to repositories, required for staged.dependencies installation
+        required: false
 
 jobs:
   pkgdown:
     name: Generate 🐣
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
+      image: ${{ inputs.image }}
     steps:
       - name: Get branch names 🌿
         id: branch-name
@@ -71,7 +88,7 @@ jobs:
       - name: Create documentation artifact 📂
         run: |
           pushd ${{ github.event.repository.name }}/docs/
-          zip -r9 $OLDPWD/pkgdown.zip *
+          zip -r9 $OLDPWD/${{ inputs.docs_zip_file_name }} *
           popd
         shell: bash
 
@@ -79,8 +96,8 @@ jobs:
         if: github.ref != 'refs/heads/main'
         uses: actions/upload-artifact@v2
         with:
-          name: pkgdown.zip
-          path: pkgdown.zip
+          name: ${{ inputs.docs_zip_file_name }}
+          path: ${{ inputs.docs_zip_file_name }}
 
       - name: Publish docs 📢
         if: github.ref == 'refs/heads/main'
@@ -111,13 +128,13 @@ jobs:
       - name: Download artifact ⏬
         uses: actions/download-artifact@v2
         with:
-          name: pkgdown.zip
+          name: ${{ inputs.docs_zip_file_name }}
 
       - name: Upload binaries to release ⤴
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: pkgdown.zip
-          asset_name: pkgdown.zip
+          file: ${{ inputs.docs_zip_file_name }}
+          asset_name: ${{ inputs.docs_zip_file_name }}
           tag: ${{ github.ref }}
           overwrite: false
