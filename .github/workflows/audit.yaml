@@ -16,11 +16,6 @@ on:
         required: false
         default: ""
         type: string
-      image:
-        description: Image to run the workflow on
-        type: string
-        default: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
-        required: false
     secrets:
       ossindex_token:
         description: OSS Index API token
@@ -30,7 +25,7 @@ jobs:
   audit:
     runs-on: ubuntu-latest
     container:
-      image: ${{ inputs.image }}
+      image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
     name: oysteR scan 🦪
 
     steps:

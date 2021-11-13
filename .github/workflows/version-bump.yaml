@@ -7,11 +7,6 @@ on:
       - main
   workflow_call:
     inputs:
-      image:
-        description: Image to run the workflow on
-        type: string
-        default: docker.io/rocker/tidyverse:4.1.2
-        required: false
       commit_user_name:
         description: Username of the entity pushing the version bump commit
         type: string
@@ -32,7 +27,7 @@ jobs:
     name: Bump version ⤴
     runs-on: ubuntu-latest
     container:
-      image: ${{ inputs.image }}
+      image: docker.io/rocker/tidyverse:4.1.2
 
     steps:
       - name: Checkout repo 🛎
