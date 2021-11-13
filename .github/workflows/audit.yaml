@@ -1,0 +1,56 @@
+name: Audit Dependencies 🕵️‍♀️
+
+on:
+  push:
+    branches:
+      - main
+      - pre-release
+  pull_request:
+    branches:
+      - main
+      - pre-release
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
+    name: oysteR scan 🦪
+
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v2
+
+      - name: Run oysteR scan on dependencies 🔍
+        run: |
+          dependencies_scan = oysteR::audit_description(
+            dir = ".",
+            fields = c("Depends", "Imports", "Suggests"),
+            verbose = TRUE
+          )
+          print(as.data.frame(
+            dependencies_scan[c(
+              "package",
+              "version",
+              "vulnerabilities",
+              "no_of_vulnerabilities"
+            )]
+          ))
+        shell: Rscript {0}
+
+      - name: Run oysteR scan on renv.lock 🔒
+        run: |
+          if (file.exists("renv.lock")) {
+            renv_lock_scan = oysteR::audit_renv_lock(dir = ".", verbose = TRUE)
+            print(as.data.frame(
+              renv_lock_scan[c(
+                "package",
+                "version",
+                "vulnerabilities",
+                "no_of_vulnerabilities"
+              )]
+            ))
+          } else {
+            print("No renv.lock file, not scanning.")
+          }
+        shell: Rscript {0}

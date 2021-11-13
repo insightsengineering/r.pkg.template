@@ -1,0 +1,33 @@
+---
+name: gitleaks 💧
+
+on:
+  push:
+    branches:
+      - main
+      - pre-release
+  pull_request:
+    branches:
+      - main
+      - pre-release
+
+jobs:
+  gitleaks:
+    name: gitleaks 💧
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v2
+
+      - name: Download and install gitleaks
+        run: |
+          GITLEAKS_VERSION=$(curl -s https://api.github.com/repos/zricethezav/gitleaks/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
+          sudo wget -q \
+            "https://github.com/zricethezav/gitleaks/releases/download/${GITLEAKS_VERSION}/gitleaks-linux-amd64" \
+            -O /usr/bin/gitleaks
+          sudo chmod +x /usr/bin/gitleaks
+        shell: bash
+
+      - name: Run gitleaks ☔
+        run: gitleaks -v --path . --no-git
+        shell: bash

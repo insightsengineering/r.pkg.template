@@ -1,4 +1,5 @@
-name: Pkgdown Docs
+---
+name: Pkgdown Docs 📚
 
 on:
   push:
@@ -21,59 +22,33 @@ on:
 
 jobs:
   pkgdown:
-    name: Generate
+    name: Generate 🐣
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v5
 
-      - name: Gather info from PR
-        uses: actions/github-script@v5
-        id: get-pr
-        if: github.event_name == 'pull_request'
-        with:
-          script: |
-            const request = {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number
-            }
-            core.info(`Getting PR #${request.pull_number} from ${request.owner}/${request.repo}`)
-            try {
-              const result = await github.rest.pulls.get(request)
-              return result.data
-            } catch (err) {
-              core.setFailed(`Request failed with error ${err}`)
-            }
-
-      - name: Checkout repo during PR
+      - name: Checkout repo 🛎
         uses: actions/checkout@v2
-        if: github.event_name == 'pull_request'
         with:
-          repository: ${{ fromJSON(steps.get-pr.outputs.result).head.repo.full_name }}
-          ref: ${{ fromJSON(steps.get-pr.outputs.result).head.ref }}
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
 
-      - name: Checkout repo from push
-        uses: actions/checkout@v2
-        if: github.event_name == 'push'
-        with:
-          path: ${{ github.event.repository.name }}
-
-      - name: Run Staged dependencies
+      - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
         env:
           GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
           SD_REPO_PATH: ${{ github.event.repository.name }}
           SD_ENABLE_CHECK: "false"
 
-      - name: Install R package
+      - name: Install R package 🚧
         run: R CMD INSTALL ${{ github.event.repository.name }}
         shell: bash
 
-      - name: Build docs
+      - name: Build docs 🏗
         run: |
           options(repos = c(CRAN = "https://cloud.r-project.org/"))
           "pkgdown" %in% installed.packages() || install.packages("pkgdown", upgrade = "never")
@@ -93,22 +68,22 @@ jobs:
           }
         shell: Rscript {0}
 
-      - name: Create artifacts
+      - name: Create documentation artifact 📂
         run: |
           pushd ${{ github.event.repository.name }}/docs/
           zip -r9 $OLDPWD/pkgdown.zip *
           popd
         shell: bash
 
-      - name: Upload docs for review
+      - name: Upload docs for review ⬆
         if: github.ref != 'refs/heads/main'
         uses: actions/upload-artifact@v2
         with:
           name: pkgdown.zip
           path: pkgdown.zip
 
-      - name: Publish docs
-        if: github.ref == 'refs/heads/main' # Only after merge or push to main
+      - name: Publish docs 📢
+        if: github.ref == 'refs/heads/main'
         run: |
           cd ${{ github.event.repository.name }}
           git config --local user.email "actions@github.com"
@@ -116,29 +91,32 @@ jobs:
           Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
 
   upload-release-assets:
-    name: Upload documentation assets
+    name: Upload documentation assets 🔼
     needs: pkgdown
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
-      - name: Checkout
+      - name: Checkout repo 🛎
         uses: actions/checkout@v2
-      - name: Wait for release to succeed
+
+      - name: Wait for release to succeed ⏳
         timeout-minutes: 2
         uses: lewagon/wait-on-check-action@v1.1.1
         with:
           ref: "${{ github.ref }}"
-          check-name: 'Release'
-          repo-token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          check-name: 'Release 🚀'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
-      - name: Download artifact
+
+      - name: Download artifact ⏬
         uses: actions/download-artifact@v2
         with:
           name: pkgdown.zip
-      - name: Upload binaries to release
+
+      - name: Upload binaries to release ⤴
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: pkgdown.zip
           asset_name: pkgdown.zip
           tag: ${{ github.ref }}
