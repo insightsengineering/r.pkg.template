@@ -10,16 +10,6 @@ on:
       - main
       - pre-release
   workflow_call:
-    inputs:
-      ossindex_user:
-        description: OSS Index email address
-        required: false
-        default: ""
-        type: string
-    secrets:
-      ossindex_token:
-        description: OSS Index API token
-        required: false
 
 jobs:
   audit:
@@ -48,9 +38,6 @@ jobs:
             )]
           ))
         shell: Rscript {0}
-        env:
-          OSSINDEX_USER: ${{ inputs.ossindex_user }}
-          OSSINDEX_TOKEN: ${{ secrets.ossindex_token }}
 
       - name: Run oysteR scan on renv.lock 🔒
         run: |
@@ -68,8 +55,3 @@ jobs:
             print("No renv.lock file, not scanning.")
           }
         shell: Rscript {0}
-        env:
-          OSSINDEX_USER: ${{ inputs.ossindex_user }}
-          OSSINDEX_TOKEN: ${{ secrets.ossindex_token }}
-
-
