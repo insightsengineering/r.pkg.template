@@ -22,10 +22,10 @@ jobs:
       - name: Download and install gitleaks
         run: |
           GITLEAKS_VERSION=$(curl -s https://api.github.com/repos/zricethezav/gitleaks/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')
-          wget -q \
+          sudo wget -q \
             "https://github.com/zricethezav/gitleaks/releases/download/${GITLEAKS_VERSION}/gitleaks-linux-amd64" \
             -O /usr/bin/gitleaks
-          chmod +x /usr/bin/gitleaks
+          sudo chmod +x /usr/bin/gitleaks
         shell: bash
 
       - name: Run gitleaks ☔

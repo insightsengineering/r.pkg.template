@@ -15,7 +15,7 @@ on:
 
 jobs:
   build-install-check:
-    name: ${{ matrix.config.image }} | ${{ matrix.config.tag }}
+    name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
     runs-on: ubuntu-latest
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}

@@ -11,14 +11,14 @@ package_owner="awesome-owner"
 package_name="awesomeR"
 ```
 
-* Clone this repo:
+* Clone this repository:
 
 ```bash
 git clone https://github.com/insightsengineering/r.pkg.template.git ${package_name}
 cd ${package_name}
 ```
 
-* Remove the previous git history and re-initialize your git repo:
+* Remove the previous git history and re-initialize your git repository:
 
 ```bash
 rm -rf .git
