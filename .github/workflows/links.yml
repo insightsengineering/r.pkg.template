@@ -1,4 +1,5 @@
-name: Check URLs
+---
+name: Check URLs 🌐
 
 on:
   push:
@@ -6,16 +7,19 @@ on:
       - main
       - pre-release
   pull_request:
+    branches:
+      - main
+      - pre-release
 
 jobs:
   linkChecker:
-    name: Validate Links
+    name: Validate Links 🔎
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repo 🛎
         uses: actions/checkout@v2
 
-      - name: Check URLs in docs
+      - name: Check URLs in docs 🔬
         uses: lycheeverse/lychee-action@v1.0.9
         with:
           args: >-
@@ -30,9 +34,3 @@ jobs:
             **/*.yml
         env:
           GITHUB_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
-
-      - name: Upload lychee report
-        uses: actions/upload-artifact@v2
-        with:
-          name: urls-check-report.md
-          path: ./lychee/out.md

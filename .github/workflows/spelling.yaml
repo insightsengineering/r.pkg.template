@@ -1,0 +1,26 @@
+---
+name: Spelling 🆎
+
+on:
+  push:
+    branches:
+      - main
+      - pre-release
+  pull_request:
+    branches:
+      - main
+      - pre-release
+
+jobs:
+  spelling:
+    name: Check spelling 🔠
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
+
+    steps:
+      - name: Checkout Code 🛎
+        uses: actions/checkout@v2
+
+      - name: Run Spellcheck 👟
+        uses: insightsengineering/r-spelling-check-action@v1

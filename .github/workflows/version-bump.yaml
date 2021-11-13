@@ -1,5 +1,5 @@
 ---
-name: Version bump
+name: Version bump ⬆
 
 on:
   push:
@@ -8,56 +8,44 @@ on:
 
 jobs:
   version-bump:
-    name: Bump version
+    name: Bump version ⤴
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
+      image: docker.io/rocker/tidyverse:4.1.2
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repo 🛎
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.REPO_GITHUB_TOKEN }}
 
-      - name: Bump version of DESCRIPTION on main branch
-        if: github.ref == 'refs/heads/main'
-        run: |
-          options(repos = c(CRAN = "https://cloud.r-project.org/"))
-          packages <- c("desc")
-          install.packages(setdiff(packages, rownames(installed.packages())))
-          ver <- desc::desc_get_version()
-          cat(paste("\nDESCRIPTION version:", ver, "\n"))
-          result <- desc::desc_bump_version("dev", normalize = TRUE)
-          ver <- desc::desc_get_version()
-          cat(paste("\nUpdated DESCRIPTION version:", ver, "\n"))
+      - name: Bump version in DESCRIPTION 📜
+        run: desc::desc_bump_version("dev", normalize = TRUE)
         shell: Rscript {0}
 
-      - name: Bump version of NEWS.md on main branch
-        if: github.ref == 'refs/heads/main'
+      - name: Bump version in NEWS.md 📰
         run: |
           DESC_VERSION=$(awk \
             -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION)
           NEWS_VERSION=$(awk '/^#+ /{print $3; exit}' NEWS.md)
-          echo "NEWS.md version: $NEWS_VERSION"
-          echo "DESCRIPTION version: $DESC_VERSION"
           regex="([0-9]+).([0-9]+).([0-9]+).([0-9])"
           if [[ $DESC_VERSION =~ $regex ]]; then
             sed -i "s/$NEWS_VERSION/$DESC_VERSION/" NEWS.md
           else
-            ehco "🔥 Wrong version format in DESCRIPTION!!!"
+            echo "🔥 Wrong version format in DESCRIPTION!"
             exit 1
           fi
           NEWS_VERSION=$(awk '/^#+ /{print $3; exit}' NEWS.md)
           echo "Updated NEWS.md version: $NEWS_VERSION"
           if (test $DESC_VERSION != $NEWS_VERSION ); then
-            echo "🙈 Updated NEWS.md and DESCRIPTION have different versions!!!"
+            echo "🙈 Updated NEWS.md and DESCRIPTION have different versions!"
             echo "Check what is going on, please 🙏"
             exit 1
           fi
-          echo "NEW_PKG_VERSION=$DESC_VERSION" >> $GITHUB_ENV
+          echo "NEW_PKG_VERSION=${DESC_VERSION}" >> $GITHUB_ENV
         shell: bash
 
-      - name: Wait for other jobs
+      - name: Wait for other jobs ⏳
         if: ${{ env.NEW_PKG_VERSION }}
         uses: lewagon/wait-on-check-action@v1.0.0
         with:
@@ -66,7 +54,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
 
-      - name: Commit and push changes
+      - name: Commit and push changes 📌
         if: ${{ env.NEW_PKG_VERSION }}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
