@@ -5,11 +5,14 @@ on:
   push:
     tags:
       - "v*"
+  workflow_call:
 
 jobs:
   release:
     name: Release 🚀
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
@@ -18,10 +21,10 @@ jobs:
         run: |
           RELEASE_VERSION=$(awk -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION)
           REPOSITORY_NAME="${{ github.event.repository.name }}"
-          (awk "/^#+.*${REPOSITORY_NAME//./\.}.*${RELEASE_VERSION//./\.}$/{flag=1;next}/^#+.*${REPOSITORY_NAME//./\.}.*/{flag=0}flag" NEWS.md |grep -v "^$" || echo "* ${RELEASE_VERSION}") > RELEASE_BODY.txt
+          (awk "/^#+.*${REPOSITORY_NAME//./\.}.*${RELEASE_VERSION//./\.}$/{flag=1;next}/^#+.*${REPOSITORY_NAME//./\.}.*/{flag=0}flag" NEWS.md | grep -v "^$" || echo "* ${RELEASE_VERSION}") > RELEASE_BODY.txt
 
       - name: Create release 🌟
         uses: softprops/action-gh-release@v1
         with:
           body_path: RELEASE_BODY.txt
-          token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}

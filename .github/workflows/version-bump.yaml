@@ -5,6 +5,11 @@ on:
   push:
     branches:
       - main
+  workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: Github token with write access to the repo
+        required: false
 
 jobs:
   version-bump:

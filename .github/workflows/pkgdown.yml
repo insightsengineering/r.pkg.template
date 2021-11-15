@@ -19,6 +19,12 @@ on:
       - man/**
       - LICENSE.*
       - NAMESPACE
+  workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with read access to repositories, required for staged.dependencies installation
+        required: false
 
 jobs:
   pkgdown:

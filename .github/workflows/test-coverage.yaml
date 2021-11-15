@@ -5,10 +5,17 @@ on:
   push:
     branches:
       - main
+      - pre-release
   pull_request:
     branches:
       - main
       - pre-release
+  workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with read access to repositories, required for staged.dependencies installation
+        required: false
 
 jobs:
   test-coverage:
