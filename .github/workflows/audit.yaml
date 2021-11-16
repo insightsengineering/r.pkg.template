@@ -24,34 +24,50 @@ jobs:
 
       - name: Run oysteR scan on dependencies 🔍
         run: |
-          dependencies_scan = oysteR::audit_description(
-            dir = ".",
-            fields = c("Depends", "Imports", "Suggests"),
-            verbose = TRUE
+          tryCatch(
+            expr = {
+              dependencies_scan = oysteR::audit_description(
+                dir = ".",
+                fields = c("Depends", "Imports", "Suggests"),
+                verbose = TRUE
+              )
+              print(as.data.frame(
+                dependencies_scan[c(
+                  "package",
+                  "version",
+                  "vulnerabilities",
+                  "no_of_vulnerabilities"
+                )]
+              ))
+            },
+            error =  function(e) {
+              message('🚨 Caught an error!')
+              print(e)
+            }
           )
-          print(as.data.frame(
-            dependencies_scan[c(
-              "package",
-              "version",
-              "vulnerabilities",
-              "no_of_vulnerabilities"
-            )]
-          ))
         shell: Rscript {0}
 
       - name: Run oysteR scan on renv.lock 🔒
         run: |
-          if (file.exists("renv.lock")) {
-            renv_lock_scan = oysteR::audit_renv_lock(dir = ".", verbose = TRUE)
-            print(as.data.frame(
-              renv_lock_scan[c(
-                "package",
-                "version",
-                "vulnerabilities",
-                "no_of_vulnerabilities"
-              )]
-            ))
-          } else {
-            print("No renv.lock file, not scanning.")
-          }
+          tryCatch(
+            expr = {
+              if (file.exists("renv.lock")) {
+                renv_lock_scan = oysteR::audit_renv_lock(dir = ".", verbose = TRUE)
+                print(as.data.frame(
+                  renv_lock_scan[c(
+                    "package",
+                    "version",
+                    "vulnerabilities",
+                    "no_of_vulnerabilities"
+                  )]
+                ))
+              } else {
+                print("No renv.lock file, not scanning.")
+              }
+            },
+            error =  function(e) {
+              message('🚨 Caught an error!')
+              print(e)
+            }
+          )
         shell: Rscript {0}
