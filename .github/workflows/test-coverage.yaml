@@ -35,7 +35,7 @@ jobs:
           path: ${{ github.event.repository.name }}
 
       - name: Run Staged dependencies 🎦
-        uses: insightsengineering/staged-dependencies-action@v1
+        uses: insightsengineering/staged-dependencies-action@163_v0.2.4
         env:
           GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
           SD_REPO_PATH: ${{ github.event.repository.name }}
