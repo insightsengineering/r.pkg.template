@@ -129,7 +129,7 @@ jobs:
           overwrite: false
 
   multiversion-docs:
-    name: Multisite creation 📖
+    name: Multi-version docs 📖
     if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
     container:
