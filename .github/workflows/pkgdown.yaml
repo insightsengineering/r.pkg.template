@@ -136,7 +136,7 @@ jobs:
       image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
     needs: pkgdown
     steps:
-      - name: Change branch multisite docs 🛎
+      - name: Checkout GH pages branch 🛎
         uses: actions/checkout@v2
         with:
           ref: gh-pages
