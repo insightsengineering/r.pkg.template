@@ -1,0 +1,104 @@
+---
+name: BiocCheck 🧬
+
+on:
+  push:
+    tags:
+      - "v*"
+    branches:
+      - main
+      - pre-release
+  pull_request:
+    branches:
+      - main
+      - pre-release
+  workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with read access to repositories, required for staged.dependencies installation
+        required: false
+
+jobs:
+  bioccheck:
+    name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13
+            tag: latest
+
+    steps:
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v5
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
+
+      - name: Run Staged dependencies 🎦
+        uses: insightsengineering/staged-dependencies-action@v1
+        env:
+          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
+          SD_REPO_PATH: ${{ github.event.repository.name }}
+
+      - name: Show session info and installed packages ℹ
+        run: |
+          sessionInfo()
+          as.data.frame(installed.packages()[, c("LibPath", "Version")])
+        shell: Rscript {0}
+
+      - name: Build R package 🏗
+        run: |
+          R CMD build ${{ github.event.repository.name }}
+          echo "PKGBUILD=$(echo *.tar.gz)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Set TESTING_DEPTH ⚙
+        env:
+          COMMIT_NEWEST_MESSAGE: ${{ github.event.head_commit.message }}
+          COMMIT_OLDEST_MESSAGE: ${{ github.event.commits[0].message }}
+        run: |
+          cd ${{ github.event.repository.name }}
+          # set TESTING_DEPTH for PR
+          if [[ ! -z "${GITHUB_HEAD_REF}" ]]; then
+            TESTING_DEPTH=3
+            echo "TESTING_DEPTH=3" >> $GITHUB_ENV
+            COMMIT_NEWEST_MESSAGE=$(git log --format=%B -n 1 ${{ github.event.after }})
+          fi
+          if [[ $COMMIT_NEWEST_MESSAGE == *"[skip tests]"* ]]; then
+            echo "NO_TESTS=1" >> $GITHUB_ENV
+          fi
+          # default TESTING_DEPTH
+          if [[ -z "${TESTING_DEPTH}" ]]; then
+            echo "TESTING_DEPTH=1" >> $GITHUB_ENV
+          fi
+        shell: bash
+
+      - name: Run R CMD check 🏁
+        run: |
+          if [[ -z "${{ env.NO_TESTS }}" ]]; then
+            R CMD check ${{ env.PKGBUILD }}
+          else
+            R CMD check --no-tests ${{ env.PKGBUILD }}
+          fi
+        shell: bash
+        continue-on-error: true
+        env:
+          _R_CHECK_TESTS_NLINES_: 0
+    
+      - name: Install R package 🚧
+        run: R CMD INSTALL ${{ env.PKGBUILD }}
+        shell: bash
+      
+      - name: Run BiocCheck 🩺
+        uses: insightsengineering/bioc-check-action@v1
+        with:
+          path: ${{ env.PKGBUILD }}
