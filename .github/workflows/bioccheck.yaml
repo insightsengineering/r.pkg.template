@@ -1,5 +1,5 @@
 ---
-name: BiocCheck 🧬
+name: BiocCheck 🩺
 
 on:
   push:
