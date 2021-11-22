@@ -31,8 +31,8 @@ jobs:
           GITLEAKS_VERSION=$(curl -s https://api.github.com/repos/zricethezav/gitleaks/releases/latest | jq -r '.tag_name')
           sudo wget -q \
             "https://github.com/zricethezav/gitleaks/releases/download/${GITLEAKS_VERSION}/gitleaks-linux-amd64" \
-            -O /usr/bin/gitleaks
-          sudo chmod +x /usr/bin/gitleaks
+            -O /usr/bin/gitleaks || echo "Error downloading gitleaks ${GITLEAKS_VERSION}"
+          sudo chmod +x /usr/bin/gitleaks || echo "Error adding execute permissions to gitleaks"
         shell: bash
 
       - name: Run gitleaks ☔
