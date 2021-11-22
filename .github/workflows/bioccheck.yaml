@@ -18,7 +18,12 @@ on:
         description: |
           Github token with read access to repositories, required for staged.dependencies installation
         required: false
-
+    inputs:
+      enable_bioccheck:
+        description: Enable BiocCheck
+        required: false
+        type: boolean
+        default: false
 jobs:
   bioccheck:
     name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
@@ -31,7 +36,7 @@ jobs:
         config:
           - image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13
             tag: latest
-
+    if: ${{ inputs.enable_bioccheck }}
     steps:
       - name: Get branch names 🌿
         id: branch-name
