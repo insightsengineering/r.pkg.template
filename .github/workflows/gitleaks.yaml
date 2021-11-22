@@ -28,12 +28,17 @@ jobs:
 
       - name: Download and install gitleaks
         run: |
-          GITLEAKS_VERSION=$(curl -s https://api.github.com/repos/zricethezav/gitleaks/releases/latest | jq -r '.tag_name')
           sudo wget -q \
-            "https://github.com/zricethezav/gitleaks/releases/download/${GITLEAKS_VERSION}/gitleaks-linux-amd64" \
-            -O /usr/bin/gitleaks || echo "Error downloading gitleaks ${GITLEAKS_VERSION}"
-          sudo chmod +x /usr/bin/gitleaks || echo "Error adding execute permissions to gitleaks"
+            "https://github.com/zricethezav/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            -O /tmp/gitleaks.tar.gz || \
+            (echo "Error downloading gitleaks ${GITLEAKS_VERSION} tarball" && exit 1)
+          sudo tar -xvzf /tmp/gitleaks.tar.gz || \
+            (echo "Error unarchiving gitleaks ${GITLEAKS_VERSION} tarball" && exit 1)
+          sudo mv gitleaks /usr/bin/. || \
+            (echo "Error moving gitleaks for /usr/bin" && exit 1)
         shell: bash
+        env:
+          GITLEAKS_VERSION: 8.0.0
 
       - name: Run gitleaks ☔
         run: gitleaks -v --no-git ${{ inputs.additional_args }} --path .
