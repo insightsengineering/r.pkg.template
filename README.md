@@ -44,29 +44,27 @@ mv r.pkg.template.Rproj "${package_name}.Rproj"
 
 ## Pre-commit
 
-This repository contains example [pre-commit] configuration.
+This repository contains an example [pre-commit] configuration.
 
-[pre-commit] is a tool that use [Git hooks] to identify and solve simple issues before submission to code review.
-[Git hooks] run on every commit to automatically point out and solve issue like missing semicolons, trailing whitespace,
+[pre-commit] is a tool that uses [Git hooks] to identify and resolve simple issues prior to submission for code review.
+[Git hooks] run on every commit to automatically point out and solve issues such as missing semicolons, trailing whitespaces,
 code formatting and spell checks.
 
 ### Setting up pre-commit for R project
 
-1. Install pre-commit framework. Use official [installation guide][pre-commit installation].
+1. Install the `pre-commit` framework. Use the official [installation guide][pre-commit installation].
 2. Install R package `precommit`
 
 ```sh
 R -e 'install.packages("precommit")'
 ```
 
-3. Run script to generate example pre-commit configuration:
+3. Run the `use_precommit()` function to generate an example pre-commit configuration called `.pre-commit-config.yaml`:
 
 ```sh
-R -e 'precommit::use_precommit()'
+[ ! -f ".pre-commit-config.yaml" ] && R -e 'precommit::use_precommit()'
 ```
 
-Above command will generate example `.pre-commit-config.yaml`. If this file already exists in repo
-you can skip this step.
 
 4. Install the git hooks script:
 
