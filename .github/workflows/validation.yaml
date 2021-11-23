@@ -17,6 +17,8 @@ jobs:
   r-pkg-validation:
     name: Create report 📃
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     permissions:
@@ -40,7 +42,6 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
 
-      # Upload the validation report to the release
       - name: Upload report to release 🔼
         if: success() && startsWith(github.ref, 'refs/tags/v')
         uses: svenstaro/upload-release-action@v2
