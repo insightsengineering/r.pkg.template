@@ -10,7 +10,6 @@ BiocCheck
 biocViews
 bootswatch
 BugReports
-cancelled
 cd
 Centos
 Changelog
@@ -18,7 +17,6 @@ ci
 CMD
 cobertura
 CODEBASE
-commiting
 config
 covr
 cre
@@ -49,8 +47,6 @@ http
 https
 httr
 ℹ
-indentify
-informatoin
 insightsengineering
 io
 junit
@@ -123,7 +119,6 @@ tmp
 tryCatch
 UA
 ubuntu
-unarchiving
 usr
 VignetteBuilder
 wget
