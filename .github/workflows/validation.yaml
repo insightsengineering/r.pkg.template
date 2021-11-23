@@ -1,0 +1,43 @@
+---
+name: R Package Validation report 📃
+
+on:
+  push:
+    tags:
+      - "v*"
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - pre-release
+  workflow_call:
+
+jobs:
+  r-pkg-validation:
+    name: Create report 📃
+    runs-on: ubuntu-latest
+    # Set Github token permissions
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
+      packages: write
+      deployments: write
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v2
+
+      - name: Build report 🏗
+        uses: insightsengineering/thevalidatoR@v1.0
+
+      # Upload the validation report to the release
+      - name: Upload report to release 🔼
+        if: success() && startsWith(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: ./validation_report.pdf
+          asset_name: validation-report.pdf
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          overwrite: false
