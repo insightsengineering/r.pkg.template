@@ -147,7 +147,11 @@ jobs:
           GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
       
       - name: Setup github user 👤
-        uses: fregante/setup-git-user@v1
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
 
       - name: Push changes, if any 📥
         uses: EndBug/add-and-commit@v7
+        with:
+          branch: gh-pages
