@@ -98,14 +98,13 @@ jobs:
         continue-on-error: true
         env:
           _R_CHECK_TESTS_NLINES_: 0
-    
+
       - name: Install R package 🚧
         run: R CMD INSTALL ${{ env.PKGBUILD }}
         shell: bash
-      
+
       - name: Run BiocCheck 🩺
         uses: insightsengineering/bioc-check-action@v1
         with:
           path: ${{ env.PKGBUILD }}
           no-check-version-num: true
-

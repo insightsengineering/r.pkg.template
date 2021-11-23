@@ -1,13 +1,13 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
-labels: 'enhancement'
-assignees: ''
-
+title: ""
+labels: "enhancement"
+assignees: ""
 ---
 
 **Summary**
+
 <!--
 Describe the new feature/improvement you would like briefly below.
 
@@ -30,8 +30,8 @@ and how it solves the problem you described.
 
 As a [persona], I [want to], [so that].
 
-
 **Additional Information**
+
 <!--
 Describe how the feature would be used, why it is needed and what it would solve.
 

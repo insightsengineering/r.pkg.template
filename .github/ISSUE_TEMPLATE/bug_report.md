@@ -1,11 +1,11 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: 'bug'
-assignees: ''
-
+title: ""
+labels: "bug"
+assignees: ""
 ---
+
 <!--
 **Thank you for wanting to report a bug!**
 
@@ -17,8 +17,8 @@ Verify first that your issue is not already reported on
 Also test if the latest main branch are affected too.
 -->
 
-
 **Summary**
+
 <!--
 Please briefly describe your problem and, when relevant, the output you expect.
 Please also provide the output of `utils::sessionInfo()` or
@@ -37,6 +37,7 @@ Your brief description of the problem
 ```
 
 **R session info**
+
 <!--
 Paste verbatim output from `R -e "utils::sessionInfo()"` below.
 -->
@@ -48,6 +49,7 @@ Paste verbatim output from `R -e "utils::sessionInfo()"` below.
 ```
 
 **OS / Environment**
+
 <!--
 Provide all relevant information below, e.g. target OS versions, docker image, etc.
 -->
