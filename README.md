@@ -50,7 +50,7 @@ This repository contains example [pre-commit] configuration.
 [Git hooks] run on every commit to automatically point out and solve issue like missing semicolons, trailing whitespace,
 code formatting and spell checks.
 
-### Setting up pre-commit for R project.
+### Setting up pre-commit for R project
 
 1. Install pre-commit framework. Use official [installation guide][pre-commit installation].
 2. Install R package `precommit`
