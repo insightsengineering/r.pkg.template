@@ -31,6 +31,16 @@ jobs:
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v1.0
 
+      - name: Wait for release to succeed ⏳
+        timeout-minutes: 2
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: lewagon/wait-on-check-action@v1.1.1
+        with:
+          ref: "${{ github.ref }}"
+          check-name: "Release 🚀"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 10
+
       # Upload the validation report to the release
       - name: Upload report to release 🔼
         if: success() && startsWith(github.ref, 'refs/tags/v')
