@@ -21,11 +21,15 @@ repos:
           (.*/|)\.Renviron|
           (.*/|)\.gitignore|
           (.*/|)NAMESPACE|
+          (.*/|)DESCRIPTION|
           (.*/|)WORDLIST|
-          (.*/|)\.travis.yml|
-          (.*/|)appveyor.yml|
+          (.*/|)LICENSE|
           (.*/|)\.Rbuildignore|
+          (.*/|)\.lintr|
+          (.*/|)_pkgdown.yaml|
+          (.*/|)staged_dependencies.yaml|
           (.*/|)\.pre-commit-.*|
+          \.github/.*|
           .*\.[rR]|
           .*\.Rproj|
           .*\.py|

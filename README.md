@@ -1,5 +1,9 @@
 # r.pkg.template
 
+[pre-commit]: https://pre-commit.com
+[pre-commit installation]: https://pre-commit.com/#installation
+[git hooks]: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
+
 An R package template with built-in Github Actions-based CI/CD workflows.
 
 ## Usage
@@ -64,7 +68,6 @@ R -e 'install.packages("precommit")'
 ```sh
 [ ! -f ".pre-commit-config.yaml" ] && R -e 'precommit::use_precommit()'
 ```
-
 
 4. Install the git hooks script:
 
@@ -137,7 +140,3 @@ Mixed line ending........................................................Passed
 Don't commit common R artifacts......................(no files to check)Skipped
 
 ```
-
-[pre-commit]: https://pre-commit.com
-[pre-commit installation]: https://pre-commit.com/#installation
-[git hooks]: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
