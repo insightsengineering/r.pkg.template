@@ -15,7 +15,7 @@ on:
       - inst/templates/**
       - _pkgdown.yml
       - DESCRIPTION
-      - '**.md'
+      - "**.md"
       - man/**
       - LICENSE.*
       - NAMESPACE
@@ -110,7 +110,7 @@ jobs:
         uses: lewagon/wait-on-check-action@v1.1.1
         with:
           ref: "${{ github.ref }}"
-          check-name: 'Release 🚀'
+          check-name: "Release 🚀"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
 
@@ -145,7 +145,7 @@ jobs:
         uses: insightsengineering/r-pkgdown-multisite@v1
         env:
           GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
-      
+
       - name: Setup github user 👤
         run: |
           git config --local user.email "actions@github.com"

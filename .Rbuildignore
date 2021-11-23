@@ -8,3 +8,5 @@ README.*
 ^\.lintr$
 ^staged_dependencies\.yaml$
 coverage.*
+^\.pre-commit-config\.yaml$
+^codemeta\.json$
