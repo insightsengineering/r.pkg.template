@@ -36,7 +36,7 @@ jobs:
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v1.1.0
         with:
-          report_template_path: "${{ env.GITHUB_ACTION_PATH }}/template.Rmd"
+          report_template_path: "${GITHUB_ACTION_PATH}/template.Rmd"
 
       - name: Wait for release to succeed ⏳
         timeout-minutes: 2
