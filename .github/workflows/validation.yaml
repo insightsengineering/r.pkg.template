@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build report 🏗
-        uses: insightsengineering/thevalidatoR@v1.0
+        uses: insightsengineering/thevalidatoR@v1.1.0
 
       - name: Wait for release to succeed ⏳
         timeout-minutes: 2
