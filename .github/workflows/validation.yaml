@@ -29,6 +29,10 @@ jobs:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
 
+      - name: Get template
+        run: wget https://raw.githubusercontent.com/insightsengineering/thevalidatoR/main/template.Rmd
+        shell: bash
+
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v1.1.0
 
