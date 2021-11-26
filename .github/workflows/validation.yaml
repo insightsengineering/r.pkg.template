@@ -36,8 +36,6 @@ jobs:
 
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
-        env:
-          SD_REPO_PATH: ${{ github.event.repository.name }}
 
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v1.1.1
