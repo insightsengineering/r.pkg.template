@@ -58,11 +58,11 @@ jobs:
         run: |
           options(repos = c(CRAN = "cloud.r-project.org"))
           "pkgdown" %in% installed.packages() || install.packages("pkgdown", upgrade = "never")
-          logfile <- "pkgdown_chevron.log"
+          logfile <- "pkgdown_${{ github.event.repository.name }}.log"
           con <- file(logfile)
           sink(con, append = TRUE, split = TRUE)
           sink(con, append = TRUE, type = "message")
-          pkgdown::build_site(".", devel = TRUE)
+          pkgdown::build_site("${{ github.event.repository.name }}", devel = TRUE)
           sink()
           sink(type = "message")
           logs <- readLines(logfile)
