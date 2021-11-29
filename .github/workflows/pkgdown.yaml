@@ -56,7 +56,7 @@ jobs:
 
       - name: Build docs 🏗
         run: |
-          options(repos = c(CRAN = "cloud.r-project.org"))
+          options(repos = c(CRAN = "https://cloud.r-project.org/"))
           "pkgdown" %in% installed.packages() || install.packages("pkgdown", upgrade = "never")
           logfile <- "pkgdown_${{ github.event.repository.name }}.log"
           con <- file(logfile)
