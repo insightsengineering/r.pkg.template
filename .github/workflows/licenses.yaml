@@ -1,0 +1,23 @@
+name: License report 🗃
+
+on:
+  push:
+    branches:
+      - main
+      - pre-release
+  pull_request:
+    branches:
+      - main
+      - pre-release
+  workflow_call:
+
+jobs:
+  license:
+    runs-on: ubuntu-latest
+    name: Check 🚩
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v2
+
+      - name: Generate license report 📜
+        uses: insightsengineering/r-license-report@v1.0.0
