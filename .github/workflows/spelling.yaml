@@ -17,7 +17,7 @@ jobs:
     name: Check spelling 🔠
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
+      image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
 
     steps:
       - name: Checkout Code 🛎

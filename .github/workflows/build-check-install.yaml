@@ -21,16 +21,16 @@ on:
 
 jobs:
   build-install-check:
-    name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
-    runs-on: ubuntu-latest
-    container:
-      image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
     strategy:
       fail-fast: false
       matrix:
         config:
-          - image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13
+          - image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14
             tag: latest
+    name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
+    runs-on: ubuntu-latest
+    container:
+      image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
 
     steps:
       - name: Get branch names 🌿
@@ -102,7 +102,7 @@ jobs:
 
       - name: Publish Unit Test Summary 📑
         uses: EnricoMi/publish-unit-test-result-action@v1
-        if: ${{ steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request' }}
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
         with:
           check_name: Unit Tests Summary
           files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
