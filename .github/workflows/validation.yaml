@@ -23,7 +23,7 @@ jobs:
     name: Create report 📃
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
+      image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
     env:
       GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
     permissions:

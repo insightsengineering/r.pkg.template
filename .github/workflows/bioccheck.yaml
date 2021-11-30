@@ -24,19 +24,21 @@ on:
         required: false
         type: boolean
         default: false
+
 jobs:
   bioccheck:
-    name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
-    runs-on: ubuntu-latest
-    container:
-      image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
     strategy:
       fail-fast: false
       matrix:
         config:
-          - image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13
+          - image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14
             tag: latest
+    name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
+    runs-on: ubuntu-latest
     if: ${{ inputs.enable_bioccheck }}
+    container:
+      image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
+
     steps:
       - name: Get branch names 🌿
         id: branch-name

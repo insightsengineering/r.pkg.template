@@ -59,7 +59,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 10
           allowed-conclusions: success,skipped,cancelled,neutral
-          check-regexp: .*rstudio_4.1.0_bioc_3.13, version latest
+          check-regexp: .*rstudio_4.1.2_bioc_3.14, version latest
 
       - name: Commit and push changes 📌
         if: ${{ env.NEW_PKG_VERSION }}

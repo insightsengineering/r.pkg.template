@@ -31,7 +31,7 @@ jobs:
     name: Generate 🐣
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
+      image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
     steps:
       - name: Get branch names 🌿
         id: branch-name
@@ -133,7 +133,7 @@ jobs:
     if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') }}
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.1.0_bioc_3.13:latest
+      image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
     needs: pkgdown
     steps:
       - name: Checkout GH pages branch 🛎
