@@ -11,6 +11,12 @@ on:
       - main
       - pre-release
   workflow_call:
+    inputs:
+      install-system-dependencies:
+        description: Check for and install system dependencies
+        required: false
+        default: false
+        type: boolean
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -36,6 +42,8 @@ jobs:
 
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
+        with:
+          run-system-dependencies: ${{ inputs.install-system-dependencies }}
         env:
           GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
           SD_REPO_PATH: ${{ github.event.repository.name }}
