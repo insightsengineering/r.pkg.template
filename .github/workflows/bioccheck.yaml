@@ -24,7 +24,6 @@ on:
         required: false
         type: boolean
         default: false
-        inputs:
       install-system-dependencies:
         description: Check for and install system dependencies
         required: false
