@@ -12,6 +12,12 @@ on:
       - main
       - pre-release
   workflow_call:
+    inputs:
+      install-system-dependencies:
+        description: Check for and install system dependencies
+        required: false
+        default: false
+        type: boolean
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -36,6 +42,8 @@ jobs:
 
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
+        with:
+          run-system-dependencies: ${{ inputs.install-system-dependencies }}
 
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v1.1.1
