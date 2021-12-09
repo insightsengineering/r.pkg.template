@@ -3,4 +3,3 @@ linters: with_defaults(
   cyclocomp_linter = NULL,
   object_usage_linter = NULL
   )
-
