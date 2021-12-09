@@ -52,6 +52,7 @@ shiny_app <- function() {
 #' @export
 #'
 plumber_api <- function(...) {
+  cat("Running the Plumber API now.........................................................................................")
   plumber::pr_run(
     plumber::plumb_api(package = packageName(), name = "hello"),
     ...

@@ -35,3 +35,4 @@ jobs:
           VALIDATE_MARKDOWN: true
           VALIDATE_R: true
           VALIDATE_YAML: true
+          LINTR_ERROR_ON_LINT: "TRUE"
