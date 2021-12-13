@@ -101,17 +101,17 @@ jobs:
           fi
         shell: bash
 
-      # - name: Run R CMD check 🏁
-      #   run: |
-      #     if [[ -z "${{ env.NO_TESTS }}" ]]; then
-      #       R CMD check ${{ env.PKGBUILD }}
-      #     else
-      #       R CMD check --no-tests ${{ env.PKGBUILD }}
-      #     fi
-      #   shell: bash
-      #   continue-on-error: true
-      #   env:
-      #     _R_CHECK_TESTS_NLINES_: 0
+      - name: Run R CMD check 🏁
+        run: |
+          if [[ -z "${{ env.NO_TESTS }}" ]]; then
+            R CMD check ${{ env.PKGBUILD }}
+          else
+            R CMD check --no-tests ${{ env.PKGBUILD }}
+          fi
+        shell: bash
+        continue-on-error: true
+        env:
+          _R_CHECK_TESTS_NLINES_: 0
 
       - name: Install R package 🚧
         run: R CMD INSTALL ${{ env.PKGBUILD }}
@@ -123,5 +123,3 @@ jobs:
           path: ${{ env.PKGBUILD }}
           no-check-version-num: true
           allow_failure: ${{ inputs.allow_failure }}
-
-
