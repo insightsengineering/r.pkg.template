@@ -29,6 +29,11 @@ on:
         required: false
         default: false
         type: boolean
+      allow_failure:
+        description: BiocCheck errors will not fail,but will give a warning
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   bioccheck:
@@ -96,17 +101,17 @@ jobs:
           fi
         shell: bash
 
-      - name: Run R CMD check 🏁
-        run: |
-          if [[ -z "${{ env.NO_TESTS }}" ]]; then
-            R CMD check ${{ env.PKGBUILD }}
-          else
-            R CMD check --no-tests ${{ env.PKGBUILD }}
-          fi
-        shell: bash
-        continue-on-error: true
-        env:
-          _R_CHECK_TESTS_NLINES_: 0
+      # - name: Run R CMD check 🏁
+      #   run: |
+      #     if [[ -z "${{ env.NO_TESTS }}" ]]; then
+      #       R CMD check ${{ env.PKGBUILD }}
+      #     else
+      #       R CMD check --no-tests ${{ env.PKGBUILD }}
+      #     fi
+      #   shell: bash
+      #   continue-on-error: true
+      #   env:
+      #     _R_CHECK_TESTS_NLINES_: 0
 
       - name: Install R package 🚧
         run: R CMD INSTALL ${{ env.PKGBUILD }}
@@ -116,4 +121,4 @@ jobs:
         uses: insightsengineering/bioc-check-action@v1
         with:
           path: ${{ env.PKGBUILD }}
-          no-check-version-num: true
+          #no-check-version-num: true
