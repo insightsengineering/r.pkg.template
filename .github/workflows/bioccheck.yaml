@@ -29,7 +29,7 @@ on:
         required: false
         default: false
         type: boolean
-      allow_failure:
+      allow-failure:
         description: BiocCheck errors will not fail, but will give a warning.
         required: false
         type: boolean
@@ -122,4 +122,4 @@ jobs:
         with:
           path: ${{ env.PKGBUILD }}
           no-check-version-num: true
-          allow_failure: ${{ inputs.allow_failure }}
+          allow-failure: ${{ inputs.allow-failure }}
