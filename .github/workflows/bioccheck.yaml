@@ -121,7 +121,7 @@ jobs:
         uses: insightsengineering/bioc-check-action@180_bioccheck
         with:
           path: ${{ env.PKGBUILD }}
-          #no-check-version-num: true
+          no-check-version-num: true
           allow_failure: ${{ inputs.allow_failure }}
 
 
