@@ -1,5 +1,5 @@
 ---
-name: BiocCheck 🩺
+name: BiocCheck ☣️
 
 on:
   push:
@@ -117,8 +117,11 @@ jobs:
         run: R CMD INSTALL ${{ env.PKGBUILD }}
         shell: bash
 
-      - name: Run BiocCheck 🩺
-        uses: insightsengineering/bioc-check-action@v1
+      - name: Run BiocCheck ☣️
+        uses: insightsengineering/bioc-check-action@180_bioccheck
         with:
           path: ${{ env.PKGBUILD }}
           #no-check-version-num: true
+          allow_failure: ${{ inputs.allow_failure }}
+
+
