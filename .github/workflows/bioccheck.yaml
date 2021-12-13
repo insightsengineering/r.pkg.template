@@ -118,7 +118,7 @@ jobs:
         shell: bash
 
       - name: Run BiocCheck ☣️
-        uses: insightsengineering/bioc-check-action@180_bioccheck
+        uses: insightsengineering/bioc-check-action@v1
         with:
           path: ${{ env.PKGBUILD }}
           no-check-version-num: true
