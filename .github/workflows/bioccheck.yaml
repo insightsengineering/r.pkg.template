@@ -30,7 +30,7 @@ on:
         default: false
         type: boolean
       allow_failure:
-        description: BiocCheck errors will not fail,but will give a warning
+        description: BiocCheck errors will not fail, but will give a warning.
         required: false
         type: boolean
         default: false
