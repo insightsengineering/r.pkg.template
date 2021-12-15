@@ -1,5 +1,5 @@
 ---
-name: BiocCheck 🩺
+name: BiocCheck ☣️
 
 on:
   push:
@@ -29,6 +29,11 @@ on:
         required: false
         default: false
         type: boolean
+      allow-failure:
+        description: BiocCheck errors will not fail, but will give a warning.
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   bioccheck:
@@ -112,8 +117,9 @@ jobs:
         run: R CMD INSTALL ${{ env.PKGBUILD }}
         shell: bash
 
-      - name: Run BiocCheck 🩺
+      - name: Run BiocCheck ☣️
         uses: insightsengineering/bioc-check-action@v1
         with:
           path: ${{ env.PKGBUILD }}
           no-check-version-num: true
+          allow-failure: ${{ inputs.allow-failure }}
