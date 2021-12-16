@@ -19,7 +19,7 @@ on:
           Github token with read access to repositories, required for staged.dependencies installation
         required: false
     inputs:
-      enable_bioccheck:
+      enable-bioccheck:
         description: Enable BiocCheck
         required: false
         type: boolean
@@ -45,7 +45,7 @@ jobs:
             tag: latest
     name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
     runs-on: ubuntu-latest
-    if: ${{ inputs.enable_bioccheck }}
+    if: ${{ inputs.enable-bioccheck }}
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
 
