@@ -91,9 +91,8 @@ jobs:
 
       - name: Post coverage report 🗞
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
-        uses: insightsengineering/coverage-action@v1
+        uses: insightsengineering/coverage-action@bugfixes
         with:
-          # Path to the Cobertura XML report.
           path: coverage.xml
           threshold: 80
           fail: false
