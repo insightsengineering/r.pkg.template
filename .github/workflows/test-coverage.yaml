@@ -91,14 +91,13 @@ jobs:
 
       - name: Post coverage report 🗞
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
-        uses: 5monkeys/cobertura-action@v12
+        uses: insightsengineering/coverage-action@v1
         with:
+          # Path to the Cobertura XML report.
           path: coverage.xml
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          minimum_coverage: 80
-          fail_below_threshold: false
-          skip_covered: true
-          show_missing: true
+          threshold: 80
+          fail: false
+          publish: true
 
       - name: Upload report 🔼
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
