@@ -31,10 +31,10 @@ on:
         required: false
         default: false
         type: boolean
-      allow-pkgdown-warnings:
-        description: Allow pkgdown warnings for build_site function
+      fail-pkgdown-on-warnings:
+        description: Fail the pkgdown workflow if warnings are generated while generating docs
         required: false
-        default: true
+        default: false
         type: boolean
 
 jobs:
