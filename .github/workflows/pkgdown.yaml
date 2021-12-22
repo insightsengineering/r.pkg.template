@@ -84,9 +84,11 @@ jobs:
           if (length(warnings_marker) > 0) {
             cat("⚠ One or more warnings were generated during the pkgdown build:\n")
             cat(logs[warnings_marker[[1]]:length(logs)], sep = "\n")
-            if ("${{ inputs.allow-pkgdown-warnings }}" == "false")
-            {
-              stop("Please 🙏 fix the warnings shown below this message 👇")
+            warn_msg <- "Please 🙏 fix the warnings shown below this message 👇"
+            if ("${{ inputs.fail-pkgdown-on-warnings }}" == "true") {
+              stop(warn_msg)
+            } else {
+              print(warn_msg)
             }
           }
           if (length(error_marker) > 0) {
