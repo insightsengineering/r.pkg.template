@@ -32,14 +32,20 @@ git init
 - Replace references:
 
 ```bash
-grep -rl "r.pkg.template" --exclude-dir='.git' | xargs perl -p -i -e "s/r.pkg.template/${package_name}/g"
-grep -rl "insightsengineering" --exclude-dir='.git' | xargs perl -p -i -e "s/insightsengineering/${package_owner}/g"
+grep -rl "r.pkg.template" --exclude-dir='.git' * | xargs perl -p -i -e "s/r.pkg.template/${package_name}/g"
+grep -rl "insightsengineering" --exclude-dir='.git' * | xargs perl -p -i -e "s/insightsengineering/${package_owner}/g"
 ```
 
 - Rename the RStudio project file:
 
 ```bash
 mv r.pkg.template.Rproj "${package_name}.Rproj"
+```
+
+- Overwrite the README file:
+
+```bash
+echo -e "# ${package_name}\n\nShort description of the package" > README.md
 ```
 
 - Update the remainder of the package as you would do typically while developing an R package.
