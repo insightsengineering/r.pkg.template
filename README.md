@@ -32,8 +32,8 @@ git init
 - Replace references:
 
 ```bash
-grep -rl "r.pkg.template" --exclude-dir='.git' | xargs perl -p -i -e "s/r.pkg.template/${package_name}/g"
-grep -rl "insightsengineering" --exclude-dir='.git' | xargs perl -p -i -e "s/insightsengineering/${package_owner}/g"
+grep -rl "r.pkg.template" --exclude-dir='.git' * | xargs perl -p -i -e "s/r.pkg.template/${package_name}/g"
+grep -rl "insightsengineering" --exclude-dir='.git' * | xargs perl -p -i -e "s/insightsengineering/${package_owner}/g"
 ```
 
 - Rename the RStudio project file:
