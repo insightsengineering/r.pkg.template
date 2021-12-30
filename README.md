@@ -45,7 +45,7 @@ mv r.pkg.template.Rproj "${package_name}.Rproj"
 - Overwrite the README file:
 
 ```bash
-echo "# ${package_name} \n\nShort description of the package" > README.md
+echo -e "# ${package_name}\n\nShort description of the package" > README.md
 ```
 
 - Update the remainder of the package as you would do typically while developing an R package.
