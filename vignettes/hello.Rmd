@@ -4,7 +4,7 @@ title: "Hello"
 date: "`r Sys.Date()`"
 ---
 
-Hello World! Incorrectlly spellled wordz.
+Hello World! Incorrectlly spellled wordz heare.
 
 ```{r}
 library(r.pkg.template)
