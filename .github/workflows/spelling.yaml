@@ -25,5 +25,3 @@ jobs:
 
       - name: Run Spellcheck 👟
         uses: insightsengineering/r-spelling-check-action@main
-        with:
-          exclude: vignettes/*
