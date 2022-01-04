@@ -17,6 +17,11 @@ on:
         required: false
         default: false
         type: boolean
+      enable-staged-dependencies-check:
+        description: Enable staged dependencies YAML check
+        required: false
+        default: false
+        type: boolean
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -48,7 +53,7 @@ jobs:
         env:
           GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
           SD_REPO_PATH: ${{ github.event.repository.name }}
-          SD_ENABLE_CHECK: "false"
+          SD_ENABLE_CHECK: ${{ inputs.enable-staged-dependencies-check }}
 
       - name: Generate man pages 📄
         run: |
