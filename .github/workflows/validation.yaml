@@ -18,6 +18,11 @@ on:
         required: false
         default: false
         type: boolean
+      enable-staged-dependencies-check:
+        description: Enable staged dependencies YAML check
+        required: false
+        default: true
+        type: boolean
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -44,6 +49,8 @@ jobs:
         uses: insightsengineering/staged-dependencies-action@v1
         with:
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
+        env:
+          SD_ENABLE_CHECK: ${{ inputs.enable-staged-dependencies-check }}
 
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v1.1.1
