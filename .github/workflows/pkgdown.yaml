@@ -13,7 +13,7 @@ on:
       - pre-release
     paths:
       - inst/templates/**
-      - _pkgdown.yml
+      - _pkgdown.yaml
       - DESCRIPTION
       - "**.md"
       - man/**
