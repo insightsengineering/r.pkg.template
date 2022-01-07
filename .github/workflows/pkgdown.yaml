@@ -76,17 +76,10 @@ jobs:
         run: |
           options(repos = c(CRAN = "https://cloud.r-project.org/"))
           "pkgdown" %in% installed.packages() || install.packages("pkgdown", upgrade = "never")
-          logfile <- "pkgdown_${{ github.event.repository.name }}.log"
-          con <- file(logfile)
-          sink(con, append = TRUE, split = TRUE)
-          sink(con, append = TRUE, type = "message")
-          try(
-            pkgdown::build_site("${{ github.event.repository.name }}", devel = TRUE)
+          logs <- capture.output(
+            pkgdown::build_site("${{ github.event.repository.name }}", devel = TRUE),
+            split = TRUE
           )
-          sink()
-          sink(type = "message")
-          logs <- readLines(logfile)
-          error_marker <- grep("Error:", logs)
           warnings_marker <- grep("Warning message", logs)
           if (length(warnings_marker) > 0) {
             cat("⚠ One or more warnings were generated during the pkgdown build:\n")
@@ -97,11 +90,6 @@ jobs:
             } else {
               print(warn_msg)
             }
-          }
-          if (length(error_marker) > 0) {
-            cat("☠ One or more errors were generated during the pkgdown build:\n")
-            cat(logs[error_marker[[1]]:length(logs)], sep = "\n")
-            stop("Please 🙏 fix the errors shown below this message 👇")
           }
         shell: Rscript {0}
 
