@@ -1,0 +1,21 @@
+== Building pkgdown site =======================================================
+Reading from: '/mnt/c/Users/kulkard2/git/github/insightsengineering/r.pkg.template'
+Writing to:   '/mnt/c/Users/kulkard2/git/github/insightsengineering/r.pkg.template/docs'
+-- Initialising site -----------------------------------------------------------
+-- Building home ---------------------------------------------------------------
+Reading '.github/CONTRIBUTING.md'
+Reading '.github/PULL_REQUEST_TEMPLATE.md'
+Writing '404.html'
+-- Building function reference -------------------------------------------------
+Reading 'man/hello.Rd'
+Reading 'man/plumber_api.Rd'
+Reading 'man/shiny_app.Rd'
+-- Building articles -----------------------------------------------------------
+Reading 'vignettes/hello.Rmd'
+-- Building news ---------------------------------------------------------------
+Writing 'sitemap.xml'
+== DONE ========================================================================
+-- Previewing site -------------------------------------------------------------
+Warning message:
+Topics missing from index: plumber_api
+* Topics missing from index: shiny_app 
