@@ -13,7 +13,7 @@ on:
       - pre-release
     paths:
       - inst/templates/**
-      - _pkgdown.yml
+      - _pkgdown.yaml
       - DESCRIPTION
       - "**.md"
       - man/**
@@ -74,34 +74,21 @@ jobs:
 
       - name: Build docs 🏗
         run: |
-          options(repos = c(CRAN = "https://cloud.r-project.org/"))
-          "pkgdown" %in% installed.packages() || install.packages("pkgdown", upgrade = "never")
-          logfile <- "pkgdown_${{ github.event.repository.name }}.log"
-          con <- file(logfile)
-          sink(con, append = TRUE, split = TRUE)
-          sink(con, append = TRUE, type = "message")
-          pkgdown::build_site("${{ github.event.repository.name }}", devel = TRUE)
-          sink()
-          sink(type = "message")
-          logs <- readLines(logfile)
-          error_marker <- grep("Error:", logs)
-          warnings_marker <- grep("Warning message", logs)
-          if (length(warnings_marker) > 0) {
-            cat("⚠ One or more warnings were generated during the pkgdown build:\n")
-            cat(logs[warnings_marker[[1]]:length(logs)], sep = "\n")
-            warn_msg <- "Please 🙏 fix the warnings shown below this message 👇"
-            if ("${{ inputs.fail-pkgdown-on-warnings }}" == "true") {
-              stop(warn_msg)
-            } else {
-              print(warn_msg)
+          repo="${{ github.event.repository.name }}"
+          cd $repo
+          R --slave -e 'pkgdown::build_site(devel = TRUE)' 2>&1 | tee pkgdown_${repo}.log
+          if [ "${{ inputs.fail-pkgdown-on-warnings }}" == "true" ]; then {
+            grep "Warning message" pkgdown_${repo}.log > pkgdown_warnings_${repo}.log
+            if [[ $(wc -l <pkgdown_warnings_${repo}.log) -gt 0 ]]; then {
+              echo "----------------------------------------"
+              echo "⚠ One or more warnings were generated during the pkgdown build."
+              echo "Please 🙏 fix the warnings shown above 👆"
+              exit 1
             }
+            fi
           }
-          if (length(error_marker) > 0) {
-            cat("☠ One or more errors were generated during the pkgdown build:\n")
-            cat(logs[error_marker[[1]]:length(logs)], sep = "\n")
-            stop("Please 🙏 fix the errors shown below this message 👇")
-          }
-        shell: Rscript {0}
+          fi
+        shell: bash
 
       - name: Create documentation artifact 📂
         run: |
