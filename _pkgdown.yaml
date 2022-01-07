@@ -15,5 +15,3 @@ reference:
     contents:
       - hello
       - plumber_api
-      - shiny_app
-      - boog
