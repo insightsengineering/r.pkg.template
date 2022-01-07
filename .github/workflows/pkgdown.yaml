@@ -34,7 +34,7 @@ on:
       fail-pkgdown-on-warnings:
         description: Fail the pkgdown workflow if warnings are generated while generating docs
         required: false
-        default: true
+        default: false
         type: boolean
       enable-staged-dependencies-check:
         description: Enable staged dependencies YAML check
@@ -85,7 +85,7 @@ jobs:
             cat("⚠ One or more warnings were generated during the pkgdown build:\n")
             cat(logs[warnings_marker[[1]]:length(logs)], sep = "\n")
             warn_msg <- "Please 🙏 fix the warnings shown above this message 👆"
-            if ("${{ inputs.fail-pkgdown-on-warnings }}" == "true") {
+            if ("true" == "true") {
               stop(warn_msg)
             } else {
               print(warn_msg)
