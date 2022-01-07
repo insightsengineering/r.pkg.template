@@ -14,3 +14,6 @@ reference:
   - title: Hello World
     contents:
       - hello
+      - plumber_api
+      - shiny_app
+      - boog
