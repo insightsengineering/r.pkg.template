@@ -77,7 +77,7 @@ jobs:
           repo="${{ github.event.repository.name }}"
           cd $repo
           R --slave -e 'pkgdown::build_site(devel = TRUE)' 2>&1 | tee pkgdown_${repo}.log
-          if [ "${{ inputs.fail-pkgdown-on-warnings }}" == "true" ]; then {
+          if [ "true" == "true" ]; then {
             grep -A10000 "Warning message" pkgdown_${repo}.log > pkgdown_warnings_${repo}.log
             if [[ $(wc -l <pkgdown_warnings_${repo}.log) -gt 0 ]]; then {
               echo "⚠ One or more warnings were generated during the pkgdown build:"
