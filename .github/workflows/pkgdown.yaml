@@ -78,13 +78,12 @@ jobs:
           cd $repo
           R --slave -e 'pkgdown::build_site(devel = TRUE)' 2>&1 | tee pkgdown_${repo}.log
           if [ "true" == "true" ]; then {
-            grep -A10000 "Warning message" pkgdown_${repo}.log > pkgdown_warnings_${repo}.log
+            grep "Warning message" pkgdown_${repo}.log > pkgdown_warnings_${repo}.log
             if [[ $(wc -l <pkgdown_warnings_${repo}.log) -gt 0 ]]; then {
-              echo "⚠ One or more warnings were generated during the pkgdown build:"
               echo "----------------------------------------"
-              cat pkgdown_warnings_${repo}.log
-              echo "----------------------------------------"
+              echo "⚠ One or more warnings were generated during the pkgdown build."
               echo "Please 🙏 fix the warnings shown above 👆"
+              exit 1
             }
             fi
           }
