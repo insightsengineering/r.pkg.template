@@ -34,7 +34,7 @@ on:
       fail-pkgdown-on-warnings:
         description: Fail the pkgdown workflow if warnings are generated while generating docs
         required: false
-        default: false
+        default: true
         type: boolean
       enable-staged-dependencies-check:
         description: Enable staged dependencies YAML check
