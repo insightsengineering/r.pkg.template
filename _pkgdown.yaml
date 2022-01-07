@@ -9,3 +9,8 @@ navbar:
   right:
     - icon: fa-github
       href: https://github.com/insightsengineering/r.pkg.template
+
+reference:
+  - title: Hello World
+    contents:
+      - hello
