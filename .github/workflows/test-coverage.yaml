@@ -104,7 +104,6 @@ jobs:
           publish: true
           diff: true
           diff-branch: ${{ steps.branch-name.outputs.head_ref_branch }}
-          diff-storage: ${{ steps.branch-name.outputs.head_ref_branch }}-coverage-report
 
       - name: Upload report 🔼
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
