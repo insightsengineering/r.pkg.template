@@ -65,7 +65,7 @@ jobs:
         if: ${{ env.NEW_PKG_VERSION }}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "[ci skip] Bump version to ${{ env.NEW_PKG_VERSION }}"
+          commit_message: "[skip actions] Bump version to ${{ env.NEW_PKG_VERSION }}"
           branch: main
           file_pattern: NEWS.md DESCRIPTION
           commit_user_name: insights-engineering-bot
