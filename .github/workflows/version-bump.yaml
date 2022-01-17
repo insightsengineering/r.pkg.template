@@ -11,12 +11,6 @@ on:
       REPO_GITHUB_TOKEN:
         description: Github token with write access to the repo
         required: false
-    inputs:
-      type:
-        description: Bump either `dev` or `rc` (release candidate) version
-        required: false
-        default: dev
-        type: string
 
 jobs:
   version-bump:
@@ -31,13 +25,14 @@ jobs:
         with:
           token: ${{ secrets.REPO_GITHUB_TOKEN }}
 
-      - name: Bump dev version in DESCRIPTION 📜
-        run: |
-          type = "dev"
-          if ("${{ inputs.type }}" == "rc") {
-            type = 5
-          }
-          desc::desc_bump_version(which = type, normalize = TRUE)
+      - name: Bump version in DESCRIPTION (main) 📜
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        run: desc::desc_bump_version("dev", normalize = TRUE)
+        shell: Rscript {0}
+
+      - name: Bump version in DESCRIPTION (pre-release) 📜
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/pre-release' }}
+        run: desc::desc_bump_version(5, normalize = TRUE)
         shell: Rscript {0}
 
       - name: Bump version in NEWS.md 📰
