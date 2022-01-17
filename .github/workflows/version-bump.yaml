@@ -5,11 +5,18 @@ on:
   push:
     branches:
       - main
+      - pre-release
   workflow_call:
     secrets:
       REPO_GITHUB_TOKEN:
         description: Github token with write access to the repo
         required: false
+    inputs:
+      type:
+        description: Bump either `dev` or `rc` (release candidate) version
+        required: false
+        default: dev
+        type: string
 
 jobs:
   version-bump:
@@ -24,27 +31,25 @@ jobs:
         with:
           token: ${{ secrets.REPO_GITHUB_TOKEN }}
 
-      - name: Bump version in DESCRIPTION 📜
-        run: desc::desc_bump_version("dev", normalize = TRUE)
+      - name: Bump dev version in DESCRIPTION 📜
+        run: |
+          type = "dev"
+          if ("${{ inputs.type }}" == "rc") {
+            type = 5
+          }
+          desc::desc_bump_version(which = type, normalize = TRUE)
         shell: Rscript {0}
 
       - name: Bump version in NEWS.md 📰
         run: |
-          DESC_VERSION=$(awk \
-            -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION)
+          DESC_VERSION=$(R --slave -e 'cat(paste(desc::desc_get_version()))')
           NEWS_VERSION=$(awk '/^#+ /{print $3; exit}' NEWS.md)
-          regex="([0-9]+).([0-9]+).([0-9]+).([0-9])"
-          if [[ $DESC_VERSION =~ $regex ]]; then
-            sed -i "s/$NEWS_VERSION/$DESC_VERSION/" NEWS.md
-          else
-            echo "🔥 Wrong version format in DESCRIPTION!"
-            exit 1
-          fi
+          sed -i "s/$NEWS_VERSION/$DESC_VERSION/" NEWS.md
           NEWS_VERSION=$(awk '/^#+ /{print $3; exit}' NEWS.md)
           echo "Updated NEWS.md version: $NEWS_VERSION"
           if (test $DESC_VERSION != $NEWS_VERSION ); then
             echo "🙈 Updated NEWS.md and DESCRIPTION have different versions!"
-            echo "Check what is going on, please 🙏"
+            echo "Please ensure that the versions in the NEWS.md and DESCRIPTION are the same 🙏"
             exit 1
           fi
           echo "NEW_PKG_VERSION=${DESC_VERSION}" >> $GITHUB_ENV
