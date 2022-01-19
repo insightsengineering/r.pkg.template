@@ -35,6 +35,10 @@ jobs:
         run: desc::desc_bump_version(5, normalize = TRUE)
         shell: Rscript {0}
 
+      - name: Remove ending .0 version
+        run: desc::desc_set_version(gsub(".0$", "", desc::desc_get_version()))
+        shell: Rscript {0}
+
       - name: Bump version in NEWS.md 📰
         run: |
           DESC_VERSION=$(R --slave -e 'cat(paste(desc::desc_get_version()))')
