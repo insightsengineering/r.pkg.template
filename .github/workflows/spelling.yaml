@@ -24,6 +24,6 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run Spellcheck 👟
-        uses: insightsengineering/r-spelling-check-action@v2
+        uses: insightsengineering/r-spellcheck-action@v2
         with:
           exclude: inst/extdata/*
