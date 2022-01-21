@@ -53,7 +53,9 @@ jobs:
           SD_ENABLE_CHECK: ${{ inputs.enable-staged-dependencies-check }}
 
       - name: Build report 🏗
-        uses: insightsengineering/thevalidatoR@v1.1.1
+        uses: insightsengineering/thevalidatoR@v1.1.2
+        with:
+          disable_install_dev_deps: true
 
       - name: Upload report for review ⬆
         if: github.ref != 'refs/heads/main'
