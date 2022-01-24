@@ -158,7 +158,7 @@ jobs:
           ref: gh-pages
 
       - name: Build multi-version docs 📤
-        uses: insightsengineering/r-pkgdown-multisite@v1
+        uses: insightsengineering/r-pkgdown-multiversion@v1
         env:
           GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
 
