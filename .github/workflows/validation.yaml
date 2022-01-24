@@ -54,8 +54,6 @@ jobs:
 
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v1.1.2
-        with:
-          disable_install_dev_deps: true
 
       - name: Upload report for review ⬆
         if: github.ref != 'refs/heads/main'
