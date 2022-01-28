@@ -16,6 +16,7 @@ jobs:
   version-bump:
     name: Bump version ⤴
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'avert') && !contains(github.event.head_commit.message, 'vbump')"
     container:
       image: docker.io/rocker/tidyverse:4.1.2
 

@@ -1,5 +1,25 @@
 # r.pkg.template
 
+[![Audit Dependencies 🕵️‍♀️](https://github.com/insightsengineering/r.pkg.template/actions/workflows/audit.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/audit.yaml)
+[![BiocCheck ☣️](https://github.com/insightsengineering/r.pkg.template/actions/workflows/bioccheck.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/bioccheck.yaml)
+[![Check URLs 🌐](https://github.com/insightsengineering/r.pkg.template/actions/workflows/links.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/links.yaml)
+[![Coverage 📔](https://github.com/insightsengineering/r.pkg.template/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/test-coverage.yaml)
+[![License report 🗃](https://github.com/insightsengineering/r.pkg.template/actions/workflows/licenses.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/licenses.yaml)
+[![Pkgdown Docs 📚](https://github.com/insightsengineering/r.pkg.template/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/pkgdown.yaml)
+[![R CMD Check 🧬](https://github.com/insightsengineering/r.pkg.template/actions/workflows/build-check-install.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/build-check-install.yaml)
+[![R Package Validation report 📃](https://github.com/insightsengineering/r.pkg.template/actions/workflows/validation.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/validation.yaml)
+[![Release 🚀](https://github.com/insightsengineering/r.pkg.template/actions/workflows/release.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/release.yaml)
+[![Roxygen 🅾](https://github.com/insightsengineering/r.pkg.template/actions/workflows/roxygen.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/roxygen.yaml)
+[![Spelling 🆎](https://github.com/insightsengineering/r.pkg.template/actions/workflows/spelling.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/spelling.yaml)
+[![SuperLinter 🦸‍♀️](https://github.com/insightsengineering/r.pkg.template/actions/workflows/linter.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/linter.yaml)
+[![Version bump ⬆](https://github.com/insightsengineering/r.pkg.template/actions/workflows/version-bump.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/version-bump.yaml)
+[![Version check 🏁](https://github.com/insightsengineering/r.pkg.template/actions/workflows/version.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/version.yaml)
+[![gitleaks 💧](https://github.com/insightsengineering/r.pkg.template/actions/workflows/gitleaks.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/gitleaks.yaml)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Downloads ⏬](https://img.shields.io/github/downloads/insightsengineering/r.pkg.template/latest/total)](https://tooomm.github.io/github-release-stats/?username=insightsengineering&repository=r.pkg.template)
+[![Current Version ✌](https://img.shields.io/github/r-package/v/insightsengineering/r.pkg.template/main?color=purple&label=Version@main)](https://github.com/insightsengineering/r.pkg.template/tree/main)
+[![Open Issues ℹ](https://img.shields.io/github/issues-raw/insightsengineering/r.pkg.template?color=red&label=Open%20Issues)](https://github.com/insightsengineering/r.pkg.template/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)
+
 [pre-commit]: https://pre-commit.com
 [pre-commit installation]: https://pre-commit.com/#installation
 [git hooks]: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
@@ -8,51 +28,29 @@ An R package template with built-in Github Actions-based CI/CD workflows.
 
 ## Usage
 
-- Assuming your package will be called `awesomeR`, and the Github owner (i.e. username or organization) is `awesome-owner`, set them as shell variables. This will be used for steps to follow:
-
-```bash
-package_owner="awesome-owner"
-package_name="awesomeR"
-```
+### Initialize
 
 - Clone this repository:
 
 ```bash
-git clone https://github.com/insightsengineering/r.pkg.template.git ${package_name}
-cd ${package_name}
+git clone https://github.com/insightsengineering/r.pkg.template.git
+cd r.pkg.template
 ```
 
-- Remove the previous git history and re-initialize your git repository:
+- Run the initializer script
 
 ```bash
-rm -rf .git
-git init
+./init.sh
 ```
-
-- Replace references:
-
-```bash
-grep -rl "r.pkg.template" --exclude-dir='.git' * | xargs perl -p -i -e "s/r.pkg.template/${package_name}/g"
-grep -rl "insightsengineering" --exclude-dir='.git' * | xargs perl -p -i -e "s/insightsengineering/${package_owner}/g"
-```
-
-- Rename the RStudio project file:
-
-```bash
-mv r.pkg.template.Rproj "${package_name}.Rproj"
-```
-
-- Overwrite the README file:
-
-```bash
-echo -e "# ${package_name}\n\nShort description of the package" > README.md
-```
-
-- Update the remainder of the package as you would do typically while developing an R package.
 
 - Enjoy!
 
-## Pre-commit
+
+### CI/CD Configurations
+
+All CI/CD jobs are defined in the [.github/workflows](./.github/workflows) directory in the form of Github Action workflows. These can be modified per your requirements, but are designed and implemented to follow best practices and to ensure the highest quality standards for your package.
+
+### Pre-commit
 
 This repository contains an example [pre-commit] configuration.
 

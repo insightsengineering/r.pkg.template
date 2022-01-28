@@ -16,7 +16,7 @@ jobs:
   lint:
     name: SuperLinter 🦸‍♂️
     runs-on: ubuntu-latest
-
+    if: "!contains(github.event.head_commit.message, 'avert') && !contains(github.event.head_commit.message, 'linter')"
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
