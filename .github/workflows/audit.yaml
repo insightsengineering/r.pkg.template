@@ -17,7 +17,7 @@ jobs:
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
     name: oysteR scan 🦪
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip audit]')"
+    if: "! contains(github.event.commits[0].message, '[skip audit]')"
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2

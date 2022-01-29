@@ -40,7 +40,7 @@ jobs:
             tag: latest
     name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
     runs-on: ubuntu-latest
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip r-cmd]')"
+    if: "! contains(github.event.commits[0].message, '[skip r-cmd]')"
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
 
@@ -155,7 +155,7 @@ jobs:
     name: Upload build tar.gz
     needs: build-install-check
     runs-on: ubuntu-latest
-    if: "startsWith(github.ref, 'refs/tags/v') && (! contains(toJSON(github.event.commits.*.message), '[skip r-cmd]'))"
+    if: "startsWith(github.ref, 'refs/tags/v') && (! contains(github.event.commits[0].message, '[skip r-cmd]'))"
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
