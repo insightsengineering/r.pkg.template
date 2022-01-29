@@ -20,6 +20,7 @@
 [![Current Version](https://img.shields.io/github/r-package/v/insightsengineering/r.pkg.template/main?color=purple&label=Version@main)](https://github.com/insightsengineering/r.pkg.template/tree/main)
 [![Open Issues](https://img.shields.io/github/issues-raw/insightsengineering/r.pkg.template?color=red&label=Open%20Issues)](https://github.com/insightsengineering/r.pkg.template/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)
 
+<!-- links -->
 [pre-commit]: https://pre-commit.com
 [pre-commit installation]: https://pre-commit.com/#installation
 [git hooks]: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
