@@ -33,6 +33,7 @@ jobs:
   r-pkg-validation:
     name: Create report 📃
     runs-on: ubuntu-latest
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip validation]')"
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
     env:

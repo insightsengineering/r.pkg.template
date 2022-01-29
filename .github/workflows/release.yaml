@@ -11,6 +11,7 @@ jobs:
   release:
     name: Release 🚀
     runs-on: ubuntu-latest
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip release]')"
     permissions:
       contents: write
     steps:
