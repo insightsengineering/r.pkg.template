@@ -32,7 +32,7 @@ jobs:
   man-pages:
     name: Manual pages check 🏁
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'skip roxygen')"
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip roxygen]')"
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
 
