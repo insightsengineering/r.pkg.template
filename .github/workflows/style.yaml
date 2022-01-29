@@ -32,26 +32,5 @@ jobs:
         shell: Rscript {0}
 
       - name: Run styler 👟
-        run: styler::style_pkg("${{ github.event.repository.name }}")
+        run: styler::style_pkg("${{ github.event.repository.name }}", dry = "fail")
         shell: Rscript {0}
-
-      - name: Catch unstyled files 👽
-        run: |
-          cd ${{ github.event.repository.name }}
-          git status -s
-          if [[ -n `git status -s | grep man` ]]
-          then {
-            echo "🙈 Code style errors found!"
-            echo "🔀 The following differences were noted:"
-            git diff man/*
-            echo -e "\n💻 Please rerun the following command on your workstation and push your changes"
-            echo "--------------------------------------------------------------------"
-            echo "styler::style_pkg()"
-            echo "--------------------------------------------------------------------"
-            echo "ℹ styler version that was used in this workflow: $(R --slave -e "cat(paste(packageVersion('styler')))")"
-            exit 1
-          } else {
-            echo "💚 Code style is up-to-date"
-          }
-          fi
-        shell: bash
