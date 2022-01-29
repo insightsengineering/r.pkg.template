@@ -22,7 +22,7 @@ jobs:
   linkChecker:
     name: Validate Links 🔎
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'avert') && !contains(github.event.head_commit.message, 'links')"
+    if: "!contains(github.event.head_commit.message, 'skip links')"
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2

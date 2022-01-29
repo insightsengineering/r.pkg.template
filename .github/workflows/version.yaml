@@ -16,7 +16,7 @@ jobs:
   version-check:
     name: Version check 🏁
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'avert') && !contains(github.event.head_commit.message, 'version')"
+    if: "!contains(github.event.head_commit.message, 'skip version')"
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
