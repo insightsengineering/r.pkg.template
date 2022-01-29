@@ -11,6 +11,7 @@
 [![Release](https://github.com/insightsengineering/r.pkg.template/actions/workflows/release.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/release.yaml)
 [![Roxygen](https://github.com/insightsengineering/r.pkg.template/actions/workflows/roxygen.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/roxygen.yaml)
 [![Spelling](https://github.com/insightsengineering/r.pkg.template/actions/workflows/spelling.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/spelling.yaml)
+[![Style](https://github.com/insightsengineering/r.pkg.template/actions/workflows/style.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/style.yaml)
 [![SuperLinter](https://github.com/insightsengineering/r.pkg.template/actions/workflows/linter.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/linter.yaml)
 [![Version bump](https://github.com/insightsengineering/r.pkg.template/actions/workflows/version-bump.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/version-bump.yaml)
 [![Version check](https://github.com/insightsengineering/r.pkg.template/actions/workflows/version.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/version.yaml)
