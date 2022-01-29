@@ -15,7 +15,7 @@ jobs:
   license:
     runs-on: ubuntu-latest
     name: Check 🚩
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip licenses]')"
+    if: "! contains(github.event.commits[0].message, '[skip licenses]')"
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2

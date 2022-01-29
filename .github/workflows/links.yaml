@@ -22,7 +22,7 @@ jobs:
   linkChecker:
     name: Validate Links 🔎
     runs-on: ubuntu-latest
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip links]')"
+    if: "! contains(github.event.commits[0].message, '[skip links]')"
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2

@@ -22,7 +22,7 @@ jobs:
   gitleaks:
     name: gitleaks 💧
     runs-on: ubuntu-latest
-    if: "! contains(toJSON(github.event.commits.*.message), '[skip gitleaks]')"
+    if: "! contains(github.event.commits[0].message, '[skip gitleaks]')"
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
