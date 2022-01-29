@@ -28,23 +28,36 @@ An R package template with built-in Github Actions-based CI/CD workflows.
 
 ## Usage
 
-### Initialize
+### Initialization
+
+You could initialize this repository in one of two ways:
+
+#### Clone this template
 
 - Clone this repository:
 
-```bash
-git clone https://github.com/insightsengineering/r.pkg.template.git
-cd r.pkg.template
-```
+  ```bash
+  git clone https://github.com/insightsengineering/r.pkg.template.git
+  cd r.pkg.template
+  ```
 
-- Run the initializer script
+- Run the initializer script:
 
-```bash
-./init.sh
-```
+  ```bash
+  ./init.sh
+  ```
 
-- Enjoy!
+#### Use Github's template importer
 
+- Click [here](https://github.com/insightsengineering/r.pkg.template/generate) to generate a copy of this template directly within Github.
+
+- Clone the repository from your account/organization.
+
+- Run the initializer script:
+
+  ```bash
+  ./init.sh
+  ```
 
 ### CI/CD Configurations
 

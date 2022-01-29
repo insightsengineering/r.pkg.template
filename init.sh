@@ -34,15 +34,28 @@ read -r owner
 echo -n "Enter your package's name here (eg. awesomeR): "
 read -r pkg
 
+echo -n "Do you want to retain the template's git history? Enter either 'yes' or 'no' (defaults to 'no'): "
+read -r retain_git_history
+retain_git_history=${retain_git_history:-"no"}
+
 gecho "Initializing your package. Standby..."
 
-oecho "Removing template git history"
-rm -rf .git
+oecho "You've chosen '$retain_git_history' for retaining the template's git history"
+if [ "$retain_git_history" == "no" ]
+then {
+    oecho "Removing template git history"
+    rm -rf .git
+} else {
+    oecho "Template's git history retained"
+}
+fi
 
 oecho "Replacing template references within files"
 grep -rl "r.pkg.template" . | xargs perl -p -i -e "s/r.pkg.template/${pkg}/g"
 grep -rl "insightsengineering" . | xargs perl -p -i -e "s/insightsengineering/${owner}/g"
 grep -rl "REPO_GITHUB_TOKEN" . | xargs perl -p -i -e 's/REPO_GITHUB_TOKEN/GITHUB_TOKEN/g'
+grep -rl "68416928+insights-engineering-bot@users.noreply.github.com" .github/workflows/ | xargs perl -p -i -e 's/68416928\+insights-engineering-bot/41898282\+github-actions\[bot\]/g'
+grep -rl "insights-engineering-bot" .github/workflows/ | xargs perl -p -i -e 's/insights-engineering-bot/github-actions/g'
 
 oecho "Renaming files"
 mv r.pkg.template.Rproj "${pkg}.Rproj"
