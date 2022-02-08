@@ -28,7 +28,7 @@ jobs:
 
       - name: Install styler 👚
         run: |
-          if (!require("styler")) install.packages("styler", repos="http://cran.rstudio.com/")
+          devtools::install_github("r-lib/styler")
         shell: Rscript {0}
 
       - name: Run styler 👟
