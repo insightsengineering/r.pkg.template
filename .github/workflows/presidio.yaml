@@ -22,3 +22,5 @@ jobs:
 
       - name: Run Presidio ☔
         uses: insightsengineering/presidio-action@v1
+        with:
+          output: "colored"
