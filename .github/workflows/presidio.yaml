@@ -1,0 +1,24 @@
+---
+name: Presidio 🧪
+
+on:
+  push:
+    branches:
+      - main
+      - pre-release
+  pull_request:
+    branches:
+      - main
+      - pre-release
+
+jobs:
+  presidio:
+    name: Presidio 🧪
+    runs-on: ubuntu-latest
+    if: "! contains(github.event.commits[0].message, '[skip presidio]')"
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v2
+
+      - name: Run Presidio ☔
+        uses: insightsengineering/presidio-action@v1
