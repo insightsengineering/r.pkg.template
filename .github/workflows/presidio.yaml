@@ -21,6 +21,6 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run Presidio ☔
-        uses: insightsengineering/presidio-action@v1
+        uses: insightsengineering/presidio-action@beutify-msg
         with:
           output: "standard"
