@@ -1,5 +1,5 @@
 ---
-name: Presidio 🧪
+name: PII Check 💳
 
 on:
   push:
@@ -13,9 +13,9 @@ on:
 
 jobs:
   presidio:
-    name: Presidio 🧪
+    name: PII Check 💳
     runs-on: ubuntu-latest
-    if: "! contains(github.event.commits[0].message, '[skip presidio]')"
+    if: "! contains(github.event.commits[0].message, '[skip pii]')"
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
