@@ -54,7 +54,7 @@ jobs:
           SD_ENABLE_CHECK: ${{ inputs.enable-staged-dependencies-check }}
 
       - name: Build report 🏗
-        uses: insightsengineering/thevalidatoR@v1.1.2
+        uses: insightsengineering/thevalidatoR@v1
 
       - name: Upload report for review ⬆
         if: github.ref != 'refs/heads/main'

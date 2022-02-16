@@ -104,6 +104,11 @@ jobs:
 
       - name: Run R CMD check 🏁
         run: |
+          if [ "${{ inputs.R_CHECK_FORCE_SUGGESTS }}" == "" ]
+          then {
+            _R_CHECK_FORCE_SUGGESTS_="FALSE"
+          }
+          fi
           if [[ -z "${{ env.NO_TESTS }}" ]]; then
             R CMD check ${{ env.PKGBUILD }}
           else
