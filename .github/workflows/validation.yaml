@@ -33,7 +33,7 @@ jobs:
   r-pkg-validation:
     name: Create report 📃
     runs-on: ubuntu-latest
-    if: "! contains(github.event.commits[0].message, '[skip validation]')"
+    if: "! contains(github.event.commits[0].message, '[skip validation]') && github.repository != 'r.pkg.template'"
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
     env:
