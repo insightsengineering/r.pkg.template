@@ -16,6 +16,7 @@ on:
       - _pkgdown.yaml
       - DESCRIPTION
       - "**.md"
+      - "**.Rmd"
       - man/**
       - LICENSE.*
       - NAMESPACE
