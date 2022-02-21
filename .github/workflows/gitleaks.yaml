@@ -50,7 +50,6 @@ jobs:
     runs-on: ubuntu-latest
     if: "! contains(github.event.commits[0].message, '[skip pii-check]')"
     steps:
-
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
 
