@@ -44,3 +44,16 @@ jobs:
       - name: Run gitleaks ☔
         run: gitleaks -v --no-git ${{ inputs.additional_args }} --path .
         shell: bash
+
+  pii-check:
+    name: PII Check 💳
+    runs-on: ubuntu-latest
+    if: "! contains(github.event.commits[0].message, '[skip pii-check]')"
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v2
+
+      - name: Run Presidio ☔
+        uses: insightsengineering/presidio-action@v1
+        with:
+          output: "standard"
