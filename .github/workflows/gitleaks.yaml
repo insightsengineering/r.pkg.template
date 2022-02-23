@@ -13,7 +13,7 @@ on:
   workflow_call:
     inputs:
       additional_args:
-        description: Additional arguments to pass to gitleaks
+        description: Additional arguments to pass to 'gitleaks detect'
         required: false
         type: string
         default: ""
@@ -29,20 +29,21 @@ jobs:
 
       - name: Download and install gitleaks 💧
         run: |
+          cd /tmp
           sudo wget -q \
             "https://github.com/zricethezav/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
-            -O /tmp/gitleaks.tar.gz || \
+            -O gitleaks.tar.gz || \
             (echo "Error downloading gitleaks ${GITLEAKS_VERSION} tarball" && exit 1)
-          sudo tar -xvzf /tmp/gitleaks.tar.gz || \
+          sudo tar -xvzf gitleaks.tar.gz || \
             (echo "Error unarchiving gitleaks ${GITLEAKS_VERSION} tarball" && exit 1)
           sudo mv gitleaks /usr/bin/. || \
             (echo "Error moving gitleaks for /usr/bin" && exit 1)
         shell: bash
         env:
-          GITLEAKS_VERSION: 8.0.0
+          GITLEAKS_VERSION: "8.3.0"
 
       - name: Run gitleaks ☔
-        run: gitleaks -v --no-git ${{ inputs.additional_args }} --path .
+        run: gitleaks -v detect --no-git ${{ inputs.additional_args }} --source .
         shell: bash
 
   pii-check:
