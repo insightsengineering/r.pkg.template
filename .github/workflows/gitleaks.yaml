@@ -56,4 +56,6 @@ jobs:
       - name: Run Presidio ☔
         uses: insightsengineering/presidio-action@v1
         with:
-          output: "standard"
+          configuration-data: |
+            threshold: 0.95
+          output: "github"
