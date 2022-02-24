@@ -54,7 +54,7 @@ jobs:
           ))
           is_r_file <- function(x) {
               ext <- tools::file_ext(x)
-              x %in% c("R", "Rmd", "Rnw", "Rmarkdown")
+              ext %in% c("R", "Rmd", "Rnw", "Rmarkdown")
           }
           changed_r_files <- Filter(is_r_file, changed_files)
           err_count <- 0
