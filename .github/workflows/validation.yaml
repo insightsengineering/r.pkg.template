@@ -32,7 +32,7 @@ on:
 jobs:
   r-pkg-validation:
     name: Create report 📃
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: "! contains(github.event.commits[0].message, '[skip validation]')"
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
@@ -66,7 +66,7 @@ jobs:
   upload-release-assets:
     name: Upload report to release 🔼
     needs: r-pkg-validation
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - name: Wait for release to succeed ⏳

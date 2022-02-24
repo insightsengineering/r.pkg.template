@@ -10,7 +10,7 @@ on:
 jobs:
   release:
     name: Release 🚀
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: "! contains(github.event.commits[0].message, '[skip release]')"
     permissions:
       contents: write
