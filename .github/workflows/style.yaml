@@ -42,6 +42,7 @@ jobs:
             **.R
             **.Rmd
             **.Rnw
+            **.Rmarkdown
 
       - name: Run styler 👟
         run: |
@@ -53,8 +54,20 @@ jobs:
           ))
           is_r_file <- function(x) {
               ext <- tools::file_ext(x)
-              ext == "R" || ext == "Rmd" || ext == "Rnw"
+              x %in% c("R", "Rmd", "Rnw", "Rmarkdown")
           }
           changed_r_files <- Filter(is_r_file, changed_files)
-          styler::style_file(changed_r_files, dry = "fail")
+          err_count <- 0
+          for (file in changed_r_files) {
+            tryCatch(
+              expr = {
+                styler::style_file(file, dry = "fail")
+              },
+              error = function(e) {
+                err_count <- err_count + 1
+              }
+            )
+          }
+          cat("☠ One or more files had styling errors. Please see the log above for remediations.")
+          quit(status=err_count)
         shell: Rscript {0}
