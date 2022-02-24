@@ -18,7 +18,7 @@ test_that("API greets the person", {
       port,
       "/echo"
     ),
-    query = "name=tim"
+    query =     "name=tim"
   )
 
   # Get response
