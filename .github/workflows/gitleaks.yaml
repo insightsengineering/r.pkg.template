@@ -53,6 +53,8 @@ jobs:
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Run Presidio ☔
         uses: insightsengineering/presidio-action@v1
@@ -60,3 +62,4 @@ jobs:
           configuration-data: |
             threshold: 0.95
           output: "github"
+          only-changed-files: true
