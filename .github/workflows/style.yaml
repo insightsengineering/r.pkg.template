@@ -25,12 +25,44 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: ${{ github.event.repository.name }}
+          fetch-depth: 0
 
       - name: Install styler 👚
         run: |
           remotes::install_github("r-lib/styler", auth_token = "${{ secrets.GITHUB_TOKEN }}")
         shell: Rscript {0}
 
+      - name: Get changed files 🗞
+        id: changed-files
+        uses: tj-actions/changed-files@v17
+        with:
+          path: ${{ github.event.repository.name }}
+          separator: ","
+          files: |
+            **.R
+            **.Rmd
+            **.Rnw
+            **.Rmarkdown
+
       - name: Run styler 👟
-        run: styler::style_pkg("${{ github.event.repository.name }}", dry = "fail")
+        run: |
+          setwd("${{ github.event.repository.name }}")
+          changed_files <- unlist(strsplit(
+            "${{ steps.changed-files.outputs.all_changed_files }}",
+            split=","
+          ))
+          is_r_file <- function(x) {
+              ext <- tools::file_ext(x)
+              ext %in% c("R", "Rmd", "Rnw", "Rmarkdown")
+          }
+          changed_r_files <- Filter(is_r_file, changed_files)
+          detect <- styler::style_file(changed_r_files, dry = "on")
+          if (TRUE %in% detect$changed) {
+            rlang::abort(paste(
+              "☠ One or more files had styling errors.",
+              "Please see the log above for remediations,",
+              "or simply run 'styler::style_pkg()'",
+              "for an immediate fix."
+            ))
+          }
         shell: Rscript {0}

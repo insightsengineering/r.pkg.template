@@ -53,7 +53,9 @@ shiny_app <- function() {
 #'
 plumber_api <- function(...) {
   plumber::pr_run(
-    plumber::plumb_api(package = packageName(), name = "hello"),
+    plumber::plumb_api(
+      package = packageName(), name = "hello"
+    ),
     ...
   )
 }
