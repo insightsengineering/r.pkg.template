@@ -31,7 +31,7 @@ on:
 jobs:
   man-pages:
     name: Manual pages check 🏁
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: "! contains(github.event.commits[0].message, '[skip roxygen]')"
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest

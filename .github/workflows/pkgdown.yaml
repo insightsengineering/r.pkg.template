@@ -46,7 +46,7 @@ on:
 jobs:
   pkgdown:
     name: Generate 🐣
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: "! contains(github.event.commits[0].message, '[skip docs]')"
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
@@ -117,7 +117,7 @@ jobs:
   upload-release-assets:
     name: Upload documentation assets 🔼
     needs: pkgdown
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: "startsWith(github.ref, 'refs/tags/v') && !contains(github.event.head_commit.message, 'avert') && !contains(github.event.head_commit.message, 'docs')"
     steps:
       - name: Checkout repo 🛎
@@ -149,7 +149,7 @@ jobs:
   multiversion-docs:
     name: Multi-version docs 📖
     if: "(github.event_name == 'push' && github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') && (!contains(github.event.head_commit.message, 'avert') && !contains(github.event.head_commit.message, 'docs'))"
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
     needs: pkgdown

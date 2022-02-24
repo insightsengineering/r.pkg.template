@@ -21,7 +21,7 @@ on:
 jobs:
   gitleaks:
     name: gitleaks 💧
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: "! contains(github.event.commits[0].message, '[skip gitleaks]')"
     steps:
       - name: Checkout repo 🛎
@@ -48,7 +48,7 @@ jobs:
 
   pii-check:
     name: PII Check 💳
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: "! contains(github.event.commits[0].message, '[skip pii-check]')"
     steps:
       - name: Checkout repo 🛎

@@ -49,7 +49,7 @@ jobs:
           - image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14
             tag: latest
     name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: "! contains(github.event.commits[0].message, '[skip bioccheck]') && contains(inputs.enable-bioccheck, 'true')"
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
