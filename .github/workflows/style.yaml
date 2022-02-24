@@ -50,10 +50,10 @@ jobs:
             "${{ steps.changed-files.outputs.all_changed_files }}",
             split=","
           ))
-          for (file in changed_files) {
-            ext <- tools::file_ext(file)
-            if (ext == "R" || ext == "Rmd" || ext == "Rnw") {
-              styler::style_file(file, dry = "fail")
-            }
+          is_r_file <- function(x) {
+              ext <- tools::file_ext(x)
+              ext == "R" || ext == "Rmd" || ext == "Rnw"
           }
+          changed_r_files <- Filter(is_r_file, changed_files)
+          styler::style_file(changed_r_files, dry = "fail")
         shell: Rscript {0}
