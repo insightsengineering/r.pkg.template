@@ -47,7 +47,7 @@ jobs:
       - name: Run styler 👟
         run: |
           setwd("${{ github.event.repository.name }}")
-          options(warn=-1)
+          options(warn=-1, rlang_backtrace_on_error = "none")
           changed_files <- unlist(strsplit(
             "${{ steps.changed-files.outputs.all_changed_files }}",
             split=","
@@ -65,9 +65,12 @@ jobs:
               },
               error = function(e) {
                 err_count <- err_count + 1
+                cat(paste("err_count =", err_count)) # Debug
               }
             )
           }
-          cat("☠ One or more files had styling errors. Please see the log above for remediations.")
-          quit(status=err_count)
+          cat(paste("err_count post loop =", err_count)) # Debug
+          if (err_count > 0) {
+            abort("☠ One or more files had styling errors. Please see the log above for remediations.")
+          }
         shell: Rscript {0}
