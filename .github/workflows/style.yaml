@@ -32,7 +32,7 @@ jobs:
           remotes::install_github("r-lib/styler", auth_token = "${{ secrets.GITHUB_TOKEN }}")
         shell: Rscript {0}
 
-      - name: Get changed files
+      - name: Get changed files 🗞
         id: changed-files
         uses: tj-actions/changed-files@v17
         with:
@@ -47,7 +47,6 @@ jobs:
       - name: Run styler 👟
         run: |
           setwd("${{ github.event.repository.name }}")
-          options(warn=-1, rlang_backtrace_on_error = "none")
           changed_files <- unlist(strsplit(
             "${{ steps.changed-files.outputs.all_changed_files }}",
             split=","
@@ -57,20 +56,13 @@ jobs:
               ext %in% c("R", "Rmd", "Rnw", "Rmarkdown")
           }
           changed_r_files <- Filter(is_r_file, changed_files)
-          err_count <- 0
-          for (file in changed_r_files) {
-            tryCatch(
-              expr = {
-                styler::style_file(file, dry = "fail")
-              },
-              error = function(e) {
-                err_count <- err_count + 1
-                cat(paste("err_count =", err_count)) # Debug
-              }
-            )
-          }
-          cat(paste("err_count post loop =", err_count)) # Debug
-          if (err_count > 0) {
-            abort("☠ One or more files had styling errors. Please see the log above for remediations.")
+          detect <- styler::style_file(changed_r_files, dry = "on")
+          if (TRUE %in% detect$changed) {
+            rlang::abort(paste(
+              "☠ One or more files had styling errors.",
+              "Please see the log above for remediations,",
+              "or simply run 'styler::style_pkg()'",
+              "for an immediate fix."
+            ))
           }
         shell: Rscript {0}
