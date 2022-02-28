@@ -13,7 +13,7 @@ on:
 
 jobs:
   audit:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
     name: oysteR scan 🦪

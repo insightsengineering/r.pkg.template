@@ -21,7 +21,7 @@ on:
 jobs:
   linkChecker:
     name: Validate Links 🔎
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: "! contains(github.event.commits[0].message, '[skip links]')"
     steps:
       - name: Checkout repo 🛎
