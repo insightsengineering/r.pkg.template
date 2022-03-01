@@ -15,7 +15,7 @@ on:
 jobs:
   version-check:
     name: Version check 🏁
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     if: "! contains(github.event.commits[0].message, '[skip version]')"
     steps:
       - name: Checkout repo 🛎
