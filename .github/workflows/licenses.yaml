@@ -11,11 +11,17 @@ on:
       - pre-release
   workflow_call:
 
+concurrency:
+  group: licenses-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  license:
+  licenses:
     runs-on: ubuntu-latest
     name: Check 🚩
-    if: "! contains(github.event.commits[0].message, '[skip licenses]')"
+    if: >
+      !contains(github.event.commits[0].message, '[skip licenses]')
+        && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2

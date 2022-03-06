@@ -12,11 +12,17 @@ on:
       - pre-release
   workflow_call:
 
+concurrency:
+  group: version-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  version-check:
+  version:
     name: Version check 🏁
     runs-on: ubuntu-latest
-    if: "! contains(github.event.commits[0].message, '[skip version]')"
+    if: >
+      !contains(github.event.commits[0].message, '[skip version]')
+        && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2

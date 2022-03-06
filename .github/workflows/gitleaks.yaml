@@ -18,11 +18,17 @@ on:
         type: string
         default: ""
 
+concurrency:
+  group: gitleaks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   gitleaks:
     name: gitleaks 💧
     runs-on: ubuntu-latest
-    if: "! contains(github.event.commits[0].message, '[skip gitleaks]')"
+    if: >
+      !contains(github.event.commits[0].message, '[skip gitleaks]')
+        && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
@@ -49,7 +55,9 @@ jobs:
   pii-check:
     name: PII Check 💳
     runs-on: ubuntu-latest
-    if: "! contains(github.event.commits[0].message, '[skip pii-check]')"
+    if: >
+      !contains(github.event.commits[0].message, '[skip pii-check]')
+        && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2

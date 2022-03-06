@@ -35,6 +35,10 @@ on:
         default: true
         type: boolean
 
+concurrency:
+  group: r-cmd-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-install-check:
     strategy:
@@ -45,7 +49,9 @@ jobs:
             tag: latest
     name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
     runs-on: ubuntu-latest
-    if: "! contains(github.event.commits[0].message, '[skip r-cmd]')"
+    if: >
+      !contains(github.event.commits[0].message, '[skip r-cmd]')
+        && github.event.pull_request.draft == false
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
 
@@ -170,7 +176,10 @@ jobs:
     name: Upload build tar.gz
     needs: build-install-check
     runs-on: ubuntu-latest
-    if: "startsWith(github.ref, 'refs/tags/v') && (! contains(github.event.commits[0].message, '[skip r-cmd]'))"
+    if: >
+      startsWith(github.ref, 'refs/tags/v')
+        && (!contains(github.event.commits[0].message, '[skip r-cmd]'))
+        && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2

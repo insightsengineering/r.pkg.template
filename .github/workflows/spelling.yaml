@@ -12,11 +12,17 @@ on:
       - pre-release
   workflow_call:
 
+concurrency:
+  group: spelling-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   spelling:
     name: Check spelling 🔠
     runs-on: ubuntu-latest
-    if: "! contains(github.event.commits[0].message, '[skip spelling]')"
+    if: >
+      !contains(github.event.commits[0].message, '[skip spelling]')
+        && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
 
