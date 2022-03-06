@@ -178,7 +178,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       startsWith(github.ref, 'refs/tags/v')
-        && (! contains(github.event.commits[0].message, '[skip r-cmd]'))
+        && (!contains(github.event.commits[0].message, '[skip r-cmd]'))
         && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
