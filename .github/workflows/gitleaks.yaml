@@ -55,7 +55,9 @@ jobs:
   pii-check:
     name: PII Check 💳
     runs-on: ubuntu-latest
-    if: "! contains(github.event.commits[0].message, '[skip pii-check]')"
+    if: >
+      !contains(github.event.commits[0].message, '[skip pii-check]')
+        && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
