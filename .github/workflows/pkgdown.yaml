@@ -43,11 +43,17 @@ on:
         default: false
         type: boolean
 
+concurrency:
+  group: docs-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  pkgdown:
+  docs:
     name: Generate 🐣
     runs-on: ubuntu-latest
-    if: "! contains(github.event.commits[0].message, '[skip docs]')"
+    if: >
+      !contains(github.event.commits[0].message, '[skip docs]')
+        && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
     steps:
@@ -118,7 +124,9 @@ jobs:
     name: Upload documentation assets 🔼
     needs: pkgdown
     runs-on: ubuntu-latest
-    if: "startsWith(github.ref, 'refs/tags/v') && !contains(github.event.head_commit.message, 'avert') && !contains(github.event.head_commit.message, 'docs')"
+    if: >
+      startsWith(github.ref, 'refs/tags/v')
+        && !contains(github.event.commits[0].message, '[skip docs]')
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
@@ -148,7 +156,10 @@ jobs:
 
   multiversion-docs:
     name: Multi-version docs 📖
-    if: "(github.event_name == 'push' && github.ref == 'refs/heads/main') || startsWith(github.ref, 'refs/tags/v') && (!contains(github.event.head_commit.message, 'avert') && !contains(github.event.head_commit.message, 'docs'))"
+    if: >
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
+        || startsWith(github.ref, 'refs/tags/v')
+        && !contains(github.event.commits[0].message, '[skip docs]')
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest

@@ -12,8 +12,12 @@ on:
         description: Github token with write access to the repo
         required: false
 
+concurrency:
+  group: vbump-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  version-bump:
+  vbump:
     name: Bump version ⤴
     runs-on: ubuntu-latest
     if: "! contains(github.event.commits[0].message, '[skip vbump]')"

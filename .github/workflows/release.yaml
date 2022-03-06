@@ -7,6 +7,10 @@ on:
       - "v*"
   workflow_call:
 
+concurrency:
+  group: release-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   release:
     name: Release 🚀

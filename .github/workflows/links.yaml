@@ -18,11 +18,17 @@ on:
         type: string
         default: ""
 
+concurrency:
+  group: links-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  linkChecker:
+  links:
     name: Validate Links 🔎
     runs-on: ubuntu-latest
-    if: "! contains(github.event.commits[0].message, '[skip links]')"
+    if: >
+      !contains(github.event.commits[0].message, '[skip links]')
+        && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
