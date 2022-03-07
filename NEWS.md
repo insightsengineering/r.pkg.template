@@ -1,4 +1,4 @@
-# r.pkg.template 0.1.0.9009
+# r.pkg.template 0.1.0.9010
 ### New features
 * Add an initializer script.
 ### Enhancements
