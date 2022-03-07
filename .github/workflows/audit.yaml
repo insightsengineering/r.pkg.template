@@ -19,7 +19,7 @@ jobs:
     name: oysteR scan 🦪
     if: >
       !contains(github.event.commits[0].message, '[skip audit]')
-        && github.event.pull_request.draft == false"
+        && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v2
