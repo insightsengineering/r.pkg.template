@@ -73,6 +73,7 @@ jobs:
               .git
               **/*.svg
               **/*.png
+              **/*.rds
               .gitlab-ci.yml
               .Rbuildignore
               _pkgdown.yml
