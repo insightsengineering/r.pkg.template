@@ -122,7 +122,7 @@ jobs:
 
   upload-release-assets:
     name: Upload documentation assets 🔼
-    needs: pkgdown
+    needs: docs
     runs-on: ubuntu-latest
     if: >
       startsWith(github.ref, 'refs/tags/v')
@@ -163,7 +163,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
-    needs: pkgdown
+    needs: docs
     steps:
       - name: Checkout GH pages branch 🛎
         uses: actions/checkout@v2
