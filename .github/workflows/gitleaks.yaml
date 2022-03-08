@@ -69,5 +69,14 @@ jobs:
         with:
           configuration-data: |
             threshold: 0.95
+            ignore: |
+              .git
+              man/figures/*.svg
+              man/figures/*.png
+              DESCRIPTION
+              .gitlab-ci.yml
+              .Rbuildignore
+              _pkgdown.yml
+              inst/WORDLIST
           output: "github"
           only-changed-files: true
