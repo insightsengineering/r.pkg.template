@@ -71,11 +71,11 @@ jobs:
               "or simply run the following commands",
               "for an immediate fix:"
             ))
-            cat("-------------------------------------------------")
+            cat("-------------------------------------------------\n")
             cat(paste0(
-            "styler::style_file(", dput(problems), ")"
+            "\n\nstyler::style_file(", dput(problems), ")\n\n"
             ))
-            cat("-------------------------------------------------")
-            rlang::abort()
+            cat("-------------------------------------------------\n")
+            rlang::abort("")
           }
         shell: Rscript {0}
