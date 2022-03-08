@@ -65,12 +65,12 @@ jobs:
           detect <- styler::style_file(changed_r_files, dry = "on")
           if (TRUE %in% detect$changed) {
             problems <- subset(detect$file, detect$changed == T)
-            print(
+            print(paste(
               "☠ One or more files had styling errors.",
               "Please see the log above for remediations,",
               "or simply run the following commands",
               "for an immediate fix:"
-            )
+            ))
             rlang::abort(paste0(
             "styler::style_file(", dput(problems), ")"
             ))
