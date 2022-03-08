@@ -71,9 +71,8 @@ jobs:
             threshold: 0.95
             ignore: |
               .git
-              man/figures/*.svg
-              man/figures/*.png
-              DESCRIPTION
+              **/*.svg
+              **/*.png
               .gitlab-ci.yml
               .Rbuildignore
               _pkgdown.yml
