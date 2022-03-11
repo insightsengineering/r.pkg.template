@@ -69,13 +69,13 @@ jobs:
               "☠ One or more files had styling errors.",
               "Please see the log above for remediations,",
               "or simply run the following commands",
-              "for an immediate fix:"
+              "for an immediate fix:\n"
             ))
-            cat("-------------------------------------------------\n")
+            cat("────────────────────────────────────────\n")
             cat(paste0(
               "styler::style_file(", capture.output(dput(problems)), ")\n"
             ))
-            cat("-------------------------------------------------\n")
+            cat("────────────────────────────────────────\n")
             quit(status = length(problems))
           }
         shell: Rscript {0}
