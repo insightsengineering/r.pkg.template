@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       !contains(github.event.commits[0].message, '[skip covtracercheck]')
-        && contains(inputs.enable-covtracercheck, 'true')
+#         && contains(inputs.enable-covtracercheck, 'true')
 #        && github.event.pull_request.draft == false
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
@@ -92,6 +92,16 @@ jobs:
         run: |
           R CMD build ${{ github.event.repository.name }}
           echo "PKGBUILD=$(echo *.tar.gz)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Debug info
+        run: |
+          printenv
+          echo "enable-covtracercheck: ${{ inputs.enable-covtracercheck }}"
+          echo "is true ? ${{ contains(inputs.enable-covtracercheck, 'true') }}"
+          echo "github.event.pull_request.draft: ${{ github.event.pull_request.draft }}"
+          echo "message: ${{ github.event.head_commit.message }}"
+          echo "commit[0] ${{ github.event.commits[0].message }}"
         shell: bash
 
       - name: Set TESTING_DEPTH ⚙
