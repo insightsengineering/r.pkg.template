@@ -24,7 +24,7 @@ on:
         description: Enable CovtracerCheck
         required: false
         type: boolean
-        default: false
+        default: true
       install-system-dependencies:
         description: Check for and install system dependencies
         required: false
@@ -133,6 +133,8 @@ jobs:
 
       - name: Run Covtracer 🧪
         uses: insightsengineering/covtracer-action@main
+        env:
+          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
         with:
           path: ${{ env.PKGBUILD }}
           no-check-version-num: true
