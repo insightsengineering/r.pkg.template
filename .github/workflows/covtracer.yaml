@@ -132,7 +132,7 @@ jobs:
         shell: bash
 
       - name: Run Covtracer 🧪
-        uses: insightsengineering/covtracer-action@main
+        uses: insightsengineering/covtracer-action@222-initial-setup
         env:
           GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
         with:
