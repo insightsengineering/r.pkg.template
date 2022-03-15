@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       !contains(github.event.commits[0].message, '[skip covtracercheck]')
-#        && contains(inputs.enable-covtracercheck, 'true')
+        && contains(inputs.enable-covtracercheck, 'true')
 #        && github.event.pull_request.draft == false
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
