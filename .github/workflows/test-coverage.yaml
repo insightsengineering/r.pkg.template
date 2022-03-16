@@ -27,10 +27,16 @@ on:
         required: false
         default: true
         type: boolean
+      allow-failure:
+        description: Covtracer errors will not fail, but will give a warning.
+        required: false
+        type: boolean
+        default: false
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
-          Github token with read access to repositories, required for staged.dependencies installation
+          Github token with read access to repositories, required
+          for staged.dependencies installation
         required: false
 
 concurrency:
@@ -67,7 +73,7 @@ jobs:
           SD_ENABLE_CHECK: ${{ inputs.enable-staged-dependencies-check }}
 
       - name: Install R package 🚧
-        run: R CMD INSTALL ${{ github.event.repository.name }}
+        run: R CMD INSTALL --with-keep.source ${{ github.event.repository.name }}
         shell: bash
 
       - name: Install covr 🎪
@@ -105,6 +111,14 @@ jobs:
         uses: andstor/file-existence-action@v1
         with:
           files: "coverage.xml, coverage.txt, coverage-report.html"
+
+      - name: Run Covtracer 🧪
+        uses: insightsengineering/covtracer-action@v1
+        env:
+          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
+        with:
+          path: ${{ github.event.repository.name }}
+          allow-failure: ${{ inputs.allow-failure }}
 
       - name: Post coverage report 🗞
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
