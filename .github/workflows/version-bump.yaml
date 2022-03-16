@@ -65,17 +65,6 @@ jobs:
           echo "NEW_PKG_VERSION=${DESC_VERSION}" >> $GITHUB_ENV
         shell: bash
 
-      - name: Wait for other jobs ⏳
-        if: ${{ env.NEW_PKG_VERSION }}
-        uses: lewagon/wait-on-check-action@v1.0.0
-        with:
-          ref: ${{ github.ref }}
-          running-workflow-name: "Bump version ⤴"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
-          allowed-conclusions: success,skipped,cancelled,neutral
-          check-regexp: .*rstudio_4.1.2_bioc_3.14, version latest
-
       - name: Commit and push changes 📌
         if: ${{ env.NEW_PKG_VERSION }}
         uses: stefanzweifel/git-auto-commit-action@v4
