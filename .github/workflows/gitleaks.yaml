@@ -74,6 +74,7 @@ jobs:
               **/*.svg
               **/*.png
               **/*.rds
+              **/*.rda
               **/*.jpg
               .gitlab-ci.yml
               .Rbuildignore
