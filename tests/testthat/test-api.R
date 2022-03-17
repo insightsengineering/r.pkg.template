@@ -3,11 +3,10 @@ test_that("API greets the person", {
   port <- 9000
 
   # Start the API
-  future::plan(future::multisession)
-  future::future(
-    r.pkg.template::plumber_api(host = host, port = port)
-  )
-  Sys.sleep(20)
+  
+  r.pkg.template::plumber_api(host = host, port = port)
+  
+  Sys.sleep(3)
 
   # Make request
   res <- httr::GET(
