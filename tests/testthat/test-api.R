@@ -3,9 +3,10 @@ test_that("API greets the person", {
   port <- 9000
 
   # Start the API
-  
-  r.pkg.template::plumber_api(host = host, port = port)
-  
+  future::plan(future::sequential)
+  future::future(
+    r.pkg.template::plumber_api(host = host, port = port)
+  )
   Sys.sleep(3)
 
   # Make request
