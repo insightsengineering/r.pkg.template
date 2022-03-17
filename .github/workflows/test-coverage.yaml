@@ -82,6 +82,12 @@ jobs:
 
       - name: Run coverage 👟
         run: |
+          if (require("shinytest")) {
+            message("installed dependencies for sinytest: ", shinytest::dependenciesInstalled())
+            message("phantom path: ", webdriver:::find_phantom())
+            message("phantom port: ", shinytest:::get_phantomPort())
+            message("is phantom alive: ?", shinytest:::is_phantom_alive())
+            }
           tryCatch(
             expr = {
                 x <- covr::package_coverage(path="${{ github.event.repository.name }}")
