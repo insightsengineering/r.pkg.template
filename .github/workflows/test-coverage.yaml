@@ -105,7 +105,33 @@ jobs:
             }
           )
         shell: Rscript {0}
-
+        
+      - name: Run coverage 2nd time 👟
+        run: |
+          tryCatch(
+            expr = {
+                x <- covr::package_coverage(path="${{ github.event.repository.name }}")
+                print(x)
+                covr::to_cobertura(x, filename = "coverage.xml")
+                p <- covr::percent_coverage(x)
+                cat(p, file = "coverage.txt", sep = "")
+                covr::report(
+                    x,
+                    file = "coverage-report.html",
+                    browse = FALSE
+                )
+            },
+            error = function(e) {
+                message("Errors generated during coverage analysis:")
+                print(e)
+            },
+            warning = function(w) {
+                message("Warnings generated during coverage analysis:")
+                print(w)
+            }
+          )
+        shell: Rscript {0}
+        
       - name: Check whether coverage reports exists 💭
         id: check_coverage_reports
         uses: andstor/file-existence-action@v1
