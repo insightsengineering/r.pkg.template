@@ -78,7 +78,11 @@ jobs:
         run: |
           tryCatch(
             expr = {
-                x <- covr::package_coverage(path="${{ github.event.repository.name }}")
+                x <- covr::package_coverage(
+                  path="${{ github.event.repository.name }}",
+                  clean = FALSE,
+                  quiet = FALSE
+                )
                 print(x)
                 covr::to_cobertura(x, filename = "coverage.xml")
                 p <- covr::percent_coverage(x)
@@ -90,8 +94,13 @@ jobs:
                 )
             },
             error = function(e) {
-                message("Errors generated during coverage analysis:")
-                print(e)
+              message("Errors generated during coverage analysis:")
+              print(e)
+              error_file <- stringr::str_match(e, "\`(.*?)\`")[, 2]
+              if (file.exists(error_file)) {
+                cat("__________FULL OUTPUT__________")
+                writeLines(readLines(error_file))
+              }
             },
             warning = function(w) {
                 message("Warnings generated during coverage analysis:")
