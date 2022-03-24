@@ -80,5 +80,6 @@ jobs:
               .Rbuildignore
               _pkgdown.yml
               inst/WORDLIST
+              **/*.RData
           output: "github"
           only-changed-files: true
