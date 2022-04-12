@@ -20,7 +20,10 @@ jobs:
   vbump:
     name: Bump version ⤴
     runs-on: ubuntu-latest
-    if: "! contains(github.event.commits[0].message, '[skip vbump]')"
+    if: |
+      !( contains(github.event.commits[0].message, '[skip vbump]') ||
+         contains(github.event.head_commit.message, '[skip vbump]')
+         )
     container:
       image: docker.io/rocker/tidyverse:4.1.2
 
@@ -47,7 +50,7 @@ jobs:
           }
           ver_str <- desc::desc_get_version()
           ver <- get_version_components(ver_str)
-          if (length(ver) > 3) desc::desc_set_version(gsub("[.]0$", "", ver_str ))
+          if (length(ver) > 3) desc::desc_set_version(gsub("[.]0$", "", ver_str))
         shell: Rscript {0}
 
       - name: Bump version in NEWS.md 📰
