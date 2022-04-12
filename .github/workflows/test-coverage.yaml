@@ -28,7 +28,12 @@ on:
         default: true
         type: boolean
       allow-failure:
-        description: Covtracer errors will not fail, but will give a warning.
+        description: Allow workflow failure if errors from covtracer are generated
+        required: false
+        type: boolean
+        default: false
+      enable-covtracer:
+        description: Enable the covtracer job
         required: false
         type: boolean
         default: false
@@ -121,14 +126,6 @@ jobs:
         with:
           files: "coverage.xml, coverage.txt, coverage-report.html"
 
-      - name: Run Covtracer 🧪
-        uses: insightsengineering/covtracer-action@v1
-        env:
-          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
-        with:
-          path: ${{ github.event.repository.name }}
-          allow-failure: ${{ inputs.allow-failure }}
-
       - name: Post coverage report 🗞
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
         uses: insightsengineering/coverage-action@v1
@@ -144,3 +141,40 @@ jobs:
         with:
           name: coverage-report
           path: "coverage-report.html"
+
+  covtracer:
+    name: Covtracer 🐄
+    runs-on: ubuntu-latest
+    if: >
+      !contains(github.event.commits[0].message, '[skip coverage]')
+        && github.event.pull_request.draft == false
+        && contains(inputs.enable-covtracer, 'true')
+    container:
+      image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
+    steps:
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v5
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
+
+      - name: Run Staged dependencies 🎦
+        uses: insightsengineering/staged-dependencies-action@v1
+        with:
+          run-system-dependencies: ${{ inputs.install-system-dependencies }}
+        env:
+          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
+          SD_REPO_PATH: ${{ github.event.repository.name }}
+          SD_ENABLE_CHECK: ${{ inputs.enable-staged-dependencies-check }}
+
+      - name: Run Covtracer 🐄
+        uses: insightsengineering/covtracer-action@v1
+        env:
+          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
+        with:
+          path: ${{ github.event.repository.name }}
+          allow-failure: ${{ inputs.allow-failure }}
