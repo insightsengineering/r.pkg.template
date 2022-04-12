@@ -71,7 +71,7 @@ jobs:
 
   upload-release-assets:
     name: Upload report to release 🔼
-    needs: build-install-check
+    needs: r-pkg-validation
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
