@@ -81,5 +81,6 @@ jobs:
               _pkgdown.yml
               inst/WORDLIST
               **/*.RData
+              **/*.bed
           output: "github"
           only-changed-files: true
