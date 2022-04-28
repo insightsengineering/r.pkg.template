@@ -145,12 +145,15 @@ jobs:
         run: |
           check_log <- "${{ github.event.repository.name }}.Rcheck/00check.log"
           if (file.exists(check_log)) {
-            cat("Refer to the 'Run R CMD check 🏁' step to troubleshoot failures reported in this step\n")
-            cat("--------------------------------------------\n")
             x <- tail(readLines(check_log), 1)
-            if (!grepl("^Status", x)) stop("☠ No status line found in R CMD check log")
-            if (grepl("ERROR", x)) stop("❌ R CMD check has errors")
-            if (grepl("WARNING", x)) stop("⚠ R CMD check has warnings")
+            if (grepl("ERROR", x)) {
+              cat(check_log, sep ="\n")
+              stop("❌ R CMD check has errors")
+            }
+            if (grepl("WARNING", x)) {
+              cat(check_log, sep ="\n")
+              stop("⚠ R CMD check has warnings")
+            }
           }
         shell: Rscript {0}
 
