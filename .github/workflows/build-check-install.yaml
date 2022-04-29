@@ -147,11 +147,11 @@ jobs:
           if (file.exists(check_log)) {
             x <- tail(readLines(check_log), 1)
             if (grepl("ERROR", x)) {
-              cat(check_log, sep ="\n")
+              writeLines(readLines(check_log))
               stop("❌ R CMD check has errors")
             }
             if (grepl("WARNING", x)) {
-              cat(check_log, sep ="\n")
+              writeLines(readLines(check_log))
               stop("⚠ R CMD check has warnings")
             }
           }
