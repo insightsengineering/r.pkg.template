@@ -81,22 +81,9 @@ jobs:
           SD_REPO_PATH: ${{ github.event.repository.name }}
           SD_ENABLE_CHECK: ${{ inputs.enable-staged-dependencies-check }}
 
-      - name: Show session info and installed packages ℹ
-        run: |
-          sessionInfo()
-          as.data.frame(installed.packages()[, c("LibPath", "Version")])
-        shell: Rscript {0}
-
-      - name: Build R package 🏗
-        run: |
-          R CMD build --no-build-vignettes \
-            ${{ github.event.repository.name }}
-          echo "PKGBUILD=$(echo *.tar.gz)" >> $GITHUB_ENV
-        shell: bash
-
       - name: Run BiocCheck ☣️
         uses: insightsengineering/bioc-check-action@v1
         with:
-          path: ${{ env.PKGBUILD }}
+          path: ${{ github.event.repository.name }}
           no-check-version-num: true
           allow-failure: ${{ inputs.allow-failure }}
