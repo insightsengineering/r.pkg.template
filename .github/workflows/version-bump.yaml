@@ -55,6 +55,7 @@ jobs:
 
       - name: Bump version in NEWS.md 📰
         run: |
+          git config --global --add safe.directory $(pwd)
           DESC_VERSION=$(R --slave -e 'cat(paste(desc::desc_get_version()))')
           NEWS_VERSION=$(awk '/^#+ /{print $3; exit}' NEWS.md)
           sed -i "s/$NEWS_VERSION/$DESC_VERSION/" NEWS.md
