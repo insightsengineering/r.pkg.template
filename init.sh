@@ -51,14 +51,18 @@ then {
 fi
 
 oecho "Replacing template references within files"
-grep -rl "r.pkg.template" . | xargs perl -p -i -e "s/r.pkg.template/${pkg}/g"
+grep -rl --exclude-dir=.git "r.pkg.template" . | \
+    xargs perl -p -i -e "s/r.pkg.template/${pkg}/g"
 perl -p -i -e "s/insightsengineering/${owner}/g" DESCRIPTION
 perl -p -i -e "s/insightsengineering\/idr/${owner}/g" .github/CODEOWNERS
 perl -p -i -e "s/insightsengineering/${owner}/g" _pkgdown.yml
 perl -p -i -e "s/insightsengineering/${owner}/g" staged_dependencies.yaml
-grep -rl "REPO_GITHUB_TOKEN" . | xargs perl -p -i -e 's/REPO_GITHUB_TOKEN/GITHUB_TOKEN/g'
-grep -rl "68416928+insights-engineering-bot@users.noreply.github.com" .github/workflows/ | xargs perl -p -i -e 's/68416928\+insights-engineering-bot/41898282\+github-actions\[bot\]/g'
-grep -rl "insights-engineering-bot" .github/workflows/ | xargs perl -p -i -e 's/insights-engineering-bot/github-actions/g'
+grep -rl --exclude-dir=.git "REPO_GITHUB_TOKEN" . | \
+    xargs perl -p -i -e 's/REPO_GITHUB_TOKEN/GITHUB_TOKEN/g'
+grep -rl --exclude-dir=.git "68416928+insights-engineering-bot@users.noreply.github.com" .github/workflows/ | \
+    xargs perl -p -i -e 's/68416928\+insights-engineering-bot/41898282\+github-actions\[bot\]/g'
+grep -rl --exclude-dir=.git "insights-engineering-bot" .github/workflows/ | \
+    xargs perl -p -i -e 's/insights-engineering-bot/github-actions/g'
 
 oecho "Renaming files"
 mv r.pkg.template.Rproj "${pkg}.Rproj"
