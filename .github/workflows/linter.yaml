@@ -50,6 +50,7 @@ jobs:
           # Rules by tags #
           #################
           blank_lines: true  # Error on blank lines
+          EOF
         shell: bash
 
       - name: Lint Code Base 🧶
