@@ -32,7 +32,7 @@ jobs:
       - name: Override SuperLinter configs 💾
         run: |
           # Override markdownlint default config
-          cat > .markdownlint.yaml <<EOF
+          [ ! -e .markdownlint.yaml ] && cat > .markdownlint.yaml <<EOF
           ###############
           # Rules by id #
           ###############
@@ -40,7 +40,7 @@ jobs:
           MD007:
             indent: 2                   # Unordered list indentation
           MD013:
-            line_length: 80             # Line length
+            line_length: 800            # Line length
           MD026:
             punctuation: ".,;:!。，；:"  # List of not allowed
           MD029: false                  # Ordered list item prefix
