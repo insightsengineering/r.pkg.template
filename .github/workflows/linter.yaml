@@ -67,6 +67,7 @@ jobs:
           VALIDATE_BASH: true
           VALIDATE_DOCKERFILE: true
           VALIDATE_MARKDOWN: true
+          MARKDOWN_CONFIG_FILE: .markdownlint.yaml
           VALIDATE_R: true
           VALIDATE_YAML: true
           LINTR_ERROR_ON_LINT: true
