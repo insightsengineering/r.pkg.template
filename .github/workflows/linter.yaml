@@ -51,6 +51,10 @@ jobs:
           #################
           blank_lines: true  # Error on blank lines
           EOF
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add .markdownlint.yaml
+          git commit -m "Add markdownlint.yaml"
         shell: bash
 
       - name: Lint Code Base 🧶
