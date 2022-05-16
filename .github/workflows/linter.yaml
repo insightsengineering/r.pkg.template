@@ -56,7 +56,7 @@ jobs:
       - name: Lint Code Base 🧶
         uses: github/super-linter/slim@v4
         env:
-          LINTER_RULES_PATH: ${{ github.workspace }}
+          LINTER_RULES_PATH: /
           DEFAULT_BRANCH: main
           FILTER_REGEX_EXCLUDE: NEWS.md|design/.*|testthat/_snaps/.*
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
