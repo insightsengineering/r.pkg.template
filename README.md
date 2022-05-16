@@ -82,19 +82,19 @@ code formatting and spell checks.
 R -e 'install.packages("precommit")'
 ```
 
-3. Run the `use_precommit()` function to generate an example pre-commit configuration called `.pre-commit-config.yaml`:
+1. Run the `use_precommit()` function to generate an example pre-commit configuration called `.pre-commit-config.yaml`:
 
 ```sh
 [ ! -f ".pre-commit-config.yaml" ] && R -e 'precommit::use_precommit()'
 ```
 
-4. Install the git hooks script:
+1. Install the git hooks script:
 
 ```sh
 pre-commit install
 ```
 
-5. From this moment all scripts from `.pre-commit-config.yaml` will run before every `git commit`
+1. From this moment all scripts from `.pre-commit-config.yaml` will run before every `git commit`
    command. If you want to run them manually without committing you can use command
    `pre-commit run --all-files`. For more information refer official [pre-commit] documentation.
 
@@ -159,3 +159,10 @@ Mixed line ending........................................................Passed
 Don't commit common R artifacts......................(no files to check)Skipped
 
 ```
+
+### BROKEN MD
+
+Bad List
+- 1
+- 2
+- 3
