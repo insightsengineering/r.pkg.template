@@ -22,6 +22,7 @@
 [![Open Issues](https://img.shields.io/github/issues-raw/insightsengineering/r.pkg.template?color=red&label=Open%20Issues)](https://github.com/insightsengineering/r.pkg.template/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)
 
 <!-- links -->
+
 [pre-commit]: https://pre-commit.com
 [pre-commit installation]: https://pre-commit.com/#installation
 [git hooks]: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
@@ -82,19 +83,19 @@ code formatting and spell checks.
 R -e 'install.packages("precommit")'
 ```
 
-3. Run the `use_precommit()` function to generate an example pre-commit configuration called `.pre-commit-config.yaml`:
+1. Run the `use_precommit()` function to generate an example pre-commit configuration called `.pre-commit-config.yaml`:
 
 ```sh
 [ ! -f ".pre-commit-config.yaml" ] && R -e 'precommit::use_precommit()'
 ```
 
-4. Install the git hooks script:
+1. Install the git hooks script:
 
 ```sh
 pre-commit install
 ```
 
-5. From this moment all scripts from `.pre-commit-config.yaml` will run before every `git commit`
+1. From this moment all scripts from `.pre-commit-config.yaml` will run before every `git commit`
    command. If you want to run them manually without committing you can use command
    `pre-commit run --all-files`. For more information refer official [pre-commit] documentation.
 
