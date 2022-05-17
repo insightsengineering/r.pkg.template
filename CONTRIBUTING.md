@@ -89,7 +89,7 @@ Sometimes you might need to change upstream dependent package(s) to be able to s
 
 #### R & package versions
 
-We continuously test our packages against the newest R version as well as a given package dependencies. We recommend to set-up your working environment in the same way. You can find all the details in any of the actions.
+We continuously test our packages against the newest R version as well as a given package dependencies. We recommend to set-up your working environment in the same way. You can find all the details in a given GitHub Action execution log - there is a step that prints out session info.
 
 If you find out any bugs on the older version of dependencies - please create appropriate bug ticket.
 
