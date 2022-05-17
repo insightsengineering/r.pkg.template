@@ -76,27 +76,14 @@ We are following [GitHub Flow](https://docs.github.com/en/get-started/quickstart
 
 ### Branching convention
 
-In case you are working on a task inside one specific repository, please name your branch
-
-`<issue_id>_<short_description>` all lowercase. Multiple words of the description should be divided by an underscore (`_`).
-
-E.g.
-
-`15_fix_spelling_error` in case you try to solve a spelling mistake mentioned in the issue number `15`.
+In case you are working on a task inside one specific repository, please name your branch `<issue_id>_<short_description>` all lowercase. Multiple words of the description should be divided by an underscore (`_`). E.g. `15_fix_spelling_error` in case you try to solve a spelling mistake mentioned in the issue number `15`.
 
 In case you are working on a task from one repository that affects multiple repositories, please always
-name your branches:
-
-`<issue_id>_<issue_repo>_<short description>` all lowercase. Multiple words of the description should be divided by an underscore (`_`).
-
-E.g.
-
-`15_teal_fix_spelling_error` in case you try to solve a spelling mistake inside `teal.data`
-which closes issue `15` inside `teal`.
+name your branches: `<issue_id>_<issue_repo>_<short description>` all lowercase. Multiple words of the description should be divided by an underscore (`_`). E.g. `15_abc_fix_spelling_error` in case you try to solve a spelling mistake inside `xyz` which closes issue `15` inside `abc`.
 
 ### Monorepo and staged.dependencies
 
-Sometimes in order to introduce a change you also need a change from an upstream dependent package. We are using [staged.dependencies](https://github.com/openpharma/staged.dependencies) functionality to simulate a monorepo behavior. You just need to name the feature branches identically to take advantage of that. Please read the package manual for more details.
+Sometimes in order to introduce a change you also need a change from an upstream dependent package. We are using [staged.dependencies](https://github.com/openpharma/staged.dependencies) functionality to simulate a monorepo behavior. The configuration is already in the [staged_dependencies.yaml](staged_dependencies.yaml) file. You just need to name the feature branches identically to take advantage of that. Please read the package manual for more details.
 
 ### Recommended development environment & tools
 
@@ -104,16 +91,15 @@ Sometimes in order to introduce a change you also need a change from an upstream
 
 We continuously test our packages against the newest R version as well as a given package dependencies. We recommend to set-up your working environment in the same way. You can find all the details in any of the actions.
 
-If you find out any bugs on the older version of dependencies - please create a bug ticket.
+If you find out any bugs on the older version of dependencies - please create appropriate bug ticket.
 
 #### pre-commit
 
-We highly recommend the [`pre-commit`](https://pre-commit.com/) tool combined with [`R hooks for pre-commit`](https://github.com/lorenzwalthert/precommit) to execute some of the checks prior committing and pushing. The configuration is already there in a repo. Please, follow the installation guide on the official [`pre-commit` page](https://github.com/lorenzwalthert/precommit)
-and the [`GitHub` `readme` page](https://github.com/lorenzwalthert/precommit#installation) for the R hooks.
+We highly recommend the [`pre-commit`](https://pre-commit.com/) tool combined with [`R hooks for pre-commit`](https://github.com/lorenzwalthert/precommit) to execute some of the checks prior committing and pushing. The configuration is already there in a repo ([here](.pre-commit-config.yaml)). Please, follow the installation guide on the official [`pre-commit` page](https://github.com/lorenzwalthert/precommit) and the [`GitHub` `readme` page](https://github.com/lorenzwalthert/precommit#installation) for the R hooks.
 
 ## Style guide 👗
 
-This repository follows standard [`tidyverse` style guide](https://style.tidyverse.org/) and it's being checked against it by [`lintr`](https://github.com/r-lib/lintr). There are some slight modifications to its default settings available in [`.lintr`](.lintr) file.
+This repository follows standard [`tidyverse` style guide](https://style.tidyverse.org/) and it's being checked against it by [`lintr`](https://github.com/r-lib/lintr). There are some slight modifications to its default settings available in the [`.lintr`](.lintr) file.
 
 Although it allows for some flexibility - we recommend to stick to the style already present in the existing code. At the end of the day we want to have consistent codebase.
 
