@@ -28,7 +28,7 @@ Thanks 🙏 You rock 🤘
 
 ## Getting started
 
-For an introduction, please read [`README`](README.md) file. You can also find vignettes [here](vignettes/). Most likely you would find a "Getting started" article. Please also see a package manual in form of `pkgdown` website.
+For an introduction, please read [`README`](README.md) file. You can also find vignettes [here](vignettes/). Usually you will find a "Getting started" article. Please also see the package manual in the form of a `pkgdown` website.
 
 ## Code of Conduct
 
@@ -42,13 +42,13 @@ All of your code changes would be under the same [license](LICENSE) that covers 
 
 We use GitHub to track issues, feature requests as well as bugs. Before opening a new issue please double-check if it's already reported (but don't worry if  to be a duplicate - we will manage). If already there - up-vote ⬆️. We will have a look at it faster!
 
-We kindly ask you to write a good issue with a minimal and reproducible example that showoff the problem. It's would be also great to know your local environment (R session info) as well. You will find our guides in the template while opening a bug ticket. This would speed up the fixing process a lot! 📈.
+We kindly ask you to write a good issue with a minimal and reproducible example that demonstrates the problem. It would also be great to know your local environment (R session info) as well. You will find our template for issues when opening a bug ticket. This will speed up the fixing process a lot! 📈.
 
 ## How to request the change?
 
-In case you find a missing feature or you have an idea how to enhance existing functionalities - please let us know by creating a new issue. Before opening a new issue please double-check if it's already reported (but don't worry if occurs to be a duplicate - we will manage). If already there - up-vote ⬆️. We will have a look at it faster!
+If you notice a missing feature or you have an idea how to enhance existing functionalities - please let us know by creating a new issue. Before opening a new issue please double-check if it's already reported (but don't worry if occurs to be a duplicate - we will manage). If already there - up-vote ⬆️. We will have a look at it faster!
 
-Please elaborate on "why?" - what's the context, what's the benefit and for whom it is. You will find our guides in the template while opening a feature request ticket. This would help us prioritize and submit meaningful changes.
+Please elaborate on "why?" - what's the context, what's the benefit and for whom. You will find our template when opening a feature request ticket. This will help us prioritize and submit meaningful changes.
 
 ## How to submit a change?
 
@@ -62,7 +62,7 @@ We are following [GitHub Flow](https://docs.github.com/en/get-started/quickstart
 
 1. Make changes.
 
-     Make sure your code is passing all the checks, it is well documented and tested so as not to decrease existing test coverage 💪.
+     Make sure your code passes all the checks and is well documented and tested so as not to decrease existing test coverage 💪.
 
 1. Create a PR(s)
 
@@ -101,9 +101,9 @@ We highly recommend the [`pre-commit`](https://pre-commit.com/) tool combined wi
 
 This repository follows standard [`tidyverse` style guide](https://style.tidyverse.org/) and it's being checked against it by [`lintr`](https://github.com/r-lib/lintr). There are some slight modifications to its default settings available in the [`.lintr`](.lintr) file.
 
-Although it allows for some flexibility - we recommend to stick to the style already present in the existing code. At the end of the day we want to have consistent codebase.
+Although it allows for some flexibility - we recommend sticking to the style of the existing code. At the end of the day we want to have consistent codebase.
 
-Please note that there is a style and also `lintr` check in place that would validate your code.
+Please note that there is a style and also `lintr` check in place that will validate your code.
 
 ## Recognition model
 
