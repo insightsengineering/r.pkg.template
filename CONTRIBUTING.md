@@ -78,8 +78,7 @@ We are following [GitHub Flow](https://docs.github.com/en/get-started/quickstart
 
 In case you are working on a task inside one specific repository, please name your branch `<issue_id>_<short_description>` all lowercase. Multiple words of the description should be divided by an underscore (`_`). E.g. `15_fix_spelling_error` in case you try to solve a spelling mistake mentioned in the issue number `15`.
 
-In case you are working on a task from one repository that affects multiple repositories, please always
-name your branches: `<issue_id>_<issue_repo>_<short description>` all lowercase. Multiple words of the description should be divided by an underscore (`_`). E.g. `15_abc_fix_spelling_error` in case you try to solve a spelling mistake inside `xyz` which closes issue `15` inside `abc`.
+In case you are working on a task from one repository that affects multiple repositories, please always name your branches: `<issue_id>_<issue_repo>_<short description>` all lowercase. Multiple words of the description should be divided by an underscore (`_`). E.g. `15_abc_fix_spelling_error` in case you try to solve a spelling mistake inside `xyz` which closes issue `15` inside `abc`.
 
 ### `monorepo` and `staged.dependencies`
 
