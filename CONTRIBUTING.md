@@ -8,28 +8,28 @@ Thanks 🙏 You rock 🤘
 
 ## Table Of Contents
 
-[Getting started](#getting-started-👶)
+[👶 Getting started](#getting-started)
 
-[Code of Conduct](#code-of-conduct)
+[📔 Code of Conduct](#code-of-conduct)
 
-[License](#license)
+[🗃 License](#license)
 
-[How to report a bug?](#how-to-report-a-bug-🐛)
+[🐛 How to report a bug?](#how-to-report-a-bug)
 
-[How to request the change?](#how-to-request-the-change-💡)
+[💡 How to request the change?](#how-to-request-the-change)
 
-[How to submit a change?](#how-to-submit-a-change-🚩)
+[🚩 How to submit a change?](#how-to-submit-a-change)
 
-[Style guide](#style-guide-👗)
+[👗 Style guide](#style-guide)
 
-[Recognision model](#recognition-model-🧐)
+[🧐 Recognision model](#recognition-model)
 
-[Any questions?](#any-questions-❓)
+[❓ Any questions](#any-questions)
 
-
-## Getting started 👶
+## Getting started
 
 For an introduction, please read [`README`](README.md) file. You can also find vignettes [here](vignettes/). Most likely you would find a "Getting started" article. Please also see a package manual in form of `pkgdown` website.
+
 ## Code of Conduct
 
 This project is governed by [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to follow the rules outlined there.
@@ -38,19 +38,19 @@ This project is governed by [Code of Conduct](CODE_OF_CONDUCT.md). By participat
 
 All of your code changes would be under the same [license](LICENSE) that covers this project.
 
-## How to report a bug 🐛 ?
+## How to report a bug?
 
 We use GitHub to track issues, feature requests as well as bugs. Before opening a new issue please double-check if it's already reported (but don't worry if  to be a duplicate - we will manage). If already there - up-vote ⬆️. We will have a look at it faster!
 
 We kindly ask you to write a good issue with a minimal and reproducible example that showoff the problem. It's would be also great to know your local environment (R session info) as well. You will find our guides in the template while opening a bug ticket. This would speed up the fixing process a lot! 📈.
 
-## How to request the change 💡 ?
+## How to request the change?
 
 In case you find a missing feature or you have an idea how to enhance existing functionalities - please let us know by creating a new issue. Before opening a new issue please double-check if it's already reported (but don't worry if occurs to be a duplicate - we will manage). If already there - up-vote ⬆️. We will have a look at it faster!
 
 Please elaborate on "why?" - what's the context, what's the benefit and for whom it is. You will find our guides in the template while opening a feature request ticket. This would help us prioritize and submit meaningful changes.
 
-## How to submit a change 🚩 ?
+## How to submit a change?
 
 ### GitHub Flow
 
@@ -83,7 +83,7 @@ name your branches: `<issue_id>_<issue_repo>_<short description>` all lowercase.
 
 ### Monorepo and staged.dependencies
 
-Sometimes in order to introduce a change you also need a change from an upstream dependent package. We are using [staged.dependencies](https://github.com/openpharma/staged.dependencies) functionality to simulate a monorepo behavior. The configuration is already in the [staged_dependencies.yaml](staged_dependencies.yaml) file. You just need to name the feature branches identically to take advantage of that. Please read the package manual for more details.
+Sometimes in order to introduce a change you also need a change from an upstream dependent package. We are using [`staged.dependencies`](https://github.com/openpharma/staged.dependencies) functionality to simulate a monorepo behavior. The configuration is already in the [`staged_dependencies.yaml`](staged_dependencies.yaml) file. You just need to name the feature branches identically to take advantage of that. Please read the package manual for more details.
 
 ### Recommended development environment & tools
 
@@ -97,7 +97,7 @@ If you find out any bugs on the older version of dependencies - please create ap
 
 We highly recommend the [`pre-commit`](https://pre-commit.com/) tool combined with [`R hooks for pre-commit`](https://github.com/lorenzwalthert/precommit) to execute some of the checks prior committing and pushing. The configuration is already there in a repo ([here](.pre-commit-config.yaml)). Please, follow the installation guide on the official [`pre-commit` page](https://github.com/lorenzwalthert/precommit) and the [`GitHub` `readme` page](https://github.com/lorenzwalthert/precommit#installation) for the R hooks.
 
-## Style guide 👗
+## Style guide
 
 This repository follows standard [`tidyverse` style guide](https://style.tidyverse.org/) and it's being checked against it by [`lintr`](https://github.com/r-lib/lintr). There are some slight modifications to its default settings available in the [`.lintr`](.lintr) file.
 
@@ -105,7 +105,7 @@ Although it allows for some flexibility - we recommend to stick to the style alr
 
 Please note that there is a style and also `lintr` check in place that would validate your code.
 
-## Recognition model 🧐
+## Recognition model
 
 Any contribution is highly welcomed and appreciated. While all the contribution data is already there in GitHub repository insights feature, we introduced some objective rules to recognize a _significant_ contribution so as to became a package author:
 
@@ -114,6 +114,6 @@ Any contribution is highly welcomed and appreciated. While all the contribution 
 
 The package maintainer also reserve the rights to manually adjust the criteria to recognize contributions.
 
-## Any questions ❓
+## Any questions
 
 If you have any further questions regarding contribution - please reach out to the repo maintainer!
