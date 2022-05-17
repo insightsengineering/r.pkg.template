@@ -26,6 +26,10 @@ Thanks 🙏 You rock 🤘
 
 [Any questions?](#any-questions-❓)
 
+
+## Getting started 👶
+
+For an introduction, please read [`README`](README.md) file. You can also find vignettes [here](vignettes/). Most likely you would find a "Getting started" article. Please also see a package manual in form of `pkgdown` website.
 ## Code of Conduct
 
 This project is governed by [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to follow the rules outlined there.
@@ -33,10 +37,6 @@ This project is governed by [Code of Conduct](CODE_OF_CONDUCT.md). By participat
 ## License
 
 All of your code changes would be under the same [license](LICENSE) that covers this project.
-
-## Getting started 👶
-
-For an introduction, please read [`README`](README.md) file. You can also find vignettes [here](vignettes/). Most likely you would find a "Getting started" article. Please also see a package manual in form of `pkgdown` website.
 
 ## How to report a bug 🐛 ?
 
