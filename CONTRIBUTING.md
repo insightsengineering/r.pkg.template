@@ -58,7 +58,7 @@ We are following [GitHub Flow](https://docs.github.com/en/get-started/quickstart
 
 1. Open a branch
 
-    Please see branching convention below. You can open a branch on remote as well as a fork.
+    Please see branch naming convention below. If you don't have write access please fork it first.
 
 1. Make changes.
 
@@ -72,7 +72,7 @@ We are following [GitHub Flow](https://docs.github.com/en/get-started/quickstart
 
     Please apply changes where necessary. If you disagree with a reviewer - please explain why.
 
-1. Merge your PR(s) and delete a branch
+1. Once approved - merge your PR(s) and delete a branch
 
 ### Branching convention
 
@@ -81,9 +81,9 @@ In case you are working on a task inside one specific repository, please name yo
 In case you are working on a task from one repository that affects multiple repositories, please always
 name your branches: `<issue_id>_<issue_repo>_<short description>` all lowercase. Multiple words of the description should be divided by an underscore (`_`). E.g. `15_abc_fix_spelling_error` in case you try to solve a spelling mistake inside `xyz` which closes issue `15` inside `abc`.
 
-### Monorepo and `staged.dependencies`
+### `monorepo` and `staged.dependencies`
 
-Sometimes in order to introduce a change you also need a change from an upstream dependent package. We are using [`staged.dependencies`](https://github.com/openpharma/staged.dependencies) functionality to simulate a monorepo behavior. The configuration is already in the [`staged_dependencies.yaml`](staged_dependencies.yaml) file. You just need to name the feature branches identically to take advantage of that. Please read the package manual for more details.
+Sometimes you might need to change upstream dependent package(s) to be able to submit a meaningful change. We are using [`staged.dependencies`](https://github.com/openpharma/staged.dependencies) functionality to simulate a `monorepo` behavior. The configuration is already in the [`staged_dependencies.yaml`](staged_dependencies.yaml) file. You just need to name the feature branches identically. This is the only exception from branch naming convention described above. Please read the package manual for more details.
 
 ### Recommended development environment & tools
 
@@ -117,3 +117,7 @@ The package maintainer also reserve the rights to manually adjust the criteria t
 ## Any questions
 
 If you have any further questions regarding contribution - please reach out to the repository maintainer!
+
+## Note
+
+This is a template applied across multiple repositories within our organization. You might find additional, repository specific rules in the [`CONTRIBUTING_ADDITIONAL.md`](CONTRIBUTING_ADDITIONAL.md) file. If it's missing then it means that there is no additional considerations to the above.
