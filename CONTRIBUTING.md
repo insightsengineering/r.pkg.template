@@ -1,12 +1,12 @@
 # Contributor guide
 
-First of all, thank you for taking the time to contribute!✌️ 🎉
+First of all, thank you for taking the time to contribute! ✌️ 🎉
 
 We love your input regardless of its size, content or scope - whether it is an issue, feature request, bug-fix or documentation enhancement.
 
 Thanks 🙏 You rock 🤘
 
-## Table Of Contents
+## Table of contents
 
 [👶 Getting started](#getting-started)
 
@@ -111,7 +111,7 @@ Any contribution is highly welcomed and appreciated. While all the contribution 
 - Minimum 5% of lines of code authored (determined by `git blame` query) OR
 - Being at the top 5 contributors in terms of number of commits OR lines added OR lines removed.
 
-The package maintainer also reserve the rights to manually adjust the criteria to recognize contributions.
+The package maintainer also reserves the rights to manually adjust the criteria to recognize contributions.
 
 ## Any questions
 
