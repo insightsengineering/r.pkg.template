@@ -10,6 +10,7 @@ on:
     branches:
       - main
       - pre-release
+  workflow_dispatch:
   workflow_call:
 
 concurrency:
@@ -25,7 +26,7 @@ jobs:
         && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: NEWS.md and DESCRIPTION Version check 🏁
         run: |

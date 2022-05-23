@@ -20,6 +20,7 @@ on:
       - man/**
       - LICENSE.*
       - NAMESPACE
+  workflow_dispatch:
   workflow_call:
     secrets:
       REPO_GITHUB_TOKEN:
@@ -62,7 +63,7 @@ jobs:
         uses: tj-actions/branch-names@v5
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
@@ -109,7 +110,7 @@ jobs:
 
       - name: Upload docs for review ⬆
         if: github.ref != 'refs/heads/main'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: pkgdown.zip
           path: pkgdown.zip
@@ -131,19 +132,10 @@ jobs:
         && !contains(github.event.commits[0].message, '[skip docs]')
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v2
-
-      - name: Wait for release to succeed ⏳
-        timeout-minutes: 2
-        uses: lewagon/wait-on-check-action@v1.1.1
-        with:
-          ref: "${{ github.ref }}"
-          check-name: "Release 🚀"
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
+        uses: actions/checkout@v3
 
       - name: Download artifact ⏬
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: pkgdown.zip
 
@@ -154,7 +146,7 @@ jobs:
           file: pkgdown.zip
           asset_name: pkgdown.zip
           tag: ${{ github.ref }}
-          overwrite: false
+          overwrite: true
 
   multiversion-docs:
     name: Multi-version docs 📖
@@ -168,7 +160,7 @@ jobs:
     needs: docs
     steps:
       - name: Checkout GH pages branch 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: gh-pages
 

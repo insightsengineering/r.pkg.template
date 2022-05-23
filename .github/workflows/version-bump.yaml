@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - pre-release
+  workflow_dispatch:
   workflow_call:
     secrets:
       REPO_GITHUB_TOKEN:
@@ -29,7 +30,7 @@ jobs:
 
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           token: ${{ secrets.REPO_GITHUB_TOKEN }}
 

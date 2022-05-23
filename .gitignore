@@ -27,3 +27,4 @@ vignettes/*.html
 vignettes/*.md
 vignettes/*.R
 coverage.*
+.vscode/
