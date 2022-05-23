@@ -116,7 +116,3 @@ The package maintainer also reserves the rights to manually adjust the criteria 
 ## Any questions
 
 If you have any further questions regarding contribution - please reach out to the repository maintainer!
-
-## Note
-
-This is a template applied across multiple repositories within our organization. You might find additional, repository specific rules in the [`CONTRIBUTING_ADDITIONAL.md`](CONTRIBUTING_ADDITIONAL.md) file. If it's missing then it means that there is no additional considerations to the above.
