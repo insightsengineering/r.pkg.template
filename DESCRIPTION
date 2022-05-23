@@ -1,7 +1,7 @@
 Type: Package
 Package: r.pkg.template
 Title: R Package Template
-Version: 0.1.0.9030
+Version: 0.1.0.9031
 Authors@R:
     person("insightsengineering", , , "insightsengineering@example.com", role = c("aut", "cre"))
 Description: R package template with Github Actions workflows included.
@@ -23,9 +23,9 @@ Suggests:
 VignetteBuilder:
     knitr
 biocViews:
+Config/Needs/website: insightsengineering/nesttemplate
 Encoding: UTF-8
 Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
-Config/Needs/website: insightsengineering/nesttemplate
