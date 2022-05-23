@@ -74,7 +74,7 @@ echo -e "# ${pkg}\n\nShort description of the package" > README.md
 gecho "Package successfully initialized!"
 oecho "Please update the remainder of the package as you would do typically while developing an R package."
 
-oecho "This utility will self-descruct in 3 seconds..."
+oecho "This utility will self-destruct in 3 seconds..."
 sleep 3
 rm -f "$0"
 
