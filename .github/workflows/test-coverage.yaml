@@ -10,6 +10,7 @@ on:
     branches:
       - main
       - pre-release
+  workflow_dispatch:
   workflow_call:
     inputs:
       install-system-dependencies:
@@ -63,7 +64,7 @@ jobs:
         uses: tj-actions/branch-names@v5
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}

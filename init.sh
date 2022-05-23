@@ -54,6 +54,7 @@ oecho "Replacing template references within files"
 grep -rl --exclude-dir=.git "r.pkg.template" . | \
     xargs perl -p -i -e "s/r.pkg.template/${pkg}/g"
 perl -p -i -e "s/insightsengineering/${owner}/g" DESCRIPTION
+perl -p -i -e "s/insightsengineering/${owner}/g" .github/ISSUE_TEMPLATE/*.yml
 perl -p -i -e "s/insightsengineering\/idr/${owner}/g" .github/CODEOWNERS
 perl -p -i -e "s/insightsengineering/${owner}/g" _pkgdown.yml
 perl -p -i -e "s/insightsengineering/${owner}/g" staged_dependencies.yaml
