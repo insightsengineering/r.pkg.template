@@ -6,6 +6,11 @@ on:
       - main
       - pre-release
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
     branches:
       - main
       - pre-release
