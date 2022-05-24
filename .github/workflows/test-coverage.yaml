@@ -84,8 +84,13 @@ jobs:
           SD_ENABLE_CHECK: ${{ inputs.enable-staged-dependencies-check }}
 
       - name: Install R package 🚧
-        run: R CMD INSTALL --with-keep.source ${{ github.event.repository.name }}
-        shell: bash
+        run: |
+          setwd("${{ github.event.repository.name }}")
+          if (file.exists("renv.lock")) {
+            renv::restore()
+            devtools::install()
+          }
+        shell: Rscript {0}
 
       - name: Install covr 🎪
         run: if (!require("covr")) install.packages("covr")
