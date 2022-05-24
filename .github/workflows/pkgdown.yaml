@@ -152,35 +152,3 @@ jobs:
           asset_name: pkgdown.zip
           tag: ${{ github.ref }}
           overwrite: true
-
-  multiversion-docs:
-    name: Multi-version docs 📖
-    if: >
-      (github.event_name == 'push' && github.ref == 'refs/heads/main')
-        || startsWith(github.ref, 'refs/tags/v')
-        && !contains(github.event.commits[0].message, '[skip docs]')
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
-    needs: docs
-    steps:
-      - name: Checkout GH pages branch 🛎
-        uses: actions/checkout@v3
-        with:
-          ref: gh-pages
-
-      - name: Build multi-version docs 📤
-        uses: insightsengineering/r-pkgdown-multiversion@v1
-        env:
-          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
-
-      - name: Setup github user 👤
-        run: |
-          git config --global user.email "actions@github.com"
-          git config --global user.name "GitHub Actions"
-          git config --global --add safe.directory '*'
-
-      - name: Push changes, if any 📥
-        uses: EndBug/add-and-commit@v9
-        with:
-          branch: gh-pages
