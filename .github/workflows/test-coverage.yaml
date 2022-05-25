@@ -96,9 +96,12 @@ jobs:
 
       - name: Run coverage 👟
         run: |
-          if (file.exists("${{ github.event.repository.name }}/renv.lock")) {
-            renv::restore(project = "${{ github.event.repository.name }}")
+          oldwd <- getwd()
+          setwd("${{ github.event.repository.name }}")
+          if (file.exists("renv.lock")) {
+            renv::restore()
           }
+          setwd(oldwd)
           tryCatch(
             expr = {
                 x <- covr::package_coverage(
