@@ -86,7 +86,7 @@ jobs:
         run: |
           setwd("${{ github.event.repository.name }}")
           if (file.exists("renv.lock")) renv::restore()
-          devtools::install()
+          install.packages(".", repos=NULL, type="source")
         shell: Rscript {0}
 
       - name: Build docs 🏗
