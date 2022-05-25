@@ -86,10 +86,8 @@ jobs:
       - name: Install R package 🚧
         run: |
           setwd("${{ github.event.repository.name }}")
-          if (file.exists("renv.lock")) {
-            renv::restore()
-            devtools::install()
-          }
+          if (file.exists("renv.lock")) renv::restore()
+          devtools::install()
         shell: Rscript {0}
 
       - name: Install covr 🎪
