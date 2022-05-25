@@ -83,15 +83,21 @@ jobs:
           SD_ENABLE_CHECK: ${{ inputs.enable-staged-dependencies-check }}
 
       - name: Install R package 🚧
-        run: R CMD INSTALL ${{ github.event.repository.name }}
-        shell: bash
+        run: |
+          setwd("${{ github.event.repository.name }}")
+          if (file.exists("renv.lock")) renv::restore()
+          devtools::install()
+        shell: Rscript {0}
 
       - name: Build docs 🏗
         if: github.ref != 'refs/heads/main'
         run: |
           repo="${{ github.event.repository.name }}"
           cd $repo
-          R --slave -e 'pkgdown::build_site(devel = TRUE)' 2>&1 | tee pkgdown_${repo}.log
+          Rscript - <<EOF 2>&1 | tee pkgdown_${repo}.log
+          if (file.exists("renv.lock")) renv::restore()
+          pkgdown::build_site(devel = TRUE)
+          EOF
           if [ "${{ inputs.fail-pkgdown-on-warnings }}" == "true" ]; then {
             grep "Warning message" pkgdown_${repo}.log > pkgdown_warnings_${repo}.log
             if [[ $(wc -l <pkgdown_warnings_${repo}.log) -gt 0 ]]; then {
@@ -126,7 +132,10 @@ jobs:
           cd ${{ github.event.repository.name }}
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
+          Rscript - <<EOF
+          if (file.exists("renv.lock")) renv::restore()
+          pkgdown::deploy_to_branch(new_process = FALSE)
+          EOF
 
   upload-release-assets:
     name: Upload documentation assets 🔼
