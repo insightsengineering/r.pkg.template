@@ -28,7 +28,7 @@ Thanks 🙏 You rock 🤘
 
 ## Getting started
 
-For an introduction, please read [`README`](README.md) file. You can also find vignettes [here](vignettes/). Usually you will find a "Getting started" article. Please also see the package manual in the form of a `pkgdown` website.
+For an introduction, please read the [documentation][url_pkgdown] which usually includes ["Getting started" article][url_getting_started]. Please also see other [articles][url_articles].
 
 ## Code of Conduct
 
@@ -36,7 +36,7 @@ This project is governed by [Code of Conduct](CODE_OF_CONDUCT.md). By participat
 
 ## License
 
-All of your code changes would be under the same [license](LICENSE) that covers this project.
+All of your code changes would be under the same [license][url_license] that covers this project.
 
 ## How to report a bug?
 
@@ -82,7 +82,7 @@ In case you are working on a task from one repository that affects multiple repo
 
 ### `monorepo` and `staged.dependencies`
 
-Sometimes you might need to change upstream dependent package(s) to be able to submit a meaningful change. We are using [`staged.dependencies`](https://github.com/openpharma/staged.dependencies) functionality to simulate a `monorepo` behavior. The configuration is already in the [`staged_dependencies.yaml`](staged_dependencies.yaml) file. You just need to name the feature branches identically. This is the only exception from branch naming convention described above. Please read the package manual for more details.
+Sometimes you might need to change upstream dependent package(s) to be able to submit a meaningful change. We are using [`staged.dependencies`](https://github.com/openpharma/staged.dependencies) functionality to simulate a `monorepo` behavior. The configuration is already in the `staged_dependencies.yaml` file. You just need to name the feature branches identically. This is the only exception from branch naming convention described above. Please read the package manual for more details.
 
 ### Recommended development environment & tools
 
@@ -94,11 +94,11 @@ If you find out any bugs on the older version of dependencies - please create ap
 
 #### `pre-commit`
 
-We highly recommend the [`pre-commit`](https://pre-commit.com/) tool combined with [`R hooks for pre-commit`](https://github.com/lorenzwalthert/precommit) to execute some of the checks prior committing and pushing. The configuration is already there in a repository ([here](.pre-commit-config.yaml)). Please, follow the installation guide on the official [`pre-commit` page](https://github.com/lorenzwalthert/precommit) and the [`GitHub` `readme` page](https://github.com/lorenzwalthert/precommit#installation) for the R hooks.
+We highly recommend the [`pre-commit`](https://pre-commit.com/) tool combined with [`R hooks for pre-commit`](https://github.com/lorenzwalthert/precommit) to execute some of the checks prior committing and pushing. The configuration is already there in the `.pre-commit-config.yaml` file. Please, follow the installation guide on the official [`pre-commit` page](https://github.com/lorenzwalthert/precommit) and the [`GitHub` `readme` page](https://github.com/lorenzwalthert/precommit#installation) for the R hooks.
 
 ## Style guide
 
-This repository follows standard [`tidyverse` style guide](https://style.tidyverse.org/) and it's being checked against it by [`lintr`](https://github.com/r-lib/lintr). There are some slight modifications to its default settings available in the [`.lintr`](.lintr) file.
+This repository follows standard [`tidyverse` style guide](https://style.tidyverse.org/) and it's being checked against it by [`lintr`](https://github.com/r-lib/lintr). There are some slight modifications to its default settings available in the `.lintr` file.
 
 Although it allows for some flexibility - we recommend sticking to the style of the existing code.
 
@@ -116,3 +116,9 @@ The package maintainer also reserves the rights to manually adjust the criteria 
 ## Any questions
 
 If you have any further questions regarding contribution - please reach out to the repository maintainer!
+
+<!-- urls -->
+[url_pkgdown]: https://insightsengineering.github.io/r.pkg.template/index.html
+[url_getting_started]: https://insightsengineering.github.io/r.pkg.template/articles/r-pkg-template.html
+[url_articles]: https://insightsengineering.github.io/r.pkg.template/articles/index.html
+[url_license]: https://insightsengineering.github.io/r.pkg.template/LICENSE-text.html
