@@ -182,6 +182,8 @@ jobs:
               writeLines(readLines(check_log))
               stop("⚠ R CMD check has warnings")
             }
+            print("inputs note blocklist = ")
+            print("{{ inputs.note-blocklist }}")
             if ("{{ inputs.note-blocklist }}" == "true") {
               print("checking for notes")
               # list of regexes for R CMD CHECK notes that should cause the pipeline to fail
