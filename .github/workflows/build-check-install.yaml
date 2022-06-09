@@ -54,7 +54,7 @@ on:
       note_blocklist:
         description: Whether to check for NOTEs that should cause the pipeline to fail
         required: false
-        default: "yes"
+        default: 'yes'
         type: string
 
 concurrency:
