@@ -183,8 +183,8 @@ jobs:
               stop("⚠ R CMD check has warnings")
             }
             print("inputs note blocklist = ")
-            print("{{ inputs.note-blocklist }}")
-            if ("{{ inputs.note-blocklist }}" == "true") {
+            print("${{ inputs.note-blocklist }}")
+            if ("${{ inputs.note-blocklist }}" == "true") {
               print("checking for notes")
               # list of regexes for R CMD CHECK notes that should cause the pipeline to fail
               regexes <- c("checking dependencies in R code ... NOTE Namespace in Imports field not imported from")
