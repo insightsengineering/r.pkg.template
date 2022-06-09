@@ -13,7 +13,8 @@ Depends:
 Imports:
     plumber,
     shiny,
-    stringr
+    stringr,
+    rtables
 Suggests:
     future,
     httr,

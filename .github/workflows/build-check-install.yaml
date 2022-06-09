@@ -8,6 +8,7 @@ on:
     branches:
       - main
       - pre-release
+      - 266_fail_on_r_cmd_check_notes
   pull_request:
     types:
       - opened
@@ -49,6 +50,11 @@ on:
         description: Skip the R CMD INSTALL step in this workflow
         required: false
         default: false
+        type: boolean
+      note-blocklist:
+        description: Whether to check for NOTEs that should cause the pipeline to fail
+        required: FALSE
+        default: true
         type: boolean
 
 concurrency:
@@ -176,17 +182,16 @@ jobs:
               writeLines(readLines(check_log))
               stop("⚠ R CMD check has warnings")
             }
-            # list of regexes for R CMD CHECK notes that should cause the pipeline to fail
-            regexes <- c(".+", "^b")
-            note_regex <- "^NOTE"
-            lines = readLines(check_log)
-            for (l in lines) {
-              print(paste("line = ", l))
+            if ("{{ inputs.note-blocklist }}" == "true") {
+              print("checking for notes")
+              # list of regexes for R CMD CHECK notes that should cause the pipeline to fail
+              regexes <- c("checking dependencies in R code ... NOTE Namespace in Imports field not imported from")
+              lines = paste(readLines(check_log), collapse = " ")
+              print(lines)
               for (r in regexes) {
                 print(paste("regex = ", r))
-                print(paste("match = ", grepl(r, l)))
-                if (grepl(r, l) && grepl(note_regex, l)) {
-                  print("found")
+                if (grepl(r, lines)) {
+                  print("found - pipeline should fail here")
                 }
               }
             }
