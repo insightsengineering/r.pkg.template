@@ -176,6 +176,20 @@ jobs:
               writeLines(readLines(check_log))
               stop("⚠ R CMD check has warnings")
             }
+            # list of regexes for R CMD CHECK notes that should cause the pipeline to fail
+            regexes <- c(".+", "^b")
+            note_regex <- "^NOTE"
+            lines = readLines(check_log)
+            for (l in lines) {
+              print(paste("line = ", l))
+              for (r in regexes) {
+                print(paste("regex = ", r))
+                print(paste("match = ", grepl(r, l)))
+                if (grepl(r, l) && grepl(note_regex, l)) {
+                  print("found")
+                }
+              }
+            }
           }
         shell: Rscript {0}
 
