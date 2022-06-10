@@ -57,6 +57,11 @@ on:
         type: boolean
       note-blocklist:
         description: List of regular expressions appearing in NOTEs that should be cause the pipeline to fail
+        # Example usage:
+        # note-blocklist: >-
+        #   c("checking dependencies in R code ...
+        #   NOTE Namespace in Imports field not imported from",
+        #   "checking installed package size ... NOTE( )+installed size is")
         required: false
         default: c("")
         type: string
@@ -191,12 +196,10 @@ jobs:
               print("checking for notes")
               # list of regexes for R CMD CHECK notes that should cause the pipeline to fail
               regexes <- ${{ inputs.note-blocklist }}
-              print(regexes)
               lines = paste(readLines(check_log), collapse = " ")
               for (r in regexes) {
                 if (grepl(r, lines)) {
-                  # stop(paste("Found a NOTE on a blocklist = ", r))
-                  print(paste("Found a NOTE on a blocklist = ", r))
+                  stop(paste("Found a NOTE on a blocklist = ", r))
                 }
               }
             }
