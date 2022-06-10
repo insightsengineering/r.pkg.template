@@ -198,7 +198,7 @@ jobs:
               lines = paste(readLines(check_log), collapse = " ")
               for (r in regexes) {
                 if (grepl(r, lines)) {
-                  stop(paste("Found a NOTE on a blocklist = ", r))
+                  stop(paste("Found a NOTE on the blocklist = ", r))
                 }
               }
             }
