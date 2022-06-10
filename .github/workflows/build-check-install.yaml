@@ -194,7 +194,6 @@ jobs:
             }
             if ("${{ inputs.check-note-blocklist }}" == "true") {
               print("checking for notes")
-              # list of regexes for R CMD CHECK notes that should cause the pipeline to fail
               regexes <- ${{ inputs.note-blocklist }}
               lines = paste(readLines(check_log), collapse = " ")
               for (r in regexes) {
