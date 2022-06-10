@@ -67,6 +67,8 @@ jobs:
 
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v1
+        with:
+          report_output_prefix: validation_report
 
       - name: Upload report for review ⬆
         if: github.ref != 'refs/heads/main'
