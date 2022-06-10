@@ -56,7 +56,7 @@ on:
         default: false
         type: boolean
       note-blocklist:
-        description: List of regular expressions appearing in NOTEs that should be cause the pipeline to fail
+        description: List of regular expressions appearing in NOTEs that should cause the pipeline to fail
         # Example usage:
         # note-blocklist: >-
         #   c("checking dependencies in R code ...
