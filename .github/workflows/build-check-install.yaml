@@ -50,11 +50,17 @@ on:
         required: false
         default: false
         type: boolean
-      note_blocklist:
+      check-note-blocklist:
         description: Whether to check for NOTEs that should cause the pipeline to fail
         required: false
         default: false
         type: boolean
+      note-blocklist:
+        description: List of regular expressions appearing in NOTEs that should be cause the pipeline to fail
+        required: false
+        default: c("")
+        type: string
+
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
@@ -181,13 +187,12 @@ jobs:
               writeLines(readLines(check_log))
               stop("⚠ R CMD check has warnings")
             }
-            print("${{ inputs.note_blocklist }}")
-            if ("${{ inputs.note_blocklist }}" == "true") {
+            if ("${{ inputs.check-note-blocklist }}" == "true") {
               print("checking for notes")
               # list of regexes for R CMD CHECK notes that should cause the pipeline to fail
-              regexes <- c("checking dependencies in R code ... NOTE Namespace in Imports field not imported from")
+              regexes <- ${{ inputs.note-blocklist }}
+              print(regexes)
               lines = paste(readLines(check_log), collapse = " ")
-              print(lines)
               for (r in regexes) {
                 if (grepl(r, lines)) {
                   stop(paste("Found a NOTE on a blocklist = ", r))
