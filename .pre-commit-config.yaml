@@ -62,6 +62,10 @@ repos:
       - id: no-commit-to-branch
       - id: mixed-line-ending
         args: ["--fix=lf"]
+      - id: detect-aws-credentials
+      - id: detect-private-key
+      - id: forbid-new-submodules
+      - id: check-symlinks
   - repo: local
     hooks:
       - id: forbid-to-commit
