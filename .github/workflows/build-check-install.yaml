@@ -59,13 +59,13 @@ on:
         description: List of regular expressions appearing in NOTEs that should cause the pipeline to fail
         # Example usage:
         # note-blocklist: >-
-        #   c("checking dependencies in R code ... NOTE( )+Namespace in Imports field not imported from",
-        #   "checking package dependencies ... NOTE( )+Depends: includes the non-default packages",
-        #   "checking R code for possible problems ... NOTE( )+.*: no visible global function definition for",
-        #   "checking for unstated dependencies in vignettes ... NOTE( )+\'.*\' import not declared from",
-        #   "checking installed package size ... NOTE( )+installed size is")
+        #   checking package dependencies ... NOTE( )+Depends: includes the non-default packages
+        #   checking R code for possible problems ... NOTE( )+.*: no visible global function definition for
+        #   checking for unstated dependencies in vignettes ... NOTE( )+\'.*\' import not declared from
+        #   checking dependencies in R code ... NOTE( )+Namespace in Imports field not imported from
+        #   checking installed package size ... NOTE( )+installed size is
         required: false
-        default: c("")
+        default: ""
         type: string
 
 
@@ -196,12 +196,21 @@ jobs:
             }
             if ("${{ inputs.check-note-blocklist }}" == "true") {
               print("checking for notes")
-              regexes <- ${{ inputs.note-blocklist }}
+              regexes <- "${{ inputs.note-blocklist }}"
+              print(regexes)
+              regexes <- unlist(lapply(strsplit(regexes, split = "\n"), function(z){ z[z != ""]}))
+              print(regexes)
               lines = paste(readLines(check_log), collapse = " ")
-              for (r in regexes) {
-                if (grepl(r, lines)) {
-                  stop(paste("Found a NOTE on the blocklist = ", r))
+              notes_result <- lapply(regexes, function(r){
+                if(grepl(r, lines)){
+                  print(paste("Found a NOTE on the blocklist = ", r))
+                  return(TRUE)
                 }
+                return(FALSE)
+              })
+
+              if(any(sapply(notes_result, function(notes_result) notes_result))){
+                  stop("NOTEs on the blocklist were found.")
               }
             }
           }
