@@ -201,6 +201,7 @@ jobs:
               lines = paste(readLines(check_log), collapse = " ")
               notes_result <- lapply(regexes, function(r){
                 if(grepl(r, lines)){
+                  print(r)
                   return(TRUE)
                 }
                 return(FALSE)
