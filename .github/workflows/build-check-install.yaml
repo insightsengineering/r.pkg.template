@@ -197,7 +197,12 @@ jobs:
             if ("${{ inputs.check-note-blocklist }}" == "true") {
               print("Checking for notes")
               regexes <- "${{ inputs.note-blocklist }}"
-              regexes <- unlist(lapply(strsplit(regexes, split = "\n"), function(z){ z[z != ""]}))
+              print(regexes)
+              print(strsplit(regexes, split = "\n"))
+              print(strsplit(trimws(regexes), split = "\n"))
+              regexes <- unlist(strsplit(trimws(regexes), split = "\n"))
+              print(regexes)
+              # regexes <- unlist(lapply(strsplit(regexes, split = "\n"), function(z){ z[z != ""]}))
               lines = paste(readLines(check_log), collapse = " ")
               notes_result <- lapply(regexes, function(r){
                 if(grepl(r, lines)){
