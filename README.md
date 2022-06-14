@@ -27,7 +27,7 @@
 [pre-commit installation]: https://pre-commit.com/#installation
 [git hooks]: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
 
-An R package template with built-in Github Actions-based CI/CD workflows.
+An R package template with built-in GitHub Actions-based CI/CD workflows.
 
 ## Usage
 
@@ -50,9 +50,9 @@ You could initialize this repository in one of two ways:
   ./init.sh
   ```
 
-#### Use Github's template importer
+#### Use GitHub's template importer
 
-- Click [here](https://github.com/insightsengineering/r.pkg.template/generate) to generate a copy of this template directly within Github.
+- Click [here](https://github.com/insightsengineering/r.pkg.template/generate) to generate a copy of this template directly within GitHub.
 
 - Clone the repository from your account/organization.
 
@@ -64,7 +64,7 @@ You could initialize this repository in one of two ways:
 
 ### CI/CD Configurations
 
-All CI/CD jobs are defined in the [.github/workflows](./.github/workflows) directory in the form of Github Action workflows. These can be modified per your requirements, but are designed and implemented to follow best practices and to ensure the highest quality standards for your package.
+All CI/CD jobs are defined in the [.github/workflows](./.github/workflows) directory in the form of GitHub Action workflows. These can be modified per your requirements, but are designed and implemented to follow best practices and to ensure the highest quality standards for your package.
 
 ### Pre-commit
 
