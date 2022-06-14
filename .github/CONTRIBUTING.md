@@ -98,7 +98,7 @@ If you discover bugs on older R versions or with an older set of dependencies, p
 
 We highly recommend that you use the [`pre-commit`](https://pre-commit.com/) tool combined with [`R hooks for pre-commit`](https://github.com/lorenzwalthert/precommit) to execute some of the checks before committing and pushing your changes.
 
-Pre-commit hooks are already available in this repository's`.pre-commit-config.yaml` file.
+Pre-commit hooks are already available in this repository's `.pre-commit-config.yaml` file.
 
 ## Style guide
 
