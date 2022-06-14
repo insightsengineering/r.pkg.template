@@ -106,7 +106,7 @@ This repository follows the standard [`tidyverse` style guide](https://style.tid
 
 ## Recognition model
 
-As mentioned previously, all contributions are deeply valued and appreciated. While all contribution data is available as part of the [repository insights][insights]), to recognize a _significant_ contribution and hence add the contributor to the package authors list, the following rules are enforced:
+As mentioned previously, all contributions are deeply valued and appreciated. While all contribution data is available as part of the [repository insights][insights], to recognize a _significant_ contribution and hence add the contributor to the package authors list, the following rules are enforced:
 
 * Minimum 5% of lines of code authored* (determined by `git blame` query) OR
 * Being at the top 5 contributors in terms of number of commits OR lines added OR lines removed*
