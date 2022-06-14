@@ -53,7 +53,7 @@ This repository uses the [Github Flow](https://docs.github.com/en/get-started/qu
 2. Make changes
 
     Make sure your code
-    * passes all checks imposed by Github Actions
+    * passes all checks imposed by GitHub Actions
     * is well documented
     * is well tested with unit tests sufficiently covering the changes introduced
 
