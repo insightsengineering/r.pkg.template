@@ -28,7 +28,7 @@ function oecho () {
 
 gecho "Hello! Thank you for using r.pkg.template! Let us initialize your package."
 
-echo -n "Please enter your Github username: "
+echo -n "Please enter your GitHub username: "
 read -r owner
 
 echo -n "Enter your package's name here (eg. awesomeR): "
