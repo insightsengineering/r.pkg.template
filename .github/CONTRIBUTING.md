@@ -120,9 +120,7 @@ The package maintainer also reserves the right to adjust the criteria to recogni
 If you have further questions regarding the contribution guidelines, please contact the package/repository maintainer.
 
 <!-- urls -->
-[issues]: https://github.com/insightsengineering/r.pkg.template/issues
 [docs]: https://insightsengineering.github.io/r.pkg.template/index.html
-[getting-started]: https://insightsengineering.github.io/r.pkg.template/articles/r.pkg.template.html
 [articles]: https://insightsengineering.github.io/r.pkg.template/articles/index.html
 [license]: https://insightsengineering.github.io/r.pkg.template/LICENSE-text.html
 [insights]: https://github.com/insightsengineering/r.pkg.template/pulse
