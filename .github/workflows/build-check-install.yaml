@@ -210,7 +210,7 @@ jobs:
                 },
                 logical(1)
               )
-              if(any(sapply(notes_result, function(notes_result) notes_result))){
+              if (any(notes_result)) {
                 stop("NOTEs on the blocklist were found (see above).")
               }
             }
