@@ -61,9 +61,7 @@ This repository uses the [Github Flow](https://docs.github.com/en/get-started/qu
 
    In the pull request description, please link the relevant issue (if any), provide a detailed description of the change, and include any assumptions.
 
-4. Address review comments
-
-    Remember to follow the rules outlined in the [Code of Conduct](CODE_OF_CONDUCT.md). TL;DR: Please be civil in your discussions.
+4. Address review comments, if any
 
 5. Post approval
 
