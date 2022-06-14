@@ -48,7 +48,7 @@ This repository uses the [Github Flow](https://docs.github.com/en/get-started/qu
 
 1. Create a branch
 
-   Please see the [branch naming convention](branch-naming-convention) below. If you don't have write access to this repository, please fork it.
+   Please see the [branch naming convention](#branch-naming-convention) below. If you don't have write access to this repository, please fork it.
 
 2. Make changes
 
