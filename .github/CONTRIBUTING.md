@@ -36,7 +36,7 @@ All your contributions will be covered by this project's [license][license].
 
 ## Issues
 
-We use Github to track issues, feature requests, and bugs. Before submitting a new issue, please check if the issue has already been reported. If the issue already exists, please upvote the existing issue 👍.
+We use GitHub to track issues, feature requests, and bugs. Before submitting a new issue, please check if the issue has already been reported. If the issue already exists, please upvote the existing issue 👍.
 
 For new feature requests, please elaborate on the context and the benefit the feature will have for users, developers, or other relevant personas.
 
