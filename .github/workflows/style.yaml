@@ -41,7 +41,7 @@ jobs:
 
       - name: Install styler 👚
         run: |
-          remotes::install_github("r-lib/styler", auth_token = "${{ secrets.GITHUB_TOKEN }}")
+          install.packages("styler", repos = "https://cloud.r-project.org")
         shell: Rscript {0}
 
       - name: Get changed files 🗞
