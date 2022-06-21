@@ -50,6 +50,24 @@ on:
         required: false
         default: false
         type: boolean
+      check-note-blocklist:
+        description: Whether to check for NOTEs that should cause the pipeline to fail
+        required: false
+        default: false
+        type: boolean
+      note-blocklist:
+        description: List of regular expressions appearing in NOTEs that should cause the pipeline to fail
+        # Example usage:
+        # note-blocklist: |
+        #   checking package dependencies ... NOTE( )+Depends: includes the non-default packages
+        #   checking R code for possible problems ... NOTE( )+.*: no visible global function definition for
+        #   checking for unstated dependencies in vignettes ... NOTE( )+\'.*\' import not declared from
+        #   checking dependencies in R code ... NOTE( )+Namespace in Imports field not imported from
+        #   checking installed package size ... NOTE( )+installed size is
+        required: false
+        default: ""
+        type: string
+
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
@@ -175,6 +193,26 @@ jobs:
             if (grepl("WARNING", x)) {
               writeLines(readLines(check_log))
               stop("⚠ R CMD check has warnings")
+            }
+            if ("${{ inputs.check-note-blocklist }}" == "true") {
+              print("Checking notes...")
+              regexes <- "${{ inputs.note-blocklist }}"
+              regexes <- unlist(strsplit(regexes, split = "\n"))
+              lines <- paste(readLines(check_log), collapse = " ")
+              notes_result <- vapply(
+                regexes, 
+                function(r){
+                  if (grepl(r, lines)) {
+                    print(r)
+                    return(TRUE)
+                  }
+                  return(FALSE)
+                },
+                logical(1)
+              )
+              if (any(notes_result)) {
+                stop("NOTEs on the blocklist were found (see above).")
+              }
             }
           }
         shell: Rscript {0}
