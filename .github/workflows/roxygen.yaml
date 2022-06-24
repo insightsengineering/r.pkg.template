@@ -33,6 +33,11 @@ on:
         description: |
           Github token with read access to repositories, required for staged.dependencies installation
         required: false
+    update:
+      description: If man page is not up-to-date then it will updates it with new commit
+      required: false
+      default: true
+      type: boolean
 
 concurrency:
   group: roxygen-${{ github.event.pull_request.number || github.ref }}
@@ -103,12 +108,22 @@ jobs:
             echo "🙈 Manuals are not up-to-date with roxygen comments!"
             echo "🔀 The following differences were noted:"
             git diff man/*
-            echo -e "\n💻 Please rerun the following command on your workstation and push your changes"
-            echo "--------------------------------------------------------------------"
-            echo "roxygen2::roxygenize('.', roclets = c('rd', 'collate', 'namespace'))"
-            echo "--------------------------------------------------------------------"
-            echo "ℹ roxygen2 version that was used in this workflow: $ROXYGEN_VERSION"
-            echo "🙏 Please ensure that the 'RoxygenNote' field in the DESCRIPTION file matches this version"
+            if [ "${{ inputs.update }}" == "true" ]
+            then {
+              echo "Overwriting man page in new commit"
+              git add man/*
+              git commit -m "[skip roxygen]"
+              git push
+            }
+            else {
+              echo -e "\n💻 Please rerun the following command on your workstation and push your changes"
+              echo "--------------------------------------------------------------------"
+              echo "roxygen2::roxygenize('.', roclets = c('rd', 'collate', 'namespace'))"
+              echo "--------------------------------------------------------------------"
+              echo "ℹ roxygen2 version that was used in this workflow: $ROXYGEN_VERSION"
+              echo "🙏 Please ensure that the 'RoxygenNote' field in the DESCRIPTION file matches this version"
+            }
+            fi
             exit 1
           } else {
             echo "💚 Manuals are up-to-date with roxygen comments"
