@@ -4,7 +4,7 @@
 #'
 #' @param name Your name (character string; e.g. "john doe").
 #'
-#' @return A character string, capitalized to title case.
+#' @return A character string (change man), capitalized to title case.
 #' @export
 #'
 #' @examples
