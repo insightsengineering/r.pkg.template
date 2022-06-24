@@ -158,5 +158,4 @@ Check Yaml...............................................................Passed
 Don't commit to branch...................................................Passed
 Mixed line ending........................................................Passed
 Don't commit common R artifacts......................(no files to check)Skipped
-
 ```
