@@ -7,6 +7,7 @@ on:
       - "v*"
     branches:
       - main
+      - pre-release
   pull_request:
     types:
       - opened
@@ -90,7 +91,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Build docs 🏗
-        if: github.ref != 'refs/heads/main'
+        if: github.event_name != 'push'
         run: |
           repo="${{ github.event.repository.name }}"
           cd $repo
@@ -112,7 +113,7 @@ jobs:
         shell: bash
 
       - name: Create documentation artifact 📂
-        if: github.ref != 'refs/heads/main'
+        if: github.event_name != 'push'
         run: |
           pushd ${{ github.event.repository.name }}/docs/
           zip -r9 $OLDPWD/pkgdown.zip *
@@ -120,22 +121,48 @@ jobs:
         shell: bash
 
       - name: Upload docs for review ⬆
-        if: github.ref != 'refs/heads/main'
+        if: github.event_name != 'push'
         uses: actions/upload-artifact@v3
         with:
           name: pkgdown.zip
           path: pkgdown.zip
 
       - name: Publish docs 📢
-        if: github.ref == 'refs/heads/main'
+        if: github.event_name == 'push'
         run: |
           cd ${{ github.event.repository.name }}
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
+          BRANCH_OR_TAG="${GITHUB_REF##*/}"
           Rscript - <<EOF
           if (file.exists("renv.lock")) renv::restore()
-          pkgdown::deploy_to_branch(new_process = FALSE)
+          pkgdown::deploy_to_branch(
+            new_process = FALSE,
+            subdir = "${BRANCH_OR_TAG}",
+            clean = TRUE
+          )
           EOF
+        shell: bash
+
+  multi-version-docs:
+    name: Multi-version docs 📑
+    needs: docs
+    runs-on: ubuntu-latest
+    if: >
+      github.event_name == 'push'
+        && !contains(github.event.commits[0].message, '[skip docs]')
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v3
+        with:
+          path: ${{ github.event.repository.name }}
+          ref: "gh-pages"
+
+      - name: Create and publish docs ↗️
+        uses: insightsengineering/r-pkgdown-multiversion@v2
+        with:
+          path: ${{ github.event.repository.name }}
+          default-landing-page: "main"
 
   upload-release-assets:
     name: Upload documentation assets 🔼
