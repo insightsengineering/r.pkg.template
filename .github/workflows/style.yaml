@@ -17,6 +17,12 @@ on:
       - pre-release
   workflow_dispatch:
   workflow_call:
+    inputs:
+      update:
+        description: If man page is not up-to-date then it will updates it with new commit
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: style-${{ github.event.pull_request.number || github.ref }}
@@ -56,6 +62,8 @@ jobs:
             **.Rnw
             **.Rmarkdown
 
+
+
       - name: Run styler 👟
         run: |
           setwd("${{ github.event.repository.name }}")
@@ -68,7 +76,8 @@ jobs:
               ext %in% c("R", "Rmd", "Rnw", "Rmarkdown")
           }
           changed_r_files <- Filter(is_r_file, changed_files)
-          detect <- styler::style_file(changed_r_files, dry = "on")
+          dry <- if(isTRUE(as.logical("${{ inputs.update }}"))) "off" else "on"
+          detect <- styler::style_file(changed_r_files, dry = dry)
           if (TRUE %in% detect$changed) {
             problems <- subset(detect$file, detect$changed == T)
             cat(paste(
@@ -85,3 +94,36 @@ jobs:
             quit(status = length(problems))
           }
         shell: Rscript {0}
+        continue-on-error: true
+
+      - name: Styler check summary 🅾
+        run: |
+          cd ${{ github.event.repository.name }}
+          git status -s
+          if [[ -n `git status -s | grep .R` ]]
+          then {
+            echo "🙈 Code style is not correct!"
+            echo "🔀 The following differences were noted:"
+            git diff
+            if [ "${{ inputs.update }}" == "true" ]
+            then {
+              echo "Overwriting source code in new commit"
+              git config --global user.name 'Insights Engineering Bot'
+              git config --global user.email '68416928+insights-engineering-bot@users.noreply.github.com'
+              git add *.R *.Rmd *.Rnw *.Rmarkdown
+              git commit -am "code style - update code"
+              git push
+            }
+            else {
+              echo -e "\n💻 Please rerun the following command on your workstation and push your changes"
+              echo "--------------------------------------------------------------------"
+              echo "styler::style_dir('.')"
+              echo "--------------------------------------------------------------------"
+            }
+            fi
+            exit 1
+          } else {
+            echo "💚 Code Style is correct"
+          }
+          fi
+        shell: bash
