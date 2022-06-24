@@ -17,6 +17,11 @@ on:
       - pre-release
   workflow_dispatch:
   workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with read access to repositories, required for staged.dependencies installation
+        required: false
     inputs:
       install-system-dependencies:
         description: Check for and install system dependencies
@@ -28,16 +33,11 @@ on:
         required: false
         default: false
         type: boolean
-    secrets:
-      REPO_GITHUB_TOKEN:
-        description: |
-          Github token with read access to repositories, required for staged.dependencies installation
+      update:
+        description: If man page is not up-to-date then it will updates it with new commit
         required: false
-    update:
-      description: If man page is not up-to-date then it will updates it with new commit
-      required: false
-      default: true
-      type: boolean
+        default: true
+        type: boolean
 
 concurrency:
   group: roxygen-${{ github.event.pull_request.number || github.ref }}
