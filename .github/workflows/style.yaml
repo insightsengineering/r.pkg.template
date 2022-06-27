@@ -109,7 +109,7 @@ jobs:
               git config --global user.name 'Insights Engineering Bot'
               git config --global user.email '68416928+insights-engineering-bot@users.noreply.github.com'
               echo "Adding to git changes"
-              git add *.R *.Rmd *.Rnw *.Rmarkdown
+              git status -s | grep -E ".R$|.Rmd$|.Rnw$|.Rmarkdown$" | cut -f3 -d ' '  | xargs git add
               git commit -am "code style - update code"
               echo "Pulling and pushing to same branch"
               git pull
