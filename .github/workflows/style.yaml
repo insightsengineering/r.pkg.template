@@ -111,11 +111,13 @@ jobs:
               echo "Adding to git changes"
               git status -s | grep -E ".R$|.Rmd$|.Rnw$|.Rmarkdown$" | cut -f3 -d ' '  | xargs git add
               git commit -am "code style - update code"
-              echo "Pulling and pushing to same branch"
-              git pull
               git status
               git log --oneline -n5
               printenv
+              git show
+              echo "Pulling and pushing to ${{ github.ref_name }} branch"
+              git checkout ${{ github.ref_name }}
+              git pull ${{ github.ref_name }}
               git push -v
               echo "Pushed"
             }
