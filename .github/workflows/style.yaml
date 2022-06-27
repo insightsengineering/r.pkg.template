@@ -113,7 +113,8 @@ jobs:
               git commit -am "code style - update code"
               echo "Pulling and pushing to same branch"
               git pull
-              git push
+              printenv
+              git push -v
               echo "Pushed"
             }
             else {
