@@ -28,7 +28,7 @@ function oecho () {
 
 gecho "Hello! Thank you for using r.pkg.template! Let us initialize your package."
 
-echo -n "Please enter your GitHub username: "
+echo -n "Please enter your GitHub username or organization name: "
 read -r owner
 
 echo -n "Enter your package's name here (eg. awesomeR): "
@@ -55,7 +55,6 @@ grep -rl --exclude-dir=.git "r.pkg.template" . | \
     xargs perl -p -i -e "s/r.pkg.template/${pkg}/g"
 perl -p -i -e "s/insightsengineering/${owner}/g" DESCRIPTION
 perl -p -i -e "s/insightsengineering/${owner}/g" .github/ISSUE_TEMPLATE/*.yml
-perl -p -i -e "s/insightsengineering\/idr/${owner}/g" .github/CODEOWNERS
 perl -p -i -e "s/insightsengineering/${owner}/g" _pkgdown.yml
 perl -p -i -e "s/insightsengineering/${owner}/g" staged_dependencies.yaml
 grep -rl --exclude-dir=.git "REPO_GITHUB_TOKEN" . | \
@@ -65,8 +64,9 @@ grep -rl --exclude-dir=.git "68416928+insights-engineering-bot@users.noreply.git
 grep -rl --exclude-dir=.git "insights-engineering-bot" .github/workflows/ | \
     xargs perl -p -i -e 's/insights-engineering-bot/github-actions/g'
 
-oecho "Renaming files"
+oecho "Updating file names and removing unneeded files"
 mv r.pkg.template.Rproj "${pkg}.Rproj"
+rm .github/CODEOWNERS
 
 oecho "Overwriting the README.md file"
 echo -e "# ${pkg}\n\nShort description of the package" > README.md
