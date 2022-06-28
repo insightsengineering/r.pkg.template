@@ -115,7 +115,7 @@ jobs:
               cat $(git rev-parse --show-toplevel)/.git/config
               git remote -v
               echo "Pulling from ${GITHUB_HEAD_REF} branch"
-              git pull
+              git pull -u origin ${GITHUB_HEAD_REF}
               echo "Adding to git changes"
               git status -s | grep -E ".R$|.Rmd$|.Rnw$|.Rmarkdown$" | cut -f3 -d ' '  | xargs git add
               git status
