@@ -115,9 +115,9 @@ jobs:
               git log --oneline -n5
               printenv
               git show
-              echo "Pulling and pushing to ${{ github.ref_name }} branch"
-              git checkout ${{ github.ref_name }}
-              git pull ${{ github.ref_name }}
+              echo "Pulling and pushing to ${GITHUB_HEAD_REF} branch"
+              git checkout ${GITHUB_HEAD_REF}
+              git pull ${GITHUB_HEAD_REF}
               git push -v
               echo "Pushed"
             }
