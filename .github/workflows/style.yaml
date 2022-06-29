@@ -121,6 +121,7 @@ jobs:
             "or simply run the following commands",
             "for an immediate fix:\n"
           ))
+          readLines("/tmp/style-problems.R", warn=FALSE)
           cat("────────────────────────────────────────\n")
           cat(paste0(
             "styler::style_file(",
