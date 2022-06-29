@@ -18,8 +18,8 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
-      update:
-        description: If man page is not up-to-date then it will updates it with new commit
+      auto-update:
+        description: If R code files are not up-to-date, they will be automatically updated and committed back to the branch.
         required: false
         default: false
         type: boolean
@@ -74,7 +74,7 @@ jobs:
               ext %in% c("R", "Rmd", "Rnw", "Rmarkdown")
           }
           changed_r_files <- Filter(is_r_file, changed_files)
-          dry <- if(isTRUE(as.logical("${{ inputs.update }}"))) "off" else "on"
+          dry <- if(isTRUE(as.logical("${{ inputs.auto-update }}"))) "off" else "on"
           detect <- styler::style_file(changed_r_files, dry = dry)
           if (TRUE %in% detect$changed) {
             problems <- subset(detect$file, detect$changed == T)
@@ -103,22 +103,21 @@ jobs:
             echo "🙈 Code style is not correct!"
             echo "🔀 The following differences were noted:"
             git diff
-            if [ "${{ inputs.update }}" == "true" ]
+            if [ "${{ inputs.auto-update }}" == "true" ]
             then {
-              echo "Overwriting source code in new commit"
+              echo "Regenerating R code files via auto-update"
               git config --global user.name 'Insights Engineering Bot'
               git config --global user.email '68416928+insights-engineering-bot@users.noreply.github.com'
               echo "Adding changes to git"
               git status -s | grep -E "\.R$|\.Rmd$|\.Rnw$|\.Rmarkdown$" | cut -f3 -d ' '  | xargs git add -v
               git commit -am "code style - update code"
-              echo "Pushing to ${GITHUB_HEAD_REF}"
-              git push -v origin HEAD:${GITHUB_HEAD_REF}
+              git push -v origin ${{ github.ref_name }}
               echo "Pushed"
             }
             else {
               echo -e "\n💻 Please rerun the following command on your workstation and push your changes"
               echo "--------------------------------------------------------------------"
-              echo "styler::style_dir('.')"
+              echo "styler::style_file(changed_r_files)"
               echo "--------------------------------------------------------------------"
             }
             fi
