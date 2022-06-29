@@ -110,7 +110,6 @@ jobs:
           files: ${{ steps.problem-files.outputs.unstyled-files }}
           name: github-actions
           email: 41898282+github-actions[bot]@users.noreply.github.com
-          directory: ${{ github.event.repository.name }}
 
       - name: Styler check summary 🅾
         if: ${{ !inputs.auto-update }}
