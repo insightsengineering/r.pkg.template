@@ -123,7 +123,7 @@ jobs:
 
       - name: Styler check summary 🅾
         if: >
-          ${{ !inputs.auto-update }}
+          inputs.auto-update != true
             && steps.check_files.outputs.files_exists == 'true'
             && steps.problem-files.outputs.unstyled-files[0] != null
         run: |
