@@ -28,6 +28,11 @@ on:
         required: false
         default: false
         type: boolean
+      auto-update:
+        description: If man pages are not up-to-date, they will be automatically updated and committed back to the branch.
+        required: false
+        default: false
+        type: boolean
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -58,6 +63,7 @@ jobs:
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
+          fetch-depth: 0
 
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
@@ -103,12 +109,25 @@ jobs:
             echo "🙈 Manuals are not up-to-date with roxygen comments!"
             echo "🔀 The following differences were noted:"
             git diff man/*
-            echo -e "\n💻 Please rerun the following command on your workstation and push your changes"
-            echo "--------------------------------------------------------------------"
-            echo "roxygen2::roxygenize('.', roclets = c('rd', 'collate', 'namespace'))"
-            echo "--------------------------------------------------------------------"
-            echo "ℹ roxygen2 version that was used in this workflow: $ROXYGEN_VERSION"
-            echo "🙏 Please ensure that the 'RoxygenNote' field in the DESCRIPTION file matches this version"
+            if [ "${{ inputs.auto-update }}" == "true" ]
+            then {
+              echo "Regenerating man pages via auto-update"
+              git config --global user.name "github-actions"
+              git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+              git add man/*
+              git commit -m "[skip actions] ROxygen Man Pages Auto Update"
+              git pull origin ${GITHUB_HEAD_REF}
+              git push -v origin ${GITHUB_HEAD_REF}
+            }
+            else {
+              echo -e "\n💻 Please rerun the following command on your workstation and push your changes"
+              echo "--------------------------------------------------------------------"
+              echo "roxygen2::roxygenize('.', roclets = c('rd', 'collate', 'namespace'))"
+              echo "--------------------------------------------------------------------"
+              echo "ℹ roxygen2 version that was used in this workflow: $ROXYGEN_VERSION"
+              echo "🙏 Please ensure that the 'RoxygenNote' field in the DESCRIPTION file matches this version"
+            }
+            fi
             exit 1
           } else {
             echo "💚 Manuals are up-to-date with roxygen comments"
