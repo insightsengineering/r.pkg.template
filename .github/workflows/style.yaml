@@ -48,6 +48,7 @@ jobs:
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
+          fetch-depth: 2
 
       - name: Install styler 👚
         run: |
