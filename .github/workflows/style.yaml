@@ -110,7 +110,7 @@ jobs:
               echo "Adding changes to git"
               git status -s | grep -E "\.R$|\.Rmd$|\.Rnw$|\.Rmarkdown$" | cut -f3 -d ' '  | xargs git add -v
               git commit -am "code style - update code"
-              git push -v
+              git push -v origin HEAD:${GITHUB_HEAD_REF}
               echo "Pushed"
             }
             else {
