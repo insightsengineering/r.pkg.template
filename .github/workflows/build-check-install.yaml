@@ -79,7 +79,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14
+          - image: ghcr.io/insightsengineering/rstudio_4.2.1_bioc_3.15
             tag: latest
     name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
     runs-on: ubuntu-latest
