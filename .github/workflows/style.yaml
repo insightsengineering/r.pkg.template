@@ -90,6 +90,7 @@ jobs:
               con = "/tmp/style-problems.txt",
               sep = " "
             )
+            readLines("/tmp/style-problems.R", warn=FALSE)
           }
         shell: Rscript {0}
 
