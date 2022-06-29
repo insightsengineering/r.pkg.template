@@ -99,9 +99,8 @@ jobs:
         shell: bash
 
       - name: Autocommit styled files
-        if: inputs.auto-update
+        if: ${{ inputs.auto-update == 'true' }}
         uses: github-actions-x/commit@v2.9
-        working-directory: ${{ github.event.repository.name }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           push-branch: ${{ steps.branch-name.outputs.head_ref_branch }}
