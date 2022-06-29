@@ -123,7 +123,7 @@ jobs:
           cat("────────────────────────────────────────\n")
           cat(paste0(
             "styler::style_file(",
-              capture.output(writeLines("/tmp/style-problems.R")),
+              readLines("/tmp/style-problems.R", warn=FALSE),
             ")\n"
           ))
           cat("────────────────────────────────────────\n")
