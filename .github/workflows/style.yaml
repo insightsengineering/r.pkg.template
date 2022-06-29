@@ -90,7 +90,6 @@ jobs:
               con = "/tmp/style-problems.txt",
               sep = " "
             )
-            readLines("/tmp/style-problems.R", warn=FALSE)
           }
         shell: Rscript {0}
 
@@ -98,7 +97,7 @@ jobs:
         id: check_files
         uses: andstor/file-existence-action@v1
         with:
-          files: "/tmp/style-problems.R"
+          files: "/tmp/style-problems.R, /tmp/style-problems.txt"
 
       - name: Get problematic files
         id: problem-files
@@ -109,8 +108,8 @@ jobs:
       - name: Autocommit styled files
         if: >
           inputs.auto-update
-          && steps.check_files.outputs.files_exists == 'true'
-          && steps.problem-files.outputs.unstyled-files[0] != null
+            && steps.check_files.outputs.files_exists == 'true'
+            && steps.problem-files.outputs.unstyled-files[0] != null
         run: |
             cd ${{ github.event.repository.name }}
             git config --global user.name 'github-actions'
@@ -125,8 +124,8 @@ jobs:
       - name: Styler check summary 🅾
         if: >
           ${{ !inputs.auto-update }}
-          && steps.check_files.outputs.files_exists == 'true'
-          && steps.problem-files.outputs.unstyled-files[0] != null
+            && steps.check_files.outputs.files_exists == 'true'
+            && steps.problem-files.outputs.unstyled-files[0] != null
         run: |
           cat(paste(
             "☠ One or more files had styling errors.",
