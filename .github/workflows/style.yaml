@@ -106,12 +106,10 @@ jobs:
               echo "Regenerating R code files via auto-update"
               git config --global user.name 'Insights Engineering Bot'
               git config --global user.email '68416928+insights-engineering-bot@users.noreply.github.com'
-              echo "Adding changes to git"
-              git status -s | grep -E "\.R$|\.Rmd$|\.Rnw$|\.Rmarkdown$" | cut -f3 -d ' '  | xargs git add -v
+              git add "**/*.R" "**/*.Rmd" "**/*.Rnw" "**/*.Rmarkdown"
               git commit -m "[skip actions] Auto-update code style"
               git pull origin ${GITHUB_HEAD_REF}
               git push -v origin HEAD:${GITHUB_HEAD_REF}
-              echo "Pushed"
             }
             else {
               echo -e "\n💻 Please rerun the following command on your workstation and push your changes"

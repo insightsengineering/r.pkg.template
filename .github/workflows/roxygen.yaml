@@ -118,7 +118,6 @@ jobs:
               git commit -m "[skip actions] ROxygen Man Pages Auto Update"
               git pull origin ${GITHUB_HEAD_REF}
               git push -v origin ${GITHUB_HEAD_REF}
-              echo "Pushed"
             }
             else {
               echo -e "\n💻 Please rerun the following command on your workstation and push your changes"
