@@ -42,6 +42,7 @@ jobs:
       - name: Checkout Code 🛎
         uses: actions/checkout@v3
         with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
           fetch-depth: 0
 
