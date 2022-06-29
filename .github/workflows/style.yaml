@@ -107,7 +107,7 @@ jobs:
             git add  ${{ steps.problem-files.outputs.unstyled-files }}
             git commit -m '[skip actions] Restyle files'
             git pull origin ${{ steps.branch-name.outputs.head_ref_branch }}
-            git push -v origin ${{ steps.branch-name.outputs.head_ref_branch }}
+            git push -v origin HEAD:${{ steps.branch-name.outputs.head_ref_branch }}
         shell: bash
 
 
