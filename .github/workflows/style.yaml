@@ -102,14 +102,14 @@ jobs:
 
       - name: Get problematic files
         id: problem-files
-        if: steps.check_files.outputs.files_exists
+        if: steps.check_files.outputs.files_exists  == 'true'
         run: echo "::set-output name=unstyled-files::$(cat /tmp/style-problems.txt)"
         shell: bash
 
       - name: Autocommit styled files
         if: >
           inputs.auto-update
-          && steps.check_files.outputs.files_exists
+          && steps.check_files.outputs.files_exists == 'true'
           && steps.problem-files.outputs.unstyled-files[0] != null
         run: |
             cd ${{ github.event.repository.name }}
@@ -125,7 +125,7 @@ jobs:
       - name: Styler check summary 🅾
         if: >
           ${{ !inputs.auto-update }}
-          && steps.check_files.outputs.files_exists
+          && steps.check_files.outputs.files_exists == 'true'
           && steps.problem-files.outputs.unstyled-files[0] != null
         run: |
           cat(paste(
