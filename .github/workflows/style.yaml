@@ -100,15 +100,16 @@ jobs:
 
       - name: Autocommit styled files
         if: inputs.auto-update
-        uses: github-actions-x/commit@v2.9
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          push-branch: ${{ steps.branch-name.outputs.head_ref_branch }}
-          commit-message: '[skip actions] Restyle files'
-          force-add: 'true'
-          files: ${{ steps.problem-files.outputs.unstyled-files }}
-          name: github-actions
-          email: 41898282+github-actions[bot]@users.noreply.github.com
+        run: |
+            cd ${{ github.event.repository.name }}
+            git config --global user.name 'github-actions'
+            git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add  ${{ steps.problem-files.outputs.unstyled-files }}
+            git commit -m '[skip actions] Restyle files'
+            git pull origin ${{ steps.branch-name.outputs.head_ref_branch }}
+            git push -v origin ${{ steps.branch-name.outputs.head_ref_branch }}
+        shell: bash
+
 
       - name: Styler check summary 🅾
         if: ${{ !inputs.auto-update }}
