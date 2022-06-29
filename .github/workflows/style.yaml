@@ -98,7 +98,7 @@ jobs:
         run: echo "::set-output name=unstyled-files::$(cat /tmp/style-problems.txt)"
         shell: bash
 
-      - name: Autocommit styled files
+      - name: Autocommit styled files 💇
         if: inputs.auto-update
         uses: github-actions-x/commit@v2.9
         with:
