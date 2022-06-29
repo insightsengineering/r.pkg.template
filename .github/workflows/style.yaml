@@ -99,7 +99,7 @@ jobs:
         shell: bash
 
       - name: Autocommit styled files
-        if: inputs.auto-update
+        if: inputs.auto-update && steps.problem-files.outputs.unstyled-files[0] != null
         run: |
             cd ${{ github.event.repository.name }}
             git config --global user.name 'github-actions'
@@ -112,7 +112,7 @@ jobs:
 
 
       - name: Styler check summary 🅾
-        if: ${{ !inputs.auto-update }}
+        if: ${{ !inputs.auto-update }} && steps.problem-files.outputs.unstyled-files[0] != null
         run: |
           cat(paste(
             "☠ One or more files had styling errors.",
