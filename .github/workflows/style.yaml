@@ -100,6 +100,7 @@ jobs:
 
       - name: Autocommit styled files
         if: inputs.auto-update
+        working-directory: ${{ github.event.repository.name }}
         uses: github-actions-x/commit@v2.9
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
