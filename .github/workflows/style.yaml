@@ -39,14 +39,9 @@ jobs:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
 
     steps:
-      - name: Get branch names 🌿
-        id: branch-name
-        uses: tj-actions/branch-names@v5
-
       - name: Checkout Code 🛎
         uses: actions/checkout@v3
         with:
-          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
           fetch-depth: 2
 
@@ -116,7 +111,6 @@ jobs:
               echo "Adding changes to git"
               git status -s | grep -E "\.R$|\.Rmd$|\.Rnw$|\.Rmarkdown$" | cut -f3 -d ' '  | xargs git add -v
               git commit -am "code style - update code"
-              git pull origin ${GITHUB_HEAD_REF}
               git push -v origin ${GITHUB_HEAD_REF}
               echo "Pushed"
             }
