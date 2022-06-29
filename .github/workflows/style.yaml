@@ -39,6 +39,10 @@ jobs:
       image: ghcr.io/insightsengineering/rstudio_4.1.2_bioc_3.14:latest
 
     steps:
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v5
+
       - name: Checkout Code 🛎
         uses: actions/checkout@v3
         with:
