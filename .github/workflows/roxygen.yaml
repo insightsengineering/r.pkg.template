@@ -112,10 +112,10 @@ jobs:
             if [ "${{ inputs.auto-update }}" == "true" ]
             then {
               echo "Regenerating man pages via auto-update"
-              git config --global user.name 'Insights Engineering Bot'
-              git config --global user.email '68416928+insights-engineering-bot@users.noreply.github.com'
+              git config --global user.name "github-actions"
+              git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
               git add man/*
-              git commit -am "Roxygen check - update man page"
+              git commit -m "[skip actions] ROxygen Man Pages Auto Update"
               git pull origin ${GITHUB_HEAD_REF}
               git push -v origin ${GITHUB_HEAD_REF}
               echo "Pushed"

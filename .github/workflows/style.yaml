@@ -19,7 +19,7 @@ on:
   workflow_call:
     inputs:
       auto-update:
-        description: If R code files are not up-to-date, they will be automatically updated and committed back to the branch.
+        description: If R code style is not up-to-date, styling will automatically be applied and restyled files will be automatically committed o the branch.
         required: false
         default: false
         type: boolean
@@ -96,10 +96,9 @@ jobs:
       - name: Styler check summary 🅾
         run: |
           cd ${{ github.event.repository.name }}
-          git status -s
-          if [[ -n `git status -s | grep .R` ]]
+          if [[ -n `git status -s *.R` ]]
           then {
-            echo "🙈 Code style is not correct!"
+            echo "🙈 Code style does not conform with project style preferences"
             echo "🔀 The following differences were noted:"
             git diff
             if [ "${{ inputs.auto-update }}" == "true" ]
@@ -109,7 +108,7 @@ jobs:
               git config --global user.email '68416928+insights-engineering-bot@users.noreply.github.com'
               echo "Adding changes to git"
               git status -s | grep -E "\.R$|\.Rmd$|\.Rnw$|\.Rmarkdown$" | cut -f3 -d ' '  | xargs git add -v
-              git commit -am "code style - update code"
+              git commit -m "[skip actions] Auto-update code style"
               git pull origin ${GITHUB_HEAD_REF}
               git push -v origin HEAD:${GITHUB_HEAD_REF}
               echo "Pushed"
