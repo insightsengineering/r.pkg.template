@@ -115,13 +115,14 @@ jobs:
               cat $(git rev-parse --show-toplevel)/.git/config
               git remote -v
               echo "Pulling from ${GITHUB_HEAD_REF} branch"
-              git pull origin ${GITHUB_HEAD_REF}
+              #git pull origin ${GITHUB_HEAD_REF}
               echo "Adding to git changes"
               git status -s | grep -E ".R$|.Rmd$|.Rnw$|.Rmarkdown$" | cut -f3 -d ' '  | xargs git add
               git status
               git commit -am "code style - update code"
-              #echo "Checkout ${GITHUB_HEAD_REF} branch"
+              echo "Checkout ${GITHUB_HEAD_REF} branch"
               #git checkout ${GITHUB_HEAD_REF}
+              pwd
               echo "Pushing to ${GITHUB_HEAD_REF}"
               git push -v
               echo "Pushed"
