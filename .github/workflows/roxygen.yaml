@@ -77,15 +77,21 @@ jobs:
       - name: Generate man pages 📄
         run: |
           setwd("${{ github.event.repository.name }}")
-          cat("1")
+          cat("1\n")
           logfile <- "roxygen_${{ github.event.repository.name }}.log"
           cat(logfile)
           con <- file(logfile)
+          cat("2\n")
           sink(con, append = TRUE, split = TRUE)
+          cat("3\n")
           sink(con, append = TRUE, type = "message")
+          cat("4\n")
           roxygen2::roxygenize('.', roclets = c('rd', 'collate', 'namespace'))
+          cat("5\n")
           sink()
+          cat("6\n")
           sink(type = "message")
+          cat("7\n")
           logs <- readLines(logfile)
           cat(logs)
           error_marker <- grep("Error:", logs)
