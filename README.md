@@ -161,3 +161,7 @@ Don't commit to branch...................................................Passed
 Mixed line ending........................................................Passed
 Don't commit common R artifacts......................(no files to check)Skipped
 ```
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/insightsengineering/r.pkg.template.svg)](https://starchart.cc/insightsengineering/r.pkg.template)
