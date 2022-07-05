@@ -77,7 +77,9 @@ jobs:
       - name: Generate man pages 📄
         run: |
           setwd("${{ github.event.repository.name }}")
+          cat("1")
           logfile <- "roxygen_${{ github.event.repository.name }}.log"
+          cat(logfile)
           con <- file(logfile)
           sink(con, append = TRUE, split = TRUE)
           sink(con, append = TRUE, type = "message")
@@ -85,8 +87,11 @@ jobs:
           sink()
           sink(type = "message")
           logs <- readLines(logfile)
+          cat(logs)
           error_marker <- grep("Error:", logs)
+          cat(error_marker)
           warnings_marker <- grep("Warning message", logs)
+          cat(warnings_marker)
           if (length(warnings_marker) > 0) {
             cat("⚠ One or more warnings were generated during the roxygen build:\n")
             cat(logs[warnings_marker[[1]]:length(logs)], sep = "\n")
@@ -97,6 +102,7 @@ jobs:
             cat(logs[error_marker[[1]]:length(logs)], sep = "\n")
             stop("Please 🙏 fix the errors shown below this message 👇")
           }
+          cat("done")
         shell: Rscript {0}
 
       - name: Roxygen check 🅾
