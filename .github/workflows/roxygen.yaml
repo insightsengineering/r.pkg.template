@@ -78,6 +78,8 @@ jobs:
         run: |
           setwd("${{ github.event.repository.name }}")
           cat("1\n")
+          print(roxygen2::roxygenize('.', roclets = c('rd', 'collate', 'namespace')))
+          cat("1.5\n")
           logfile <- "roxygen_${{ github.event.repository.name }}.log"
           cat(logfile)
           con <- file(logfile)
