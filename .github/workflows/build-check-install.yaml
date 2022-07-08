@@ -186,6 +186,7 @@ jobs:
           check_log <- "${{ github.event.repository.name }}.Rcheck/00check.log"
           if (file.exists(check_log)) {
             x <- tail(readLines(check_log), 1)
+            print(x)
             if (grepl("ERROR", x)) {
               writeLines(readLines(check_log))
               stop("❌ R CMD check has errors")
