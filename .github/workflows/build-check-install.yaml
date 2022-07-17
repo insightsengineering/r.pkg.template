@@ -50,8 +50,8 @@ on:
         required: false
         default: false
         type: boolean
-      check-note-blocklist:
-        description: Whether to check for NOTEs that should cause the pipeline to fail
+      enforce-note-blocklist:
+        description: Whether to check for specific NOTEs via regexes that should cause the pipeline to fail
         required: false
         default: false
         type: boolean
@@ -67,7 +67,11 @@ on:
         required: false
         default: ""
         type: string
-
+      additional-r-cmd-check-params:
+        description: Additional flags or parameters to add to R CMD check
+        required: false
+        default: "--as cran"
+        type: string
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
@@ -155,11 +159,13 @@ jobs:
             _R_CHECK_FORCE_SUGGESTS_="FALSE"
           }
           fi
-          if [[ -z "${{ env.NO_TESTS }}" ]]; then
-            R CMD check ${{ env.PKGBUILD }}
-          else
-            R CMD check --no-tests ${{ env.PKGBUILD }}
+          ADDITIONAL_PARAMS=${{ inputs.additional-r-cmd-check-params }}
+          if [[ ! -z "${{ env.NO_TESTS }}" ]]
+          then {
+            ADDITIONAL_PARAMS="${ADDITIONAL_PARAMS} --no-tests"
+          }
           fi
+          R CMD check ${ADDITIONAL_PARAMS} ${{ env.PKGBUILD }}
         shell: bash
         continue-on-error: true
         env:
@@ -194,7 +200,7 @@ jobs:
               writeLines(readLines(check_log))
               stop("⚠ R CMD check has warnings")
             }
-            if ("${{ inputs.check-note-blocklist }}" == "true") {
+            if ("${{ inputs.enforce-note-blocklist }}" == "true") {
               print("Checking notes...")
               regexes <- "${{ inputs.note-blocklist }}"
               regexes <- unlist(strsplit(regexes, split = "\n"))
