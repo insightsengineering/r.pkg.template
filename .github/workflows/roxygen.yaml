@@ -102,20 +102,19 @@ jobs:
       - name: Roxygen check 🅾
         run: |
           cd ${{ github.event.repository.name }}
-          git status -s
-          if [[ -n `git status -s | grep man` ]]
+          if [[ -n `git status -s | grep -E "man|DESCRIPTION"` ]]
           then {
             ROXYGEN_VERSION="$(Rscript -e 'packageVersion("roxygen2")' | awk '{print $NF}')"
             echo "🙈 Manuals are not up-to-date with roxygen comments!"
             echo "🔀 The following differences were noted:"
-            git diff man/*
+            git diff man/* DESCRIPTION
             if [ "${{ inputs.auto-update }}" == "true" ]
             then {
               echo "Regenerating man pages via auto-update"
               git config --global user.name "github-actions"
               git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
               git add man/* DESCRIPTION
-              git commit -m "[skip actions] ROxygen Man Pages Auto Update"
+              git commit -m "[skip actions] Roxygen Man Pages Auto Update"
               git pull origin ${GITHUB_HEAD_REF}
               git push -v origin ${GITHUB_HEAD_REF}
             }
