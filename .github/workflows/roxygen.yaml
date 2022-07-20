@@ -125,9 +125,9 @@ jobs:
               echo "--------------------------------------------------------------------"
               echo "ℹ roxygen2 version that was used in this workflow: $ROXYGEN_VERSION"
               echo "🙏 Please ensure that the 'RoxygenNote' field in the DESCRIPTION file matches this version"
+              exit 1
             }
             fi
-            exit 1
           } else {
             echo "💚 Manuals are up-to-date with roxygen comments"
           }
