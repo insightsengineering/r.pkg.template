@@ -143,7 +143,7 @@ jobs:
 
       - name: Post coverage report 🗞
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
-        uses: insightsengineering/coverage-action@v1
+        uses: insightsengineering/coverage-action@fix-v2
         with:
           path: coverage.xml
           threshold: 80
