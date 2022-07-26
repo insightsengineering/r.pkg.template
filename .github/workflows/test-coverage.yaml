@@ -148,10 +148,7 @@ jobs:
           path: coverage.xml
           threshold: 80
           fail: false
-          # publish: ${{ inputs.publish-coverage-report }}
-          publish: true
-          diff: true
-          coverage-reduction-failure: true
+          publish: ${{ inputs.publish-coverage-report }}
 
       - name: Upload report 🔼
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
