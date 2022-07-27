@@ -39,31 +39,6 @@ shiny_app <- function() {
   shiny::shinyApp(ui, server)
 }
 
-#' Personal greeting as a Shiny app
-#'
-#' @description Greet a person and appropriately capitalize their name
-#'              as a Shiny app.
-#'
-#' @return Shiny app showcasing the personal greeting feature.
-#' @export
-#'
-shiny_app_2 <- function() {
-  ui <- shiny::fluidPage(
-    shiny::textInput("name", "What is your name?"),
-    shiny::actionButton("greet", "Greet"),
-    shiny::textOutput("greeting")
-  )
-
-  server <- function(input, output, session) {
-    output$greeting <- shiny::renderText({
-      shiny::req(input$greet)
-      hello(shiny::isolate(input$name))
-    })
-  }
-
-  shiny::shinyApp(ui, server)
-}
-
 #' Personal greeting as a Plumber API
 #'
 #' @importFrom utils packageName

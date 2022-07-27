@@ -3,5 +3,4 @@
 export(hello)
 export(plumber_api)
 export(shiny_app)
-export(shiny_app_2)
 importFrom(utils,packageName)
