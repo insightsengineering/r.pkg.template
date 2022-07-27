@@ -151,7 +151,6 @@ jobs:
           # publish: ${{ inputs.publish-coverage-report }}
           publish: true
           diff: true
-          coverage-reduction-failure: true
 
       - name: Upload report 🔼
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
