@@ -148,8 +148,7 @@ jobs:
           path: coverage.xml
           threshold: 80
           fail: false
-          # publish: ${{ inputs.publish-coverage-report }}
-          publish: true
+          publish: ${{ inputs.publish-coverage-report }}
           diff: true
 
       - name: Upload report 🔼
