@@ -52,11 +52,18 @@ jobs:
       - name: Checkout Code 🛎
         uses: actions/checkout@v3
 
+      - name: Restore npm cache 💰
+        uses: actions/cache@v3
+        with:
+          key: npm-${{ runner.os }}-${{ github.job }}
+          restore-keys: |
+            npm-${{ runner.os }}-
+          path: node_modules
+
       - name: Setup NodeJS ☊
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: 'npm'
 
       - name: Install write-good ⏬
         run: npm install write-good glob
