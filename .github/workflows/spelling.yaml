@@ -92,7 +92,11 @@ jobs:
             const writeGood = require('write-good');
             const path = require('path');
             const fs = require('fs');
-            let files = "${{ steps.changed-files.outputs.all_changed_files }}".split(",");
+            const changedFiles = "${{ steps.changed-files.outputs.all_changed_files }}";
+            if (!changedFiles || changedFiles.length === 0) {
+              process.exit(0);
+            }
+            let files = changedFiles.split(",");
             let allSuggestions = [];
             files.forEach((file) => {
               if (fs.lstatSync(file).isFile() && 
@@ -125,3 +129,4 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           json-file-path: ./annotations.json
+          fail-on-error: false
