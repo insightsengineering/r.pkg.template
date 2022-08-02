@@ -89,18 +89,15 @@ jobs:
                   for (var i=0; i < annotations.length; i++) {
                     let ann = annotations[i];
                     ann['message'] = ann['reason'];
-                    ann['column'] = {};
-                    ann['column'].start = ann['col'];
-                    ann['column'].end = ann['col'];
-                    const line = ann['line'];
-                    delete ann['line'];
-                    ann['line'] = {};
-                    ann['line']['start'] = line;
-                    ann['line']['end'] = line;
-                    ann['level'] = 'notice';
-                    ann['path'] =  file;
+                    ann['start_column'] = ann['col'];
+                    ann['end_column'] = ann['col'];
+                    ann['start_line'] = ann['line'];
+                    ann['end_line'] = ann['line'];
+                    ann['annotation_level'] = 'notice';
+                    ann['path'] = file;
                     delete ann['reason'];
                     delete ann['col'];
+                    delete ann['line'];
                     allSuggestions.push(ann);
                   }
                 }
