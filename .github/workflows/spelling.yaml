@@ -124,7 +124,14 @@ jobs:
             });
             fs.writeFileSync('./annotations.json', JSON.stringify(allSuggestions, null, 2) , 'utf-8');
 
+      - name: Check whether annotations exist 💭
+        id: check-annotations
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "annotations.json"
+
       - name: Annotate files for grammar suggestions ✍️
+        if: steps.check-annotations.outputs.files_exists == 'true'
         uses: kibalabs/github-action-create-annotations@v0.2.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
