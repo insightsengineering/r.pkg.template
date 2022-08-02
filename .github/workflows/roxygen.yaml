@@ -65,6 +65,14 @@ jobs:
           path: ${{ github.event.repository.name }}
           fetch-depth: 0
 
+      - name: Restore SD cache 💰
+        uses: actions/cache@v3
+        with:
+          key: sd-${{ runner.os }}-${{ github.event.repository.name }}
+          restore-keys: |
+            sd-${{ runner.os }}-
+          path: ~/.staged.dependencies
+
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
         with:

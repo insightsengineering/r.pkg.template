@@ -28,3 +28,6 @@ vignettes/*.md
 vignettes/*.R
 coverage.*
 .vscode/
+node_modules/
+package-lock.json
+package.json
