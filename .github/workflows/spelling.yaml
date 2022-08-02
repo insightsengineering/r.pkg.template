@@ -106,11 +106,10 @@ jobs:
                 }
               }
             });
-            fs.writeFileSync('/tmp/annotations.json', JSON.stringify(allSuggestions, null, 2) , 'utf-8');
+            fs.writeFileSync('./annotations.json', JSON.stringify(allSuggestions, null, 2) , 'utf-8');
 
       - name: Annotate files for grammar suggestions ✍️
-        uses: Attest/annotations-action@v1.0.7
+        uses: kibalabs/github-action-create-annotations@v0.2.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          input: '/tmp/annotations.json'
-          title: Grammar Annotations
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          json-file-path: ./annotations.json
