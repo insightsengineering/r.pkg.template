@@ -62,22 +62,37 @@ jobs:
 
       - name: Setup NodeJS ☊
         uses: actions/setup-node@v3
+        id: npm-cache
         with:
           node-version: 18
 
-      - name: Install write-good ⏬
-        run: npm install write-good glob fs
+      - name: Install write-good and deps ⏬
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm install write-good fs
+        shell: bash
+
+      - name: Get changed files 🗞
+        id: changed-files
+        uses: tj-actions/changed-files@v24
+        with:
+          separator: ","
+          files: |
+            **.R
+            **.Rmd
+            **.Rnw
+            **.Rmarkdown
+            **.qmd
+            **.md
 
       - name: Run write-good 🏃‍♀️
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const globber = require('glob');
             const writeGood = require('write-good');
             const path = require('path');
             const fs = require('fs');
-            let files = globber.sync('**/*.@(Rd|Rmd|qmd|md)');
+            let files = "${{ steps.changed-files.outputs.all_changed_files }}".split(",");
             let allSuggestions = [];
             files.forEach((file) => {
               if (fs.lstatSync(file).isFile() && 
