@@ -58,6 +58,12 @@ jobs:
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
 
+      - name: Restore SD cache 💰
+        uses: actions/cache@v3
+        with:
+          key: sd-${{ runner.os }}-${{ github.event.repository.name }}
+          path: ~/.staged.dependencies
+
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
         with:

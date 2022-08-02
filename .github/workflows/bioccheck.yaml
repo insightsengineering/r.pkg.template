@@ -78,6 +78,12 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
 
+      - name: Restore SD cache 💰
+        uses: actions/cache@v3
+        with:
+          key: sd-${{ runner.os }}-${{ github.event.repository.name }}
+          path: ~/.staged.dependencies
+
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
         with:

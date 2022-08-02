@@ -40,3 +40,73 @@ jobs:
         uses: insightsengineering/r-spellcheck-action@v2
         with:
           exclude: inst/extdata/*
+
+  grammar:
+    name: Check grammar 🔡
+    runs-on: ubuntu-latest
+    if: >
+      !contains(github.event.commits[0].message, '[skip spelling]')
+        && github.event.pull_request.draft == false
+
+    steps:
+      - name: Checkout Code 🛎
+        uses: actions/checkout@v3
+
+      - name: Restore npm cache 💰
+        uses: actions/cache@v3
+        with:
+          key: npm-${{ runner.os }}-${{ github.job }}
+          restore-keys: |
+            npm-${{ runner.os }}-
+          path: node_modules
+
+      - name: Setup NodeJS ☊
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install write-good ⏬
+        run: npm install write-good glob fs
+
+      - name: Run write-good 🏃‍♀️
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const globber = require('glob');
+            const writeGood = require('write-good');
+            const path = require('path');
+            const fs = require('fs');
+            let files = globber.sync('**/*.@(Rd|Rmd|qmd|md)');
+            let allSuggestions = [];
+            files.forEach((file) => {
+              if (fs.lstatSync(file).isFile() && 
+                  !path.dirname(file).startsWith("node_modules")) {
+                const contents = fs.readFileSync(file, 'utf8');
+                const suggestions = writeGood(contents);
+                const annotations = writeGood.annotate(contents, suggestions, true);
+                if (annotations.length) {
+                  for (var i=0; i < annotations.length; i++) {
+                    let ann = annotations[i];
+                    ann['message'] = ann['reason'];
+                    ann['start_column'] = ann['col'];
+                    ann['end_column'] = ann['col'];
+                    ann['start_line'] = ann['line'];
+                    ann['end_line'] = ann['line'];
+                    ann['annotation_level'] = 'notice';
+                    ann['path'] = file;
+                    delete ann['reason'];
+                    delete ann['col'];
+                    delete ann['line'];
+                    allSuggestions.push(ann);
+                  }
+                }
+              }
+            });
+            fs.writeFileSync('./annotations.json', JSON.stringify(allSuggestions, null, 2) , 'utf-8');
+
+      - name: Annotate files for grammar suggestions ✍️
+        uses: kibalabs/github-action-create-annotations@v0.2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          json-file-path: ./annotations.json
