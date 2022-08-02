@@ -62,7 +62,7 @@ jobs:
         run: npm install write-good glob
 
       - name: Run write-good 🏃‍♀️
-        uses: actions/github-script@6
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
