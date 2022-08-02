@@ -62,8 +62,6 @@ jobs:
         uses: actions/cache@v3
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
-          restore-keys: |
-            sd-${{ runner.os }}-
           path: ~/.staged.dependencies
 
       - name: Run Staged dependencies 🎦
