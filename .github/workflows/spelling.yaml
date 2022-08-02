@@ -66,7 +66,7 @@ jobs:
           node-version: 18
 
       - name: Install write-good ⏬
-        run: npm install write-good glob
+        run: npm install write-good glob fs
 
       - name: Run write-good 🏃‍♀️
         uses: actions/github-script@v6
@@ -76,6 +76,7 @@ jobs:
             const globber = require('glob');
             const writeGood = require('write-good');
             const path = require('path');
+            const fs = require('fs');
             let files = globber.sync('**/*.@(Rd|Rmd|qmd|md)');
             let allSuggestions = [];
             files.forEach((file) => {
