@@ -1,0 +1,121 @@
+---
+name: Grammar 📓
+
+on:
+  push:
+    branches:
+      - main
+      - pre-release
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+    branches:
+      - main
+      - pre-release
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: grammar-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  grammar:
+    name: Check 📝
+    runs-on: ubuntu-latest
+    if: >
+      !contains(github.event.commits[0].message, '[skip grammar]')
+        && github.event.pull_request.draft == false
+
+    steps:
+      - name: Checkout Code 🛎
+        uses: actions/checkout@v3
+
+      - name: Restore npm cache 💰
+        uses: actions/cache@v3
+        with:
+          key: npm-${{ runner.os }}-${{ github.job }}
+          restore-keys: |
+            npm-${{ runner.os }}-
+          path: node_modules
+
+      - name: Setup NodeJS ☊
+        uses: actions/setup-node@v3
+        id: npm-cache
+        with:
+          node-version: 18
+
+      - name: Install write-good and deps ⏬
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm install write-good fs
+        shell: bash
+
+      - name: Get changed files 🗞
+        id: changed-files
+        uses: tj-actions/changed-files@v24
+        with:
+          separator: ","
+          files: |
+            **.R
+            **.Rmd
+            **.Rnw
+            **.Rmarkdown
+            **.qmd
+            **.md
+
+      - name: Run write-good 🏃‍♀️
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const writeGood = require('write-good');
+            const path = require('path');
+            const fs = require('fs');
+            const changedFiles = "${{ steps.changed-files.outputs.all_changed_files }}";
+            if (!changedFiles || changedFiles.length === 0) {
+              process.exit(0);
+            }
+            let files = changedFiles.split(",");
+            let allSuggestions = [];
+            files.forEach((file) => {
+              if (fs.lstatSync(file).isFile() && 
+                  !path.dirname(file).startsWith("node_modules")) {
+                const contents = fs.readFileSync(file, 'utf8');
+                const suggestions = writeGood(contents);
+                const annotations = writeGood.annotate(contents, suggestions, true);
+                if (annotations.length) {
+                  for (var i=0; i < annotations.length; i++) {
+                    let ann = annotations[i];
+                    ann['message'] = ann['reason'];
+                    ann['start_column'] = ann['col'];
+                    ann['end_column'] = ann['col'];
+                    ann['start_line'] = ann['line'];
+                    ann['end_line'] = ann['line'];
+                    ann['annotation_level'] = 'notice';
+                    ann['path'] = file;
+                    delete ann['reason'];
+                    delete ann['col'];
+                    delete ann['line'];
+                    allSuggestions.push(ann);
+                  }
+                }
+              }
+            });
+            fs.writeFileSync('./annotations.json', JSON.stringify(allSuggestions, null, 2) , 'utf-8');
+
+      - name: Check whether annotations exist 💭
+        id: check-annotations
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "annotations.json"
+
+      - name: Annotate files for grammar suggestions ✍️
+        if: steps.check-annotations.outputs.files_exists == 'true'
+        uses: kibalabs/github-action-create-annotations@v0.2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          json-file-path: ./annotations.json
+          fail-on-error: false

@@ -2,6 +2,7 @@ Type: Package
 Package: r.pkg.template
 Title: R Package Template
 Version: 0.1.0.9056
+Date: 2022-08-08
 Authors@R:
     person("insightsengineering", , , "insightsengineering@example.com", role = c("aut", "cre"))
 Description: R package template with GitHub Actions workflows included.
