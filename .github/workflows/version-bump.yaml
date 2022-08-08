@@ -44,7 +44,7 @@ jobs:
         run: desc::desc_bump_version(5, normalize = TRUE)
         shell: Rscript {0}
 
-      - name: Remove ending .0 version
+      - name: Remove ending .0 version 🙅🏼‍♀️
         run: |
           get_version_components <- function(x) {
             as.numeric(strsplit(format(x), "[-\\.]")[[1]])
@@ -52,6 +52,10 @@ jobs:
           ver_str <- desc::desc_get_version()
           ver <- get_version_components(ver_str)
           if (length(ver) > 3) desc::desc_set_version(gsub("[.]0$", "", ver_str))
+        shell: Rscript {0}
+
+      - name: Update Date field 📅
+        run: if (desc::desc_has_fields("Date")) desc::desc_set("Date", Sys.Date())
         shell: Rscript {0}
 
       - name: Bump version in NEWS.md 📰
