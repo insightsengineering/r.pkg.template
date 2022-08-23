@@ -7,7 +7,6 @@ on:
       - "v*"
     branches:
       - main
-      - pre-release
   pull_request:
     types:
       - opened
@@ -16,7 +15,6 @@ on:
       - ready_for_review
     branches:
       - main
-      - pre-release
   workflow_dispatch:
   workflow_call:
     secrets:

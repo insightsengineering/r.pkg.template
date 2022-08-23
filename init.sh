@@ -34,9 +34,13 @@ read -r owner
 echo -n "Enter your package's name here (eg. awesomeR): "
 read -r pkg
 
-echo -n "Do you want to retain the template's git history? Enter either 'yes' or 'no' (defaults to 'no'): "
+echo -n "Retain the template's git history? Enter either 'yes' or 'no' (defaults to 'no'): "
 read -r retain_git_history
 retain_git_history=${retain_git_history:-"no"}
+
+echo -n "Use shared workflows or use the original workflows? Enter 'yes' to use shared workflows (recommended) and 'no' to use the original workflows (defaults to 'yes'): "
+read -r use_shared_workflows
+use_shared_workflows=${use_shared_workflows:-"yes"}
 
 gecho "Initializing your package. Standby..."
 
@@ -64,9 +68,30 @@ grep -rl --exclude-dir=.git "68416928+insights-engineering-bot@users.noreply.git
 grep -rl --exclude-dir=.git "insights-engineering-bot" .github/workflows/ | \
     xargs perl -p -i -e 's/insights-engineering-bot/github-actions/g'
 
-oecho "Updating file names and removing unneeded files"
+oecho "Updating file names and removing unnecessary files"
 mv r.pkg.template.Rproj "${pkg}.Rproj"
-rm .github/CODEOWNERS
+rm -rf \
+    .github/CODEOWNERS \
+    .github/ISSUE_TEMPLATE \
+    .github/CONTRIBUTING.md \
+    .github/PULL_REQUEST_TEMPLATE.md \
+    .github/CODE_OF_CONDUCT.md \
+    SECURITY.md
+oecho "You've chosen '$use_shared_workflows' for using the shared workflows"
+if [ "$use_shared_workflows" == "yes" ];
+then {
+    oecho "Removing the original workflows and using the shared workflows"
+    rm -rf .github/workflows/*.yaml
+    for shared in check docs release
+    do {
+        mv .github/workflows/$shared.yaml.shared .github/workflows/$shared.yaml
+    }
+    done
+} else {
+    oecho "Retaining the original workflows and removing the shared workflows"
+    rm -rf .github/workflows/*.yaml.shared
+}
+fi
 
 oecho "Overwriting the README.md file"
 echo -e "# ${pkg}\n\nShort description of the package" > README.md

@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - pre-release
   workflow_dispatch:
   workflow_call:
     secrets:
@@ -34,24 +33,9 @@ jobs:
         with:
           token: ${{ secrets.REPO_GITHUB_TOKEN }}
 
-      - name: Bump version in DESCRIPTION (main) 📜
+      - name: Bump version in DESCRIPTION 📜
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         run: desc::desc_bump_version("dev", normalize = TRUE)
-        shell: Rscript {0}
-
-      - name: Bump version in DESCRIPTION (pre-release) 📜
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/pre-release' }}
-        run: desc::desc_bump_version(5, normalize = TRUE)
-        shell: Rscript {0}
-
-      - name: Remove ending .0 version 🙅🏼‍♀️
-        run: |
-          get_version_components <- function(x) {
-            as.numeric(strsplit(format(x), "[-\\.]")[[1]])
-          }
-          ver_str <- desc::desc_get_version()
-          ver <- get_version_components(ver_str)
-          if (length(ver) > 3) desc::desc_set_version(gsub("[.]0$", "", ver_str))
         shell: Rscript {0}
 
       - name: Update Date field 📅
