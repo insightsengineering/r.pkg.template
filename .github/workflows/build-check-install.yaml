@@ -122,6 +122,7 @@ jobs:
           sessionInfo()
           as.data.frame(installed.packages()[, c("LibPath", "Version")])
           # Temporarily until the package has been published to CRAN/BioC
+          setwd("${{ github.event.repository.name }}")
           x <- desc::desc_del("Remotes")
         shell: Rscript {0}
 
