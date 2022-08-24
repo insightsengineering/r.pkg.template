@@ -121,6 +121,8 @@ jobs:
         run: |
           sessionInfo()
           as.data.frame(installed.packages()[, c("LibPath", "Version")])
+          # Temporarily until the package has been published to CRAN/BioC
+          x <- desc::desc_del("Remotes")
         shell: Rscript {0}
 
       - name: Build R package 🏗
@@ -150,6 +152,28 @@ jobs:
           fi
         shell: bash
 
+      - name: Replace testthat.R for test reporting 🎚
+        run: |
+          cd ${{ github.event.repository.name }}
+          if [ -f "tests/testthat.R" ]; then {
+            # Overwrite testthat.R for JUnit XML reporting
+            cat > tests/testthat.R <<EOF
+            pkg_name <- "${{ github.event.repository.name }}"
+            if (requireNamespace("testthat", quietly = TRUE)) {
+              library(testthat)
+              reporter <- MultiReporter$new(list(
+                CheckReporter$new(),
+                JunitReporter$new(file = "junit-result.xml")
+              ))
+              test_results <- test_check(pkg_name, reporter = reporter)
+              saveRDS(test_results, "unit_testing_results.rds")
+            }
+          EOF
+          }
+          cat tests/testthat.R
+          fi
+        shell: bash
+
       - name: Run R CMD check 🏁
         run: |
           if [ "${{ inputs.skip-r-cmd-check }}" == "true" ]
@@ -169,6 +193,11 @@ jobs:
             ADDITIONAL_PARAMS="${ADDITIONAL_PARAMS} --no-tests"
           }
           fi
+          Rscript - <<EOF
+          if (!requireNamespace("xml2", quietly = TRUE)) {
+            install.packages("xml2", repos = "https://cloud.r-project.org", quiet = TRUE)
+          }
+          EOF
           R CMD check ${ADDITIONAL_PARAMS} ${{ env.PKGBUILD }}
         shell: bash
         continue-on-error: true
