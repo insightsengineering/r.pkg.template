@@ -194,7 +194,7 @@ jobs:
           }
           fi
           Rscript - <<EOF
-          if (!requireNamespace("xml2", quietly = TRUE)) {
+          if (!require("xml2")) {
             install.packages("xml2", repos = "https://cloud.r-project.org", quiet = TRUE)
           }
           EOF
