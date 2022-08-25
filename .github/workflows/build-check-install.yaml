@@ -123,6 +123,12 @@ jobs:
           as.data.frame(installed.packages()[, c("LibPath", "Version")])
         shell: Rscript {0}
 
+      - name: Remove `Remotes` field from DESCRIPTION file
+        run: |
+          desc::desc_del("Remotes")
+        shell: Rscript {0}
+        working-directory: ${{ github.event.repository.name }}
+
       - name: Build R package 🏗
         run: |
           R CMD build ${{ github.event.repository.name }}
