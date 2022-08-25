@@ -133,11 +133,12 @@ jobs:
             cat > tests/testthat.R <<EOF
             pkg_name <- "${{ github.event.repository.name }}"
             if (requireNamespace("testthat", quietly = TRUE)) {
-              reporter <- testthat::MultiReporter$new(list(
-                testthat::CheckReporter$new(),
-                testthat::JunitReporter$new(file = "junit-result.xml")
+              library(testthat)
+              reporter <- MultiReporter$new(list(
+                CheckReporter$new(),
+                JunitReporter$new(file = "junit-result.xml")
               ))
-              testthat::test_check(pkg_name, reporter = reporter)
+              test_check(pkg_name, reporter = reporter)
             }
           EOF
           }
