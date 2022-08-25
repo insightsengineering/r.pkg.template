@@ -123,7 +123,7 @@ jobs:
           as.data.frame(installed.packages()[, c("LibPath", "Version")])
         shell: Rscript {0}
 
-      - name: Remove `Remotes` field from DESCRIPTION file
+      - name: Remove `Remotes` field from DESCRIPTION file 🏖
         run: |
           desc::desc_del("Remotes")
         shell: Rscript {0}
