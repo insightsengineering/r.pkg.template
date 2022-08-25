@@ -122,40 +122,12 @@ jobs:
           sessionInfo()
           as.data.frame(installed.packages()[, c("LibPath", "Version")])
           # Temporarily until the package has been published to CRAN/BioC
-          setwd("${{ github.event.repository.name }}")
           x <- desc::desc_del("Remotes")
         shell: Rscript {0}
-
-      - name: Build R package 🏗
-        run: |
-          R CMD build ${{ github.event.repository.name }}
-          echo "PKGBUILD=$(echo *.tar.gz)" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Set TESTING_DEPTH ⚙
-        env:
-          COMMIT_NEWEST_MESSAGE: ${{ github.event.head_commit.message }}
-          COMMIT_OLDEST_MESSAGE: ${{ github.event.commits[0].message }}
-        run: |
-          cd ${{ github.event.repository.name }}
-          # set TESTING_DEPTH for PR
-          if [[ ! -z "${GITHUB_HEAD_REF}" ]]; then
-            TESTING_DEPTH=3
-            echo "TESTING_DEPTH=3" >> $GITHUB_ENV
-            COMMIT_NEWEST_MESSAGE=$(git log --format=%B -n 1 ${{ github.event.after }})
-          fi
-          if [[ $COMMIT_NEWEST_MESSAGE == *"[skip tests]"* ]]; then
-            echo "NO_TESTS=1" >> $GITHUB_ENV
-          fi
-          # default TESTING_DEPTH
-          if [[ -z "${TESTING_DEPTH}" ]]; then
-            echo "TESTING_DEPTH=1" >> $GITHUB_ENV
-          fi
-        shell: bash
+        working-directory: ${{ github.event.repository.name }}
 
       - name: Replace testthat.R for test reporting 🎚
         run: |
-          cd ${{ github.event.repository.name }}
           if [ -f "tests/testthat.R" ]; then {
             # Overwrite testthat.R for JUnit XML reporting
             cat > tests/testthat.R <<EOF
@@ -174,6 +146,34 @@ jobs:
           cat tests/testthat.R
           fi
         shell: bash
+        working-directory: ${{ github.event.repository.name }}
+
+      - name: Build R package 🏗
+        run: |
+          R CMD build ${{ github.event.repository.name }}
+          echo "PKGBUILD=$(echo ${{ github.event.repository.name }}_*.tar.gz)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Set TESTING_DEPTH ⚙
+        env:
+          COMMIT_NEWEST_MESSAGE: ${{ github.event.head_commit.message }}
+          COMMIT_OLDEST_MESSAGE: ${{ github.event.commits[0].message }}
+        run: |
+          # set TESTING_DEPTH for PR
+          if [[ ! -z "${GITHUB_HEAD_REF}" ]]; then
+            TESTING_DEPTH=3
+            echo "TESTING_DEPTH=3" >> $GITHUB_ENV
+            COMMIT_NEWEST_MESSAGE=$(git log --format=%B -n 1 ${{ github.event.after }})
+          fi
+          if [[ $COMMIT_NEWEST_MESSAGE == *"[skip tests]"* ]]; then
+            echo "NO_TESTS=1" >> $GITHUB_ENV
+          fi
+          # default TESTING_DEPTH
+          if [[ -z "${TESTING_DEPTH}" ]]; then
+            echo "TESTING_DEPTH=1" >> $GITHUB_ENV
+          fi
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}
 
       - name: Run R CMD check 🏁
         run: |
@@ -269,11 +269,20 @@ jobs:
           R CMD INSTALL ${{ env.PKGBUILD }}
         shell: bash
 
+      - name: Rebuild R package 🏗
+        run: |
+          # Undo changes to DESCRIPTION and tests/testthat.R
+          git checkout DESCRIPTION tests/testthat.R
+          R CMD build .
+          echo "PKGBUILD=$(echo ${{ github.event.repository.name }}_*.tar.gz)" >> $GITHUB_ENV
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}
+
       - name: Upload package build ⤴
         if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v3
         with:
-          path: ${{ env.PKGBUILD }}
+          path: ${{ github.event.repository.name }}/${{ env.PKGBUILD }}
           name: ${{ env.PKGBUILD }}
 
   upload-release-assets:
