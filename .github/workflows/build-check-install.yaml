@@ -134,9 +134,9 @@ jobs:
             pkg_name <- "${{ github.event.repository.name }}"
             if (requireNamespace("testthat", quietly = TRUE)) {
               library(testthat)
-              reporter <- MultiReporter$new(list(
-                CheckReporter$new(),
-                JunitReporter$new(file = "junit-result.xml")
+              reporter <- MultiReporter\$new(list(
+                CheckReporter\$new(),
+                JunitReporter\$new(file = "junit-result.xml")
               ))
               test_check(pkg_name, reporter = reporter)
             }
