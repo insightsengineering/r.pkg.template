@@ -123,6 +123,8 @@ jobs:
           as.data.frame(installed.packages()[, c("LibPath", "Version")])
           # Temporarily until the package has been published to CRAN/BioC
           x <- desc::desc_del("Remotes")
+          # Add the xml2 package to the Suggests field
+          x <- desc::desc_set_dep("xml2", "Suggests")
         shell: Rscript {0}
         working-directory: ${{ github.event.repository.name }}
 
