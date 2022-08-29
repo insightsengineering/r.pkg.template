@@ -70,6 +70,11 @@ on:
         required: false
         default: ""
         type: string
+      disable-unit-test-reports:
+        description: Do not produce unit test reports
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
@@ -121,14 +126,17 @@ jobs:
         run: |
           sessionInfo()
           as.data.frame(installed.packages()[, c("LibPath", "Version")])
-          # Temporarily until the package has been published to CRAN/BioC
-          x <- desc::desc_del("Remotes")
-          # Add the xml2 package to the Suggests field
-          x <- desc::desc_set_dep("xml2", "Suggests")
+          if (grepl("--as-cran", "${{ inputs.additional-r-cmd-check-params }}", fixed = TRUE)) {
+            x <- desc::desc_del("Remotes")
+          }
+          if ("${{ inputs.disable-unit-test-reports }}" != "true") {
+            x <- desc::desc_set_dep("xml2", "Suggests")
+          }
         shell: Rscript {0}
         working-directory: ${{ github.event.repository.name }}
 
       - name: Replace testthat.R for test reporting 🎚
+        if: inputs.disable-unit-test-reports != 'true'
         run: |
           if [ -f "tests/testthat.R" ]; then {
             # Overwrite testthat.R for JUnit XML reporting
@@ -196,8 +204,10 @@ jobs:
           }
           fi
           Rscript - <<EOF
-          if (!require("xml2")) {
-            install.packages("xml2", repos = "https://cloud.r-project.org", quiet = TRUE)
+          if ("${{ inputs.disable-unit-test-reports }}" != "true") {
+            if (!require("xml2")) {
+              install.packages("xml2", repos = "https://cloud.r-project.org", quiet = TRUE)
+            }
           }
           EOF
           R CMD check ${ADDITIONAL_PARAMS} ${{ env.PKGBUILD }}
@@ -271,6 +281,7 @@ jobs:
         shell: bash
 
       - name: Rebuild R package 🏗
+        if: inputs.disable-unit-test-reports != 'true'
         run: |
           # Undo changes to DESCRIPTION and tests/testthat.R
           git checkout DESCRIPTION tests/testthat.R
