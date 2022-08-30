@@ -162,7 +162,6 @@ Mixed line ending........................................................Passed
 Don't commit common R artifacts......................(no files to check)Skipped
 ```
 
-
 [![Stargazers repo roster for @insightsengineering/r.pkg.template](https://reporoster.com/stars/insightsengineering/r.pkg.template)](https://github.com/insightsengineering/r.pkg.template/stargazers)
 [![Forkers repo roster for @insightsengineering/r.pkg.template](https://reporoster.com/forks/insightsengineering/r.pkg.template)](https://github.com/insightsengineering/r.pkg.template/network/members)
 
