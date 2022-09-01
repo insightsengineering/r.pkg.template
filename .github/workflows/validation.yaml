@@ -64,11 +64,10 @@ jobs:
           path: ~/.staged.dependencies
 
       - name: Run Staged dependencies 🎦
-        uses: insightsengineering/staged-dependencies-action@v1
+        uses: insightsengineering/staged-dependencies-action@main
         with:
+          enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
-        env:
-          SD_ENABLE_CHECK: ${{ inputs.enable-staged-dependencies-check }}
 
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v1

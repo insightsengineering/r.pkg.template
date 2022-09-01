@@ -83,13 +83,13 @@ jobs:
           path: ~/.staged.dependencies
 
       - name: Run Staged dependencies 🎦
-        uses: insightsengineering/staged-dependencies-action@v1
-        with:
-          run-system-dependencies: ${{ inputs.install-system-dependencies }}
+        uses: insightsengineering/staged-dependencies-action@main
         env:
           GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
-          SD_REPO_PATH: ${{ github.event.repository.name }}
-          SD_ENABLE_CHECK: ${{ inputs.enable-staged-dependencies-check }}
+        with:
+          path: ${{ github.event.repository.name }}
+          enable-check: ${{ inputs.enable-staged-dependencies-check }}
+          run-system-dependencies: ${{ inputs.install-system-dependencies }}
 
       - name: Run BiocCheck ☣️
         uses: insightsengineering/bioc-check-action@v1
