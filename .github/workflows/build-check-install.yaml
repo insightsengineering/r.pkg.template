@@ -284,7 +284,10 @@ jobs:
         if: inputs.disable-unit-test-reports != 'true'
         run: |
           # Undo changes to DESCRIPTION and tests/testthat.R
-          git checkout DESCRIPTION tests/testthat.R
+          git checkout DESCRIPTION 
+          if [ -f "tests/testthat.R" ]; then
+            git checkout tests/testthat.R
+          fi
           R CMD build .
           echo "PKGBUILD=$(echo ${{ github.event.repository.name }}_*.tar.gz)" >> $GITHUB_ENV
         shell: bash
