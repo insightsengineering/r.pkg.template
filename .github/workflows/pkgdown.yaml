@@ -79,7 +79,7 @@ jobs:
           path: ~/.staged.dependencies
 
       - name: Run Staged dependencies 🎦
-        uses: insightsengineering/staged-dependencies-action@main
+        uses: insightsengineering/staged-dependencies-action@v1
         env:
           GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
         with:
