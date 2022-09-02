@@ -56,12 +56,20 @@ jobs:
         id: branch-name
         uses: tj-actions/branch-names@v5
 
-      - name: Checkout repo 🛎
+      - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v3
+        if: github.event_name == 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
-          fetch-depth: 0
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v3
+        if: github.event_name != 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
 
       - name: Restore SD cache 💰
         uses: actions/cache@v3
