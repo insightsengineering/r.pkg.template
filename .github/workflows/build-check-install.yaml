@@ -54,14 +54,15 @@ on:
         default: false
         type: boolean
       note-blocklist:
-        description: List of regular expressions appearing in NOTEs that should cause the pipeline to fail
-        # Example usage:
-        # note-blocklist: |
-        #   checking package dependencies ... NOTE( )+Depends: includes the non-default packages
-        #   checking R code for possible problems ... NOTE( )+.*: no visible global function definition for
-        #   checking for unstated dependencies in vignettes ... NOTE( )+\'.*\' import not declared from
-        #   checking dependencies in R code ... NOTE( )+Namespace in Imports field not imported from
-        #   checking installed package size ... NOTE( )+installed size is
+        description: |
+          List of regular expressions appearing in NOTEs that should cause the pipeline to fail.
+          Example usage:
+          note-blocklist: |
+            checking package dependencies ... NOTE( )+Depends: includes the non-default packages
+            checking R code for possible problems ... NOTE( )+.*: no visible global function definition for
+            checking for unstated dependencies in vignettes ... NOTE( )+\'.*\' import not declared from
+            checking dependencies in R code ... NOTE( )+Namespace in Imports field not imported from
+            checking installed package size ... NOTE( )+installed size is
         required: false
         default: ""
         type: string
@@ -75,6 +76,16 @@ on:
         required: false
         default: false
         type: boolean
+      additional-env-vars:
+        description: |
+          Extra environment variables, as a key=value map, with each map on a new line.
+          Example usage:
+          additional-env-vars: |
+            ABC=123
+            XYZ=456
+        required: false
+        default: ""
+        type: string
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
@@ -201,6 +212,14 @@ jobs:
           if [[ ! -z "${{ env.NO_TESTS }}" ]]
           then {
             ADDITIONAL_PARAMS="${ADDITIONAL_PARAMS} --no-tests"
+          }
+          fi
+          if [ "${{ inputs.additional-env-vars }}" != "" ]
+          then {
+            echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
+            set -a
+            . /tmp/dotenv.env
+            set +a
           }
           fi
           Rscript - <<EOF
