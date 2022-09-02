@@ -163,6 +163,7 @@ jobs:
           fail: false
           publish: ${{ inputs.publish-coverage-report }}
           diff: true
+        continue-on-error: true
 
       - name: Upload report 🔼
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
@@ -170,6 +171,7 @@ jobs:
         with:
           name: coverage-report
           path: "coverage-report.html"
+        continue-on-error: true
 
   covtracer:
     name: Covtracer 🐄
