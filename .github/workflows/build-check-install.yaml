@@ -217,9 +217,8 @@ jobs:
           if [ "${{ inputs.additional-env-vars }}" != "" ]
           then {
             echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
-            source /tmp/dotenv.env
-            echo "Exporting the followng env var: $(cat /tmp/dotenv.env)"
-            export $(cut -d= -f1 /tmp/dotenv.env)
+            echo "Exporting the following env vars: $(cat /tmp/dotenv.env)"
+            export $(tr '\n' ' ' < /tmp/dotenv.env)
           }
           fi
           Rscript - <<EOF
