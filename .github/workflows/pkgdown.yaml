@@ -47,6 +47,16 @@ on:
         required: false
         default: false
         type: boolean
+      additional-env-vars:
+        description: |
+          Extra environment variables, as a 'key=value' pair, with each pair on a new line.
+          Example usage:
+          additional-env-vars: |
+            ABC=123
+            XYZ=456
+        required: false
+        default: ""
+        type: string
 
 concurrency:
   group: docs-${{ github.event.pull_request.number || github.ref }}
@@ -98,16 +108,21 @@ jobs:
 
       - name: Install R package 🚧
         run: |
-          setwd("${{ github.event.repository.name }}")
           if (file.exists("renv.lock")) renv::restore()
           install.packages(".", repos=NULL, type="source")
         shell: Rscript {0}
+        working-directory: ${{ github.event.repository.name }}
 
       - name: Build docs 🏗
         if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
         run: |
           repo="${{ github.event.repository.name }}"
-          cd $repo
+          if [ "${{ inputs.additional-env-vars }}" != "" ]
+          then {
+            echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
+            export $(tr '\n' ' ' < /tmp/dotenv.env)
+          }
+          fi
           Rscript - <<EOF 2>&1 | tee pkgdown_${repo}.log
           if (file.exists("renv.lock")) renv::restore()
           pkgdown::build_site(devel = TRUE)
@@ -124,6 +139,7 @@ jobs:
           }
           fi
         shell: bash
+        working-directory: ${{ github.event.repository.name }}
 
       - name: Create documentation artifact 📂
         if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
@@ -143,7 +159,6 @@ jobs:
       - name: Publish docs 📢
         if: github.event_name == 'push'
         run: |
-          cd ${{ github.event.repository.name }}
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           BRANCH_OR_TAG="${GITHUB_REF##*/}"
@@ -156,6 +171,7 @@ jobs:
           )
           EOF
         shell: bash
+        working-directory: ${{ github.event.repository.name }}
 
   multi-version-docs:
     name: Multi-version docs 📑

@@ -88,7 +88,6 @@ jobs:
 
       - name: Generate man pages 📄
         run: |
-          setwd("${{ github.event.repository.name }}")
           logfile <- "roxygen_${{ github.event.repository.name }}.log"
           con <- file(logfile)
           sink(con, append = TRUE, split = TRUE)
@@ -110,10 +109,10 @@ jobs:
             stop("Please 🙏 fix the errors shown below this message 👇")
           }
         shell: Rscript {0}
+        working-directory: ${{ github.event.repository.name }}
 
       - name: Roxygen check 🅾
         run: |
-          cd ${{ github.event.repository.name }}
           if [[ -n `git status -s | grep -E "man|DESCRIPTION"` ]]
           then {
             ROXYGEN_VERSION="$(Rscript -e 'packageVersion("roxygen2")' | awk '{print $NF}')"
@@ -145,3 +144,4 @@ jobs:
           }
           fi
         shell: bash
+        working-directory: ${{ github.event.repository.name }}
