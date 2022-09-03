@@ -171,13 +171,16 @@ jobs:
         id: check_coverage_reports
         uses: andstor/file-existence-action@v1
         with:
-          files: "coverage.xml, coverage.txt, coverage-report.html"
+          files: >-
+            ${{ github.event.repository.name }}/coverage.xml,
+            ${{ github.event.repository.name }}/coverage.txt,
+            ${{ github.event.repository.name }}/coverage-report.html"
 
       - name: Post coverage report 🗞
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
         uses: insightsengineering/coverage-action@v2
         with:
-          path: coverage.xml
+          path: ${{ github.event.repository.name }}/coverage.xml
           threshold: 80
           fail: false
           publish: ${{ inputs.publish-coverage-report }}
@@ -189,7 +192,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: coverage-report
-          path: "coverage-report.html"
+          path: "${{ github.event.repository.name }}/coverage-report.html"
         continue-on-error: true
 
   covtracer:
