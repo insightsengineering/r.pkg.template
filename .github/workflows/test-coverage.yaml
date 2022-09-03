@@ -41,6 +41,16 @@ on:
         required: false
         type: boolean
         default: false
+      additional-env-vars:
+        description: |
+          Extra environment variables, as a 'key=value' pair, with each pair on a new line.
+          Example usage:
+          additional-env-vars: |
+            ABC=123
+            XYZ=456
+        required: false
+        default: ""
+        type: string
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -98,27 +108,35 @@ jobs:
 
       - name: Install R package 🚧
         run: |
-          setwd("${{ github.event.repository.name }}")
           if (file.exists("renv.lock")) renv::restore()
           install.packages(".", repos=NULL, type="source")
         shell: Rscript {0}
+        working-directory: ${{ github.event.repository.name }}
 
       - name: Install covr 🎪
-        run: if (!require("covr")) install.packages("covr")
+        run: |
+          if (file.exists("renv.lock")) {
+            renv::restore()
+            if (!require("covr")) renv::install("covr")
+          }
+          if (!require("covr")) install.packages("covr")
         shell: Rscript {0}
 
       - name: Run coverage 👟
         run: |
-          oldwd <- getwd()
-          setwd("${{ github.event.repository.name }}")
           if (file.exists("renv.lock")) {
             renv::restore()
           }
-          setwd(oldwd)
+          # Load extra env vars
+          extra_env_vars <- "${{ inputs.additional-env-vars }}"
+          if (extra_env_vars != "") {
+            writeLines(extra_env_vars, "/tmp/dotenv.env")
+            if (!require("dotenv")) install.packages("dotenv", repos = "https://cloud.r-project.org")
+            dotenv::load_dot_env("/tmp/dotenv.env")
+          }
           tryCatch(
             expr = {
                 x <- covr::package_coverage(
-                  path="${{ github.event.repository.name }}",
                   clean = FALSE,
                   quiet = FALSE
                 )
@@ -147,6 +165,7 @@ jobs:
             }
           )
         shell: Rscript {0}
+        working-directory: ${{ github.event.repository.name }}
 
       - name: Check whether coverage reports exists 💭
         id: check_coverage_reports

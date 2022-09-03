@@ -179,6 +179,12 @@ jobs:
 
       - name: Build R package 🏗
         run: |
+          if [ "${{ inputs.additional-env-vars }}" != "" ]
+          then {
+            echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
+            export $(tr '\n' ' ' < /tmp/dotenv.env)
+          }
+          fi
           R CMD build ${{ github.event.repository.name }}
           echo "PKGBUILD=$(echo ${{ github.event.repository.name }}_*.tar.gz)" >> $GITHUB_ENV
         shell: bash
@@ -226,7 +232,6 @@ jobs:
           if [ "${{ inputs.additional-env-vars }}" != "" ]
           then {
             echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
-            echo "Exporting the following env vars: $(cat /tmp/dotenv.env)"
             export $(tr '\n' ' ' < /tmp/dotenv.env)
           }
           fi
@@ -304,6 +309,12 @@ jobs:
             exit 0
           }
           fi
+          if [ "${{ inputs.additional-env-vars }}" != "" ]
+          then {
+            echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
+            export $(tr '\n' ' ' < /tmp/dotenv.env)
+          }
+          fi
           R CMD INSTALL ${{ env.PKGBUILD }}
         shell: bash
 
@@ -314,6 +325,12 @@ jobs:
           git checkout DESCRIPTION 
           if [ -f "tests/testthat.R" ]; then
             git checkout tests/testthat.R
+          fi
+          if [ "${{ inputs.additional-env-vars }}" != "" ]
+          then {
+            echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
+            export $(tr '\n' ' ' < /tmp/dotenv.env)
+          }
           fi
           R CMD build .
           echo "PKGBUILD=$(echo ${{ github.event.repository.name }}_*.tar.gz)" >> $GITHUB_ENV
