@@ -5,7 +5,7 @@
 This workflow scans dependencies of your package for vulnerabilities using oysteR.
 Dependencies can be retrieved either from `DESCRIPTION` file or from `renv.lock` file.
 
-![Screenshot with example output](images/audit.png)
+<img src="images/audit.png"  width="60%">
 
 ### [`bioccheck.yaml`](./.github/workflows/bioccheck.yaml)
 
@@ -20,19 +20,19 @@ This workflow:
 * catches any notes, warnings etc. in the `R CMD check` output,
 * installs the package.
 
-![Screenshot with example output](images/r-cmd-check.png)
+<img src="images/r-cmd-check.png"  width="60%">
 
 ### [`gitleaks.yaml`](./.github/workflows/gitleaks.yaml)
 
 This workflow runs `gitleaks` on the repo to discover any secrets that might have
 been committed.
 
-![Screenshot with example output](images/gitleaks.png)
+<img src="images/gitleaks.png"  width="60%">
 
 Additionally, it runs `presidio-cli` to find any personally identifiable information
 within the `git` repo.
 
-![Screenshot with example output](images/presidio.png)
+<img src="images/presidio.png"  width="60%">
 
 ### [`grammar.yaml`](./.github/workflows/grammar.yaml)
 
@@ -40,12 +40,13 @@ This workflow checks changed files with names matching a pattern for English
 sentences that could be corrected. Then, it adds annotations to the pull request
 so that problematic grammar can be reviewed.
 
-![Screenshot with example output](images/grammar1.png)
-![Screenshot with example output](images/grammar2.png)
+<img src="images/grammar1.png"  width="60%">
+<img src="images/grammar2.png"  width="60%">
 
 ### [`licenses.yaml`](./.github/workflows/licenses.yaml)
+
 
 This workflow generates a license report of R package's dependencies for
 continuous compliance.
 
-![Screenshot with example output](images/license-report.png)
+<img src="images/license-report.png"  width="60%">
