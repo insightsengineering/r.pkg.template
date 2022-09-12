@@ -5,7 +5,7 @@
 This workflow scans dependencies of your package for vulnerabilities using [oysteR](https://cran.r-project.org/web/packages/oysteR/index.html).
 Dependencies can be retrieved either from `DESCRIPTION` file or from `renv.lock` file.
 
-<img src="images/audit.png"  width="70%">
+<img src="images/audit.png"  width="60%">
 
 ## [`bioccheck.yaml`](./.github/workflows/bioccheck.yaml)
 
@@ -20,19 +20,19 @@ This workflow:
 * catches any notes, warnings etc. in the `R CMD check` output,
 * installs the package.
 
-<img src="images/r-cmd-check.png"  width="60%">
+<img src="images/r-cmd-check.png"  width="50%">
 
 ## [`gitleaks.yaml`](./.github/workflows/gitleaks.yaml)
 
 This workflow runs [`gitleaks`](https://github.com/zricethezav/gitleaks) on the repo to discover any secrets that might have
 been committed.
 
-<img src="images/gitleaks.png"  width="60%">
+<img src="images/gitleaks.png"  width="50%">
 
 Additionally, it runs [`presidio-cli`](https://github.com/insightsengineering/presidio-cli) to find any personally identifiable information
 within the `git` repo.
 
-<img src="images/presidio.png"  width="60%">
+<img src="images/presidio.png"  width="50%">
 
 ## [`grammar.yaml`](./.github/workflows/grammar.yaml)
 
@@ -40,21 +40,21 @@ This workflow uses [`write-good`](https://github.com/btford/write-good) to check
 with names matching a pattern for English sentences that could be corrected.
 Then, it adds annotations to the pull request so that problematic grammar can be reviewed.
 
-<img src="images/grammar1.png"  width="60%">
-<img src="images/grammar2.png"  width="60%">
+<img src="images/grammar1.png"  width="50%">
+<img src="images/grammar2.png"  width="50%">
 
 ## [`licenses.yaml`](./.github/workflows/licenses.yaml)
 
 This workflow generates a license report of R package's dependencies for
 continuous compliance.
 
-<img src="images/license-report.png"  width="60%">
+<img src="images/license-report.png"  width="50%">
 
 ## [`links.yaml`](./.github/workflows/links.yaml)
 
 This workflow checks whether URLs embedded in code and documentation are valid. This workflow uses [`lychee`](https://github.com/lycheeverse/lychee) to detect broken links. Occasionally this check will detect false positives of strings that look like URLs. To remedy, please add this false positive to the `.lycheeignore` file.
 
-<img src="images/links.png"  width="60%">
+<img src="images/links.png"  width="50%">
 
 ## [`linter.yaml`](./.github/workflows/linter.yaml)
 
@@ -68,7 +68,7 @@ Documentation for the R package is generated via this workflow. This workflow us
 
 Moreover, an additional `Versions` dropdown is generated via the GitHub Action, so that the end user can view multiple versions of the documentation for the package.
 
-<img src="images/pkgdown.png"  width="40%">
+<img src="images/pkgdown.png"  width="30%">
 
 ## [`release.yaml`](./.github/workflows/release.yaml)
 
@@ -96,3 +96,34 @@ can be configured to commit files that had styling problems automatically, after
 remediating the problems.
 
 <img src="images/styler.png"  width="90%">
+
+## [`test-coverage.yaml`](./.github/workflows/test-coverage.yaml)
+
+This workflow examines the test coverage of given R package with [`covr`](https://covr.r-lib.org/).
+Following that, coverage report is added to the PR. Additional feature is the ability
+to compare code coverage between branches, so the PR can be declined if the coverage
+would decrease following the merge.
+
+The second part of the workflow runs utilizes `covtracer` to:
+* prepare traceability matrix
+* identify untested behavior
+* verify directly tested functions
+
+## [`validation.yaml`](./.github/workflows/validation.yaml)
+
+This workflow generates and publishes validation report.
+
+<img src="images/validation.png"  width="50%">
+
+## [`version-bump.yaml`](./.github/workflows/version-bump.yaml)
+
+This workflow increases R package version in `NEWS.md` and `DESCRIPTION` files and
+commits this change to the repository.
+
+<img src="images/version-bump.png"  width="60%">
+
+## [`version.yaml`](./.github/workflows/version.yaml)
+
+This workflow checks if `NEWS.md` and `DESCRPTION` files have the same R package version.
+
+<img src="images/version.png"  width="60%">
