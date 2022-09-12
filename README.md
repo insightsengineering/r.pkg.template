@@ -68,6 +68,8 @@ All CI/CD jobs are defined in the [.github/workflows](./.github/workflows) direc
 
 All workflows originating from this repository can be repurposed by other R package Github repositories.
 
+For detailed description and screenshots of workflows please refer to [this document](./workflows.md).
+
 ### Pre-commit
 
 This repository contains an example [pre-commit] configuration.
