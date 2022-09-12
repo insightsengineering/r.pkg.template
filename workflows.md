@@ -60,7 +60,7 @@ This workflow checks whether URLs embedded in code and documentation are valid. 
 
 This workflow lints the codebase using [`super-linter`](https://github.com/github/super-linter).
 
-<img src="images/superlinter.png"  width="60%">
+<img src="images/superlinter.png"  width="80%">
 
 ## [`pkgdown.yaml`](./.github/workflows/pkgdown.yaml)
 
@@ -80,3 +80,5 @@ This workflow creates a GitHub release from a `git` tag and generates changelog 
 
 This workflow uses [`roxygen`](https://roxygen2.r-lib.org/) to generate `.Rd` files in `man/` directory.
 It also checks if manuals are up-to-date with roxygen comments in the code.
+
+<img src="images/roxygen.png"  width="80%">
