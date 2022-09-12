@@ -113,8 +113,6 @@ The second part of the workflow runs utilizes `covtracer` to:
 
 This workflow generates and publishes validation report.
 
-<img src="images/validation.png"  width="50%">
-
 ## [`version-bump.yaml`](./.github/workflows/version-bump.yaml)
 
 This workflow increases R package version in `NEWS.md` and `DESCRIPTION` files and
