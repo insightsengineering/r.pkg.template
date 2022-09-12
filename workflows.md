@@ -5,7 +5,7 @@
 This workflow scans dependencies of your package for vulnerabilities using [oysteR](https://cran.r-project.org/web/packages/oysteR/index.html).
 Dependencies can be retrieved either from `DESCRIPTION` file or from `renv.lock` file.
 
-<img src="images/audit.png"  width="60%">
+<img src="images/audit.png"  width="70%">
 
 ## [`bioccheck.yaml`](./.github/workflows/bioccheck.yaml)
 
@@ -68,7 +68,7 @@ Documentation for the R package is generated via this workflow. This workflow us
 
 Moreover, an additional `Versions` dropdown is generated via the GitHub Action, so that the end user can view multiple versions of the documentation for the package.
 
-<img src="images/pkgdown.png"  width="60%">
+<img src="images/pkgdown.png"  width="40%">
 
 ## [`release.yaml`](./.github/workflows/release.yaml)
 
@@ -82,3 +82,17 @@ This workflow uses [`roxygen`](https://roxygen2.r-lib.org/) to generate `.Rd` fi
 It also checks if manuals are up-to-date with roxygen comments in the code.
 
 <img src="images/roxygen.png"  width="80%">
+
+## [`spelling.yaml`](./.github/workflows/spelling.yaml)
+
+Spellchecks are performed by this workflow, and the [`spelling`](https://docs.ropensci.org/spelling/) R package is used to detect spelling mistakes. In the `inst/WORDLIST` file, you can add words and or acronyms that you want the spell check to ignore.
+
+<img src="images/spellcheck.png"  width="80%">
+
+## [`style.yaml`](./.github/workflows/style.yaml)
+
+Code style is enforced via the [`styler`](https://styler.r-lib.org/) R package. The workflow
+can be configured to commit files that had styling problems automatically, after
+remediating the problems.
+
+<img src="images/styler.png"  width="90%">
