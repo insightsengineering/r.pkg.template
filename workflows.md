@@ -69,3 +69,14 @@ Documentation for the R package is generated via this workflow. This workflow us
 Moreover, an additional `Versions` dropdown is generated via the GitHub Action, so that the end user can view multiple versions of the documentation for the package.
 
 <img src="images/pkgdown.png"  width="60%">
+
+## [`release.yaml`](./.github/workflows/release.yaml)
+
+This workflow creates a GitHub release from a `git` tag and generates changelog based on `NEWS.md` file.
+
+<img src="images/release.png"  width="60%">
+
+## [`roxygen.yaml`](./.github/workflows/roxygen.yaml)
+
+This workflow uses [`roxygen`](https://roxygen2.r-lib.org/) to generate `.Rd` files in `man/` directory.
+It also checks if manuals are up-to-date with roxygen comments in the code.
