@@ -11,6 +11,8 @@ Dependencies can be retrieved either from `DESCRIPTION` file or from `renv.lock`
 
 This workflow implements Bioconductor-specific R package checks with [BiocCheck](https://bioconductor.org/packages/release/bioc/html/BiocCheck.html).
 
+<img src="images/bioccheck.png"  width="40%">
+
 ## [`build-check-install.yaml`](./.github/workflows/build-check-install.yaml)
 
 This workflow:
@@ -112,6 +114,9 @@ The second part of the workflow runs utilizes `covtracer` to:
 ## [`validation.yaml`](./.github/workflows/validation.yaml)
 
 This workflow generates and publishes validation report.
+
+<img src="images/validation1.png"  width="40%">
+<img src="images/validation2.png"  width="60%">
 
 ## [`version-bump.yaml`](./.github/workflows/version-bump.yaml)
 
