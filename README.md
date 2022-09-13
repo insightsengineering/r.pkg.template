@@ -66,13 +66,15 @@ You could initialize this repository in one of two ways:
 
 All CI/CD jobs are defined in the [.github/workflows](./.github/workflows) directory in the form of GitHub Action workflows. These can be modified per your requirements, but are designed and implemented to follow best practices and to ensure the highest quality standards for your package.
 
-All workflows originating from this repository can be repurposed by other R package Github repositories.
+All workflows originating from this repository can be repurposed by other R package GitHub repositories.
+
+For more information including detailed description and screenshots of workflows, please refer to [Workflows](./workflows.md).
 
 ### Pre-commit
 
 This repository contains an example [pre-commit] configuration.
 
-[pre-commit] is a tool that uses [Git hooks] to identify and resolve simple issues prior to submission for code review.
+[pre-commit] is a tool that uses [Git hooks] to identify and resolve simple issues before submission for code review.
 [Git hooks] run on every commit to automatically point out and solve issues such as missing semicolons, trailing whitespaces,
 code formatting and spell checks.
 

@@ -15,3 +15,5 @@ coverage.*
 ^\.pre-commit-config\.yaml$
 ^codemeta\.json$
 init.sh
+workflows.md
+images

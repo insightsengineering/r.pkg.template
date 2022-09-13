@@ -76,7 +76,9 @@ rm -rf \
     .github/CONTRIBUTING.md \
     .github/PULL_REQUEST_TEMPLATE.md \
     .github/CODE_OF_CONDUCT.md \
-    SECURITY.md
+    SECURITY.md \
+    images \
+    workflows.md
 oecho "You've chosen '$use_shared_workflows' for using the shared workflows"
 if [ "$use_shared_workflows" == "yes" ];
 then {
