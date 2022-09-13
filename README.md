@@ -74,7 +74,7 @@ For more information including detailed description and screenshots of workflows
 
 This repository contains an example [pre-commit] configuration.
 
-[pre-commit] is a tool that uses [Git hooks] to identify and resolve simple issues prior to submission for code review.
+[pre-commit] is a tool that uses [Git hooks] to identify and resolve simple issues before submission for code review.
 [Git hooks] run on every commit to automatically point out and solve issues such as missing semicolons, trailing whitespaces,
 code formatting and spell checks.
 
