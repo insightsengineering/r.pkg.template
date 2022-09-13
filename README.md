@@ -66,9 +66,9 @@ You could initialize this repository in one of two ways:
 
 All CI/CD jobs are defined in the [.github/workflows](./.github/workflows) directory in the form of GitHub Action workflows. These can be modified per your requirements, but are designed and implemented to follow best practices and to ensure the highest quality standards for your package.
 
-All workflows originating from this repository can be repurposed by other R package Github repositories.
+All workflows originating from this repository can be repurposed by other R package GitHub repositories.
 
-For detailed description and screenshots of workflows please refer to [this document](./workflows.md).
+For more information including detailed description and screenshots of workflows, please refer to [Workflows](./workflows.md).
 
 ### Pre-commit
 
