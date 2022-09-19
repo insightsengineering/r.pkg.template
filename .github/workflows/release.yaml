@@ -34,3 +34,4 @@ jobs:
         with:
           body_path: RELEASE_BODY.txt
           token: ${{ secrets.GITHUB_TOKEN }}
+          generate_release_notes: true
