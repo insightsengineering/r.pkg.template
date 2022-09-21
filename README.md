@@ -1,5 +1,19 @@
 # r.pkg.template
 
+![GitHub forks](https://img.shields.io/github/forks/insightsengineering/r.pkg.template?style=social)
+![GitHub Repo stars](https://img.shields.io/github/stars/insightsengineering/r.pkg.template?style=social)
+
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/insightsengineering/r.pkg.template)
+![GitHub contributors](https://img.shields.io/github/contributors/insightsengineering/r.pkg.template)
+![GitHub last commit](https://img.shields.io/github/last-commit/insightsengineering/r.pkg.template)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/insightsengineering/r.pkg.template)
+![GitHub repo size](https://img.shields.io/github/repo-size/insightsengineering/r.pkg.template)
+![GitHub language count](https://img.shields.io/github/languages/count/insightsengineering/r.pkg.template)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Downloads](https://img.shields.io/github/downloads/insightsengineering/r.pkg.template/latest/total)](https://tooomm.github.io/github-release-stats/?username=insightsengineering\&repository=r.pkg.template)
+[![Current Version](https://img.shields.io/github/r-package/v/insightsengineering/r.pkg.template/main?color=purple\&label=package%20version)](https://github.com/insightsengineering/r.pkg.template/tree/main)
+[![Open Issues](https://img.shields.io/github/issues-raw/insightsengineering/r.pkg.template?color=red\&label=open%20issues)](https://github.com/insightsengineering/r.pkg.template/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)
+
 [![Audit Dependencies](https://github.com/insightsengineering/r.pkg.template/actions/workflows/audit.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/audit.yaml)
 [![BiocCheck](https://github.com/insightsengineering/r.pkg.template/actions/workflows/bioccheck.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/bioccheck.yaml)
 [![Check URLs](https://github.com/insightsengineering/r.pkg.template/actions/workflows/links.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/links.yaml)
@@ -16,15 +30,13 @@
 [![Version bump](https://github.com/insightsengineering/r.pkg.template/actions/workflows/version-bump.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/version-bump.yaml)
 [![Version check](https://github.com/insightsengineering/r.pkg.template/actions/workflows/version.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/version.yaml)
 [![gitleaks](https://github.com/insightsengineering/r.pkg.template/actions/workflows/gitleaks.yaml/badge.svg)](https://github.com/insightsengineering/r.pkg.template/actions/workflows/gitleaks.yaml)
-[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Downloads](https://img.shields.io/github/downloads/insightsengineering/r.pkg.template/latest/total)](https://tooomm.github.io/github-release-stats/?username=insightsengineering&repository=r.pkg.template)
-[![Current Version](https://img.shields.io/github/r-package/v/insightsengineering/r.pkg.template/main?color=purple&label=Version@main)](https://github.com/insightsengineering/r.pkg.template/tree/main)
-[![Open Issues](https://img.shields.io/github/issues-raw/insightsengineering/r.pkg.template?color=red&label=Open%20Issues)](https://github.com/insightsengineering/r.pkg.template/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc)
 
 <!-- links -->
 
 [pre-commit]: https://pre-commit.com
+
 [pre-commit installation]: https://pre-commit.com/#installation
+
 [git hooks]: https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks
 
 An R package template with built-in GitHub Actions-based CI/CD workflows.
@@ -37,14 +49,14 @@ You could initialize this repository in one of two ways:
 
 #### Clone this template
 
-- Clone this repository:
+* Clone this repository:
 
   ```bash
   git clone https://github.com/insightsengineering/r.pkg.template.git
   cd r.pkg.template
   ```
 
-- Run the initializer script:
+* Run the initializer script:
 
   ```bash
   ./init.sh
@@ -52,11 +64,11 @@ You could initialize this repository in one of two ways:
 
 #### Use GitHub's template importer
 
-- Click [here](https://github.com/insightsengineering/r.pkg.template/generate) to generate a copy of this template directly within GitHub.
+* Click [here](https://github.com/insightsengineering/r.pkg.template/generate) to generate a copy of this template directly within GitHub.
 
-- Clone the repository from your account/organization.
+* Clone the repository from your account/organization.
 
-- Run the initializer script:
+* Run the initializer script:
 
   ```bash
   ./init.sh
@@ -68,7 +80,7 @@ All CI/CD jobs are defined in the [.github/workflows](./.github/workflows) direc
 
 All workflows originating from this repository can be repurposed by other R package GitHub repositories.
 
-For more information including detailed description and screenshots of workflows, please refer to [Workflows](./workflows.md).
+👉 For more information including detailed description and screenshots of workflows, please refer to the [Workflows documentation](./workflows.md).
 
 ### Pre-commit
 
@@ -80,32 +92,29 @@ code formatting and spell checks.
 
 ### Setting up pre-commit for R project
 
-1. Install the `pre-commit` framework. Use the official [installation guide][pre-commit installation].
-2. Install R package `precommit`
+* Install the `pre-commit` framework. Use the official [installation guide][pre-commit installation].
 
-```sh
-R -e 'install.packages("precommit")'
-```
+* Install R package `precommit`
 
-1. Run the `use_precommit()` function to generate an example pre-commit configuration called `.pre-commit-config.yaml`:
+  ```sh
+  R -e 'install.packages("precommit")'
+  ```
 
-```sh
-[ ! -f ".pre-commit-config.yaml" ] && R -e 'precommit::use_precommit()'
-```
+* Run the `use_precommit()` function to generate an example pre-commit configuration called `.pre-commit-config.yaml`:
 
-1. Install the git hooks script:
+  ```sh
+  [ ! -f ".pre-commit-config.yaml" ] && R -e 'precommit::use_precommit()'
+  ```
 
-```sh
-pre-commit install
-```
+* Install the git hooks script:
 
-1. From this moment all scripts from `.pre-commit-config.yaml` will run before every `git commit`
-   command. If you want to run them manually without committing you can use command
-   `pre-commit run --all-files`. For more information refer official [pre-commit] documentation.
+  ```sh
+  pre-commit install
+  ```
 
-> NOTE:
-> Frequently run `pre-commit autoupdate` to update all repositories
-> in `.pre-commit-config.yaml`.
+* From this moment on, all scripts from `.pre-commit-config.yaml` will run before every `git commit` command. If you want to run them manually without committing you can use command `pre-commit run --all-files`. For more information, please refer to the official [pre-commit] documentation.
+
+> NOTE: Frequently run `pre-commit autoupdate` to update all hooks in the `.pre-commit-config.yaml` configuration file.
 
 ### Example output from pre-commit
 
