@@ -7,6 +7,8 @@ on:
       - "v*"
     branches:
       - main
+      - devel
+      - pre-release
   pull_request:
     types:
       - opened
