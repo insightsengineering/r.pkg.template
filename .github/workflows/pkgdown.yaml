@@ -5,10 +5,8 @@ on:
   push:
     tags:
       - "v*"
-    # branches:
-    #   - main
-    #   - devel
-    #   - pre-release
+    branches:
+      - main
   pull_request:
     types:
       - opened
@@ -129,7 +127,7 @@ jobs:
         working-directory: ${{ github.event.repository.name }}
 
       - name: Build docs 🏗
-        if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v') || startsWith(github.ref, 'refs/')
+        if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
         run: |
           repo="${{ github.event.repository.name }}"
           if [ "${{ inputs.additional-env-vars }}" != "" ]
@@ -203,33 +201,33 @@ jobs:
           ref: "gh-pages"
 
       - name: Create and publish docs ↗️
-        uses: insightsengineering/r-pkgdown-multiversion@7_custom_sorting
+        uses: insightsengineering/r-pkgdown-multiversion@v2
         with:
           path: ${{ github.event.repository.name }}
           default-landing-page: "main"
           refs-order: ${{ inputs.refs-order }}
 
-  # upload-release-assets:
-  #   name: Upload documentation assets 🔼
-  #   needs: docs
-  #   runs-on: ubuntu-latest
-  #   if: >
-  #     startsWith(github.ref, 'refs/tags/v')
-  #       && !contains(github.event.commits[0].message, '[skip docs]')
-  #   steps:
-  #     - name: Checkout repo 🛎
-  #       uses: actions/checkout@v3
+  upload-release-assets:
+    name: Upload documentation assets 🔼
+    needs: docs
+    runs-on: ubuntu-latest
+    if: >
+      startsWith(github.ref, 'refs/tags/v')
+        && !contains(github.event.commits[0].message, '[skip docs]')
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v3
 
-  #     - name: Download artifact ⏬
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: pkgdown.zip
+      - name: Download artifact ⏬
+        uses: actions/download-artifact@v3
+        with:
+          name: pkgdown.zip
 
-  #     - name: Upload binaries to release ⤴
-  #       uses: svenstaro/upload-release-action@v2
-  #       with:
-  #         repo_token: ${{ secrets.GITHUB_TOKEN }}
-  #         file: pkgdown.zip
-  #         asset_name: pkgdown.zip
-  #         tag: ${{ github.ref }}
-  #         overwrite: true
+      - name: Upload binaries to release ⤴
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: pkgdown.zip
+          asset_name: pkgdown.zip
+          tag: ${{ github.ref }}
+          overwrite: true
