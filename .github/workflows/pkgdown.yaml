@@ -194,7 +194,7 @@ jobs:
         with:
           path: ${{ github.event.repository.name }}
           default-landing-page: "main"
-          refs-order: c("latest-tag", "devel", "pre-release", "main")
+          refs-order: c("devel", "pre-release", "main", "latest-tag")
 
   # upload-release-assets:
   #   name: Upload documentation assets 🔼
