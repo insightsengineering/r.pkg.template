@@ -65,115 +65,115 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # docs:
-  #   name: Generate 🐣
-  #   runs-on: ubuntu-latest
-  #   if: >
-  #     !contains(github.event.commits[0].message, '[skip docs]')
-  #       && github.event.pull_request.draft == false
-  #   container:
-  #     image: ghcr.io/insightsengineering/rstudio_4.2.1_bioc_3.15:latest
-  #   steps:
-  #     - name: Get branch names 🌿
-  #       id: branch-name
-  #       uses: tj-actions/branch-names@v5
+  docs:
+    name: Generate 🐣
+    runs-on: ubuntu-latest
+    if: >
+      !contains(github.event.commits[0].message, '[skip docs]')
+        && github.event.pull_request.draft == false
+    container:
+      image: ghcr.io/insightsengineering/rstudio_4.2.1_bioc_3.15:latest
+    steps:
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v5
 
-  #     - name: Checkout repo (PR) 🛎
-  #       uses: actions/checkout@v3
-  #       if: github.event_name == 'pull_request'
-  #       with:
-  #         ref: ${{ steps.branch-name.outputs.head_ref_branch }}
-  #         path: ${{ github.event.repository.name }}
-  #         repository: ${{ github.event.pull_request.head.repo.full_name }}
+      - name: Checkout repo (PR) 🛎
+        uses: actions/checkout@v3
+        if: github.event_name == 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
-  #     - name: Checkout repo 🛎
-  #       uses: actions/checkout@v3
-  #       if: github.event_name != 'pull_request'
-  #       with:
-  #         ref: ${{ steps.branch-name.outputs.head_ref_branch }}
-  #         path: ${{ github.event.repository.name }}
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v3
+        if: github.event_name != 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
 
-  #     - name: Restore SD cache 💰
-  #       uses: actions/cache@v3
-  #       with:
-  #         key: sd-${{ runner.os }}-${{ github.event.repository.name }}
-  #         path: ~/.staged.dependencies
+      - name: Restore SD cache 💰
+        uses: actions/cache@v3
+        with:
+          key: sd-${{ runner.os }}-${{ github.event.repository.name }}
+          path: ~/.staged.dependencies
 
-  #     - name: Run Staged dependencies 🎦
-  #       uses: insightsengineering/staged-dependencies-action@v1
-  #       env:
-  #         GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
-  #       with:
-  #         path: ${{ github.event.repository.name }}
-  #         enable-check: ${{ inputs.enable-staged-dependencies-check }}
-  #         run-system-dependencies: ${{ inputs.install-system-dependencies }}
+      - name: Run Staged dependencies 🎦
+        uses: insightsengineering/staged-dependencies-action@v1
+        env:
+          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
+        with:
+          path: ${{ github.event.repository.name }}
+          enable-check: ${{ inputs.enable-staged-dependencies-check }}
+          run-system-dependencies: ${{ inputs.install-system-dependencies }}
 
-  #     - name: Install R package 🚧
-  #       run: |
-  #         if (file.exists("renv.lock")) renv::restore()
-  #         install.packages(".", repos=NULL, type="source")
-  #       shell: Rscript {0}
-  #       working-directory: ${{ github.event.repository.name }}
+      - name: Install R package 🚧
+        run: |
+          if (file.exists("renv.lock")) renv::restore()
+          install.packages(".", repos=NULL, type="source")
+        shell: Rscript {0}
+        working-directory: ${{ github.event.repository.name }}
 
-  #     - name: Build docs 🏗
-  #       if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
-  #       run: |
-  #         repo="${{ github.event.repository.name }}"
-  #         if [ "${{ inputs.additional-env-vars }}" != "" ]
-  #         then {
-  #           echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
-  #           export $(tr '\n' ' ' < /tmp/dotenv.env)
-  #         }
-  #         fi
-  #         Rscript - <<EOF 2>&1 | tee pkgdown_${repo}.log
-  #         if (file.exists("renv.lock")) renv::restore()
-  #         pkgdown::build_site(devel = TRUE)
-  #         EOF
-  #         if [ "${{ inputs.fail-pkgdown-on-warnings }}" == "true" ]; then {
-  #           grep "Warning message" pkgdown_${repo}.log > pkgdown_warnings_${repo}.log
-  #           if [[ $(wc -l <pkgdown_warnings_${repo}.log) -gt 0 ]]; then {
-  #             echo "----------------------------------------"
-  #             echo "⚠ One or more warnings were generated during the pkgdown build."
-  #             echo "Please 🙏 fix the warnings shown above 👆"
-  #             exit 1
-  #           }
-  #           fi
-  #         }
-  #         fi
-  #       shell: bash
-  #       working-directory: ${{ github.event.repository.name }}
+      - name: Build docs 🏗
+        if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
+        run: |
+          repo="${{ github.event.repository.name }}"
+          if [ "${{ inputs.additional-env-vars }}" != "" ]
+          then {
+            echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
+            export $(tr '\n' ' ' < /tmp/dotenv.env)
+          }
+          fi
+          Rscript - <<EOF 2>&1 | tee pkgdown_${repo}.log
+          if (file.exists("renv.lock")) renv::restore()
+          pkgdown::build_site(devel = TRUE)
+          EOF
+          if [ "${{ inputs.fail-pkgdown-on-warnings }}" == "true" ]; then {
+            grep "Warning message" pkgdown_${repo}.log > pkgdown_warnings_${repo}.log
+            if [[ $(wc -l <pkgdown_warnings_${repo}.log) -gt 0 ]]; then {
+              echo "----------------------------------------"
+              echo "⚠ One or more warnings were generated during the pkgdown build."
+              echo "Please 🙏 fix the warnings shown above 👆"
+              exit 1
+            }
+            fi
+          }
+          fi
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}
 
-  #     - name: Create documentation artifact 📂
-  #       if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
-  #       run: |
-  #         pushd ${{ github.event.repository.name }}/docs/
-  #         zip -r9 $OLDPWD/pkgdown.zip *
-  #         popd
-  #       shell: bash
+      - name: Create documentation artifact 📂
+        if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
+        run: |
+          pushd ${{ github.event.repository.name }}/docs/
+          zip -r9 $OLDPWD/pkgdown.zip *
+          popd
+        shell: bash
 
-  #     - name: Upload docs for review ⬆
-  #       if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: pkgdown.zip
-  #         path: pkgdown.zip
+      - name: Upload docs for review ⬆
+        if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v3
+        with:
+          name: pkgdown.zip
+          path: pkgdown.zip
 
-  #     - name: Publish docs 📢
-  #       if: github.event_name == 'push'
-  #       run: |
-  #         git config --local user.email "actions@github.com"
-  #         git config --local user.name "GitHub Actions"
-  #         BRANCH_OR_TAG="${GITHUB_REF##*/}"
-  #         Rscript - <<EOF
-  #         if (file.exists("renv.lock")) renv::restore()
-  #         pkgdown::deploy_to_branch(
-  #           new_process = FALSE,
-  #           subdir = "${BRANCH_OR_TAG}",
-  #           clean = TRUE
-  #         )
-  #         EOF
-  #       shell: bash
-  #       working-directory: ${{ github.event.repository.name }}
+      - name: Publish docs 📢
+        if: github.event_name == 'push'
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          BRANCH_OR_TAG="${GITHUB_REF##*/}"
+          Rscript - <<EOF
+          if (file.exists("renv.lock")) renv::restore()
+          pkgdown::deploy_to_branch(
+            new_process = FALSE,
+            subdir = "${BRANCH_OR_TAG}",
+            clean = TRUE
+          )
+          EOF
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}
 
   multi-version-docs:
     name: Multi-version docs 📑
