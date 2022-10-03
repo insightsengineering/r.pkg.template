@@ -57,6 +57,16 @@ on:
         required: false
         default: ""
         type: string
+      refs-order:
+        description: |
+          The order in which refs should appear in the drop-down list. Versions not in the vector
+          will appear below refs listed here.
+          If docs have never been generated for the ref, the ref will not appear in the
+          drop-down. Similarly, if docs have been generated for the ref, but the ref is not
+          listed in the vector, it will not appear in the drop-down.
+        required: false
+        default: c("devel", "pre-release", "main", "latest-tag")
+        type: string
 
 concurrency:
   group: docs-${{ github.event.pull_request.number || github.ref }}
@@ -192,6 +202,7 @@ jobs:
         with:
           path: ${{ github.event.repository.name }}
           default-landing-page: "main"
+          refs-order: ${{ inputs.refs-order }}
 
   upload-release-assets:
     name: Upload documentation assets 🔼
