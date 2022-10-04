@@ -124,6 +124,7 @@ jobs:
 
       - name: Run coverage 👟
         run: |
+          setwd("${{ github.event.repository.name }}")
           if (file.exists("renv.lock")) {
             renv::restore()
           }
@@ -141,14 +142,14 @@ jobs:
                   quiet = FALSE
                 )
                 print(x)
-                covr::to_cobertura(x, filename = "coverage.xml")
-                p <- covr::percent_coverage(x)
-                cat(p, file = "coverage.txt", sep = "")
                 covr::report(
                     x,
                     file = "coverage-report.html",
                     browse = FALSE
                 )
+                covr::to_cobertura(x, filename = "coverage.xml")
+                p <- covr::percent_coverage(x)
+                cat(p, file = "coverage.txt", sep = "")
             },
             error = function(e) {
               message("Errors generated during coverage analysis:")
@@ -165,7 +166,6 @@ jobs:
             }
           )
         shell: Rscript {0}
-        working-directory: ${{ github.event.repository.name }}
 
       - name: Check whether coverage reports exists 💭
         id: check_coverage_reports
@@ -189,10 +189,12 @@ jobs:
 
       - name: Upload report 🔼
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: coverage-report
-          path: "${{ github.event.repository.name }}/coverage-report.html"
+          path: |
+            ${{ github.event.repository.name }}/coverage-report.html
+            ${{ github.event.repository.name }}/lib/
         continue-on-error: true
 
   covtracer:
@@ -210,7 +212,7 @@ jobs:
         uses: tj-actions/branch-names@v5
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
