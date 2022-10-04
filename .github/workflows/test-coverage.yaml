@@ -174,7 +174,7 @@ jobs:
           files: >-
             ${{ github.event.repository.name }}/coverage.xml,
             ${{ github.event.repository.name }}/coverage.txt,
-            ${{ github.event.repository.name }}/coverage-report.html"
+            ${{ github.event.repository.name }}/coverage-report.html
 
       - name: Post coverage report 🗞
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
