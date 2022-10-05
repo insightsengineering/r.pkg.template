@@ -62,12 +62,15 @@ perl -p -i -e "s/insightsengineering/${owner}/g" DESCRIPTION
 perl -p -i -e "s/insightsengineering/${owner}/g" .github/ISSUE_TEMPLATE/*.yml
 perl -p -i -e "s/insightsengineering/${owner}/g" _pkgdown.yml
 perl -p -i -e "s/insightsengineering/${owner}/g" staged_dependencies.yaml
-grep -rl --exclude=init.sh --exclude-dir=.git "REPO_GITHUB_TOKEN" . | \
+grep -rl --exclude=init.sh --exclude=*.shared \
+    --exclude-dir=.git "REPO_GITHUB_TOKEN" . | \
     xargs perl -p -i -e 's/REPO_GITHUB_TOKEN/GITHUB_TOKEN/g'
-grep -rl --exclude=init.sh --exclude-dir=.git \
+grep -rl --exclude=init.sh --exclude=*.shared \
+    --exclude-dir=.git \
     "68416928+insights-engineering-bot@users.noreply.github.com" .github/workflows/ | \
     xargs perl -p -i -e 's/68416928\+insights-engineering-bot/41898282\+github-actions\[bot\]/g'
-grep -rl --exclude=init.sh --exclude-dir=.git "insights-engineering-bot" .github/workflows/ | \
+grep -rl --exclude=init.sh --exclude=*.shared \
+    --exclude-dir=.git "insights-engineering-bot" .github/workflows/ | \
     xargs perl -p -i -e 's/insights-engineering-bot/github-actions/g'
 
 oecho "Updating file names and removing unnecessary files"
