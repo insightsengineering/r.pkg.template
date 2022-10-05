@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - badges_private_repos
   pull_request:
     types:
       - opened
@@ -13,7 +14,6 @@ on:
       - ready_for_review
     branches:
       - main
-      - badges_private_repos
   workflow_dispatch:
   workflow_call:
     inputs:
