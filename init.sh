@@ -55,7 +55,8 @@ then {
 fi
 
 oecho "Replacing template references within files"
-grep -rl --exclude=init.sh --exclude-dir=.git "r.pkg.template" . | \
+grep -rl --exclude=init.sh --exclude=*.shared \
+    --exclude-dir=.git "r.pkg.template" . | \
     xargs perl -p -i -e "s/r.pkg.template/${pkg}/g"
 perl -p -i -e "s/insightsengineering/${owner}/g" DESCRIPTION
 perl -p -i -e "s/insightsengineering/${owner}/g" .github/ISSUE_TEMPLATE/*.yml
