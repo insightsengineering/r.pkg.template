@@ -184,8 +184,8 @@ jobs:
           path: ${{ github.event.repository.name }}/coverage.xml
           threshold: 80
           fail: false
-          # publish: ${{ inputs.publish-coverage-report }}
-          publish: true
+          publish: ${{ inputs.publish-coverage-report }}
+          # TODO change to false
           private-repo: true
           diff: true
         continue-on-error: true
