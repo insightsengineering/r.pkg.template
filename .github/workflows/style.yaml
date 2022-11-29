@@ -34,7 +34,7 @@ jobs:
       !contains(github.event.commits[0].message, '[skip style]')
         && github.event.pull_request.draft == false
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.2.1_bioc_3.15:latest
+      image: ghcr.io/insightsengineering/rstudio_4.2.2_bioc_3.16:latest
 
     steps:
       - name: Checkout Code 🛎
