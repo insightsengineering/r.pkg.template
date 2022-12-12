@@ -100,6 +100,11 @@ then {
 }
 fi
 
+oecho "Resetting the package version"
+reset_version="0.1.0"
+perl -p -i -e "s@^Version: .*@Version: ${reset_version}@" DESCRIPTION
+perl -p -i -e "s@^\# ${pkg} .*@\# ${pkg} ${reset_version}@" NEWS.md
+
 oecho "Overwriting the README.md file"
 echo -e "# ${pkg}\n\nShort description of the package" > README.md
 
