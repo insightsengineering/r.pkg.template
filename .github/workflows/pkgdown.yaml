@@ -216,7 +216,7 @@ jobs:
         uses: insightsengineering/r-pkgdown-multiversion@v2
         with:
           path: ${{ github.event.repository.name }}
-          default-landing-page: ${{ input.default-landing-page }}
+          default-landing-page: ${{ inputs.default-landing-page }}
           refs-order: ${{ inputs.refs-order }}
 
   upload-release-assets:
