@@ -67,6 +67,15 @@ on:
         required: false
         default: c("devel", "pre-release", "main", "latest-tag")
         type: string
+      default-landing-page:
+        description:
+          The default branch or tag on gh-pages that corresponds to the landing page.
+          For instance, if your root index page on gh-pages is built using the 'main'
+          branch, then the root page of the website will correspond to this page.
+          If 'latest-tag' is selected, then the latest version will become the default.
+        required: false
+        default: main
+        type: string
 
 concurrency:
   group: docs-${{ github.event.pull_request.number || github.ref }}
@@ -207,7 +216,7 @@ jobs:
         uses: insightsengineering/r-pkgdown-multiversion@v2
         with:
           path: ${{ github.event.repository.name }}
-          default-landing-page: "main"
+          default-landing-page: ${{ input.default-landing-page }}
           refs-order: ${{ inputs.refs-order }}
 
   upload-release-assets:
