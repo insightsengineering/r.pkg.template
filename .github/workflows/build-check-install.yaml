@@ -110,7 +110,7 @@ jobs:
     steps:
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v5
+        uses: tj-actions/branch-names@v6
 
       - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v3
@@ -252,7 +252,7 @@ jobs:
 
       - name: Check whether JUnit XML report exists 🚦
         id: check-junit-xml
-        uses: andstor/file-existence-action@v1
+        uses: andstor/file-existence-action@v2
         with:
           files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
 

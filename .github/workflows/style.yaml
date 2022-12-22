@@ -46,7 +46,7 @@ jobs:
       - name: Get branch names 🌿
         if: inputs.auto-update
         id: branch-name
-        uses: tj-actions/branch-names@v5
+        uses: tj-actions/branch-names@v6
 
       - name: Install styler 👚
         run: |
@@ -55,7 +55,7 @@ jobs:
 
       - name: Get changed files 🗞
         id: changed-files
-        uses: tj-actions/changed-files@v24
+        uses: tj-actions/changed-files@v35
         with:
           path: ${{ github.event.repository.name }}
           separator: ","
@@ -93,7 +93,7 @@ jobs:
 
       - name: Check file existence
         id: check_files
-        uses: andstor/file-existence-action@v1
+        uses: andstor/file-existence-action@v2
         with:
           files: "/tmp/style-problems.R, /tmp/style-problems.txt"
 

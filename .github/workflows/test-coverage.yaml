@@ -74,7 +74,7 @@ jobs:
     steps:
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v5
+        uses: tj-actions/branch-names@v6
 
       - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v3
@@ -170,7 +170,7 @@ jobs:
 
       - name: Check whether coverage reports exists 💭
         id: check_coverage_reports
-        uses: andstor/file-existence-action@v1
+        uses: andstor/file-existence-action@v2
         with:
           files: >-
             ${{ github.event.repository.name }}/coverage.xml,
@@ -210,7 +210,7 @@ jobs:
     steps:
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v5
+        uses: tj-actions/branch-names@v6
 
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
