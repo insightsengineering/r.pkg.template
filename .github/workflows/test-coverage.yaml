@@ -154,7 +154,7 @@ jobs:
             error = function(e) {
               message("Errors generated during coverage analysis:")
               print(e)
-              error_file <- stringr::str_match(e, "\`(.*?)\`")[, 2]
+              error_file <- stringr::str_match(str(e), "\`(.*?)\`")[, 2]
               if (file.exists(error_file)) {
                 cat("__________FULL OUTPUT__________")
                 writeLines(readLines(error_file))
