@@ -154,9 +154,8 @@ jobs:
             error = function(e) {
               message("Errors generated during coverage analysis:")
               print(e)
-              error_file <- stringr::str_extract_all(str(e), "`(.*?)`")[[1]][1]
-              error_file <- gsub('`', '', error_file)
-              if (file.exists(error_file)) {
+              error_file <- list.files(path = "/tmp", pattern="*.fail$", recursive = T, full.names = T)[1]
+              if (length(error_file) && file.exists(error_file)) {
                 cat("__________FULL OUTPUT__________")
                 writeLines(readLines(error_file))
               }
