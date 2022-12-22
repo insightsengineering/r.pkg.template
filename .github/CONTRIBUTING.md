@@ -16,7 +16,7 @@ Your input is deeply valued, whether an issue, a pull request, or even feedback,
 
 [🚩 Pull requests](#pull-requests)
 
-[👗 Style guide](#style-guide)
+[💻 Coding guidelines](#coding-guidelines)
 
 [🏆 Recognition model](#recognition-model)
 
@@ -84,6 +84,22 @@ Sometimes you might need to change upstream dependent package(s) to be able to s
 
 Please refer to the [staged.dependencies package documentation](https://openpharma.github.io/staged.dependencies/) for more details.
 
+## Coding guidelines
+
+This repository follows some unified processes and standards adopted by its maintainers to ensure software development is carried out consistently within teams and cohesively across other repositories.
+
+### Style guide
+
+This repository follows the standard [`tidyverse` style guide](https://style.tidyverse.org/) and uses [`lintr`](https://github.com/r-lib/lintr) for lint checks. Customized lint configurations are available in this repository's `.lintr` file.
+
+### Dependency management
+
+Lightweight is the right weight. This repository follows [tinyverse](https://www.tinyverse.org/) recommedations of limiting dependencies to minimum.
+
+### Dependency version management
+
+If the code is not compatible with all (!) historical versions of a given dependenct package, it is required to specify minimal version in the `DESCRIPTION` file. In particular: if the development version requires (imports) the development version of another package - it is required to put `abc (>= 1.2.3.9000)`.
+
 ### Recommended development environment & tools
 
 #### R & package versions
@@ -97,10 +113,6 @@ If you discover bugs on older R versions or with an older set of dependencies, p
 We highly recommend that you use the [`pre-commit`](https://pre-commit.com/) tool combined with [`R hooks for pre-commit`](https://github.com/lorenzwalthert/precommit) to execute some of the checks before committing and pushing your changes.
 
 Pre-commit hooks are already available in this repository's `.pre-commit-config.yaml` file.
-
-## Style guide
-
-This repository follows the standard [`tidyverse` style guide](https://style.tidyverse.org/) and uses [`lintr`](https://github.com/r-lib/lintr) for lint checks. Customized lint configurations are available in this repository's `.lintr` file.
 
 ## Recognition model
 
@@ -119,6 +131,6 @@ If you have further questions regarding the contribution guidelines, please cont
 
 <!-- urls -->
 [docs]: https://insightsengineering.github.io/r.pkg.template/index.html
-[articles]: https://insightsengineering.github.io/r.pkg.template/articles/index.html
-[license]: https://insightsengineering.github.io/r.pkg.template/LICENSE-text.html
+[articles]: https://insightsengineering.github.io/r.pkg.template/main/articles/index.html
+[license]: https://insightsengineering.github.io/r.pkg.template/main/LICENSE-text.html
 [insights]: https://github.com/insightsengineering/r.pkg.template/pulse

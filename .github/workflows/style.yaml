@@ -102,7 +102,7 @@ jobs:
         if: steps.check_files.outputs.files_exists  == 'true'
         run: |
           perl -p -i -e 's/\R//g;' /tmp/style-problems.R
-          echo "::set-output name=unstyled-files::$(cat /tmp/style-problems.txt)"
+          echo "unstyled-files=$(cat /tmp/style-problems.txt)" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Autocommit styled files
