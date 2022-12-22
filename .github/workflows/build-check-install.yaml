@@ -97,7 +97,7 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - image: ghcr.io/insightsengineering/rstudio_4.2.1_bioc_3.15
+          - image: ghcr.io/insightsengineering/rstudio_4.2.2_bioc_3.16
             tag: latest
     name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
     runs-on: ubuntu-latest
@@ -284,7 +284,7 @@ jobs:
               regexes <- unlist(strsplit(regexes, split = "\n"))
               lines <- paste(readLines(check_log), collapse = " ")
               notes_result <- vapply(
-                regexes, 
+                regexes,
                 function(r){
                   if (grepl(r, lines)) {
                     print(r)
@@ -322,7 +322,7 @@ jobs:
         if: inputs.disable-unit-test-reports != 'true'
         run: |
           # Undo changes to DESCRIPTION and tests/testthat.R
-          git checkout DESCRIPTION 
+          git checkout DESCRIPTION
           if [ -f "tests/testthat.R" ]; then
             git checkout tests/testthat.R
           fi
