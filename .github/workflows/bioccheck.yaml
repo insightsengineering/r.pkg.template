@@ -68,7 +68,7 @@ jobs:
     steps:
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v5
+        uses: tj-actions/branch-names@v6
 
       - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v3
