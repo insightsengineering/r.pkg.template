@@ -264,6 +264,37 @@ jobs:
           check_name: Unit Tests Summary
           junit_files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
 
+      # TODO These steps will probably have to be a separate action.
+      # TODO Parametrize _xml_coverage_reports -> ${{ inputs.diff-storage }}
+      # TODO should the branch be initialized or the same one used as for coverage reports?
+      - name: Fetch JUnit XML reports from _xml_coverage_reports
+        if: steps.check-junit-xml.outputs.files_exists == 'true'
+        uses: actions/checkout@v3
+        with:
+          path: _xml_coverage_reports
+          fetch-depth: 0
+
+      - name: Copy data to _xml_coverage_reports
+        if: steps.check-junit-xml.outputs.files_exists == 'true'
+        run: |
+          BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          echo "diff_storage_branch=$BRANCH" >> $GITHUB_ENV
+          mkdir -p _xml_coverage_reports/data/${BRANCH}
+        shell: bash
+
+      - name: Commit JUnit XML report
+        if: steps.check-junit-xml.outputs.files_exists == 'true'
+        working-directory: _xml_coverage_reports/data
+        run: |
+          cp ${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml ./${{ env.diff_storage_branch }}/junit-result.xml
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git switch _xml_coverage_reports || true
+          git pull origin _xml_coverage_reports
+          git add -f "${{ env.diff_storage_branch }}/junit-result.xml"
+          git commit -m "Add/Update JUnit report: ${{ github.sha }}" || true
+        shell: bash
+
       - name: Catch warnings in R CMD check output 🗳
         id: catch-errors
         run: |
