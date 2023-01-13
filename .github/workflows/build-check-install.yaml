@@ -295,6 +295,15 @@ jobs:
           git commit -m "Add/Update JUnit report: ${{ github.sha }}" || true
         shell: bash
 
+      - name: Push JUnit XML report to _xml_coverage_reports
+      # if: >
+      #   contains(inputs.diff, 'true')
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+        branch: _xml_coverage_reports
+        directory: _xml_coverage_reports/data
+
       - name: Catch warnings in R CMD check output 🗳
         id: catch-errors
         run: |
