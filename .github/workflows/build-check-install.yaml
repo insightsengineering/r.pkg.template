@@ -318,12 +318,13 @@ jobs:
           go build -v ./...
           # TODO obviously parametrize
           ./test ../_xml_coverage_reports/data/${{ env.diff_storage_branch }}/junit-result.xml ../_xml_coverage_reports/data/main/junit-result.xml > output.md
+          cat output.md
 
       - name: Post as comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: markdown-table
-          path: go/output.md
+          path: tern/go/output.md
 
       - name: Catch warnings in R CMD check output 🗳
         id: catch-errors
