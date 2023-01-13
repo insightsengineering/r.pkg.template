@@ -306,12 +306,6 @@ jobs:
           branch: _xml_coverage_reports
           directory: _xml_coverage_reports/data
 
-      - name: Compare JUnit XML reports
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
-        working-directory: _xml_coverage_reports/data
-        run: |
-          diff ${{ env.diff_storage_branch }}/junit-result.xml main/junit-result.xml
-
       # Temporary - the Go binary will be downloaded.
       - name: Set up Go
         uses: actions/setup-go@v3
