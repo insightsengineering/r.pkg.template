@@ -286,11 +286,12 @@ jobs:
         if: steps.check-junit-xml.outputs.files_exists == 'true'
         working-directory: _xml_coverage_reports/data
         run: |
-          cp ../../${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml ./${{ env.diff_storage_branch }}/junit-result.xml
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git switch _xml_coverage_reports || true
+          git config pull.rebase false
           git pull origin _xml_coverage_reports
+          cp ../../${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml ./${{ env.diff_storage_branch }}/junit-result.xml
           git add -f "${{ env.diff_storage_branch }}/junit-result.xml"
           git commit -m "Add/Update JUnit report: ${{ github.sha }}" || true
         shell: bash
