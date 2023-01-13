@@ -127,22 +127,6 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
 
-      # Temporary - the Go binary will be downloaded.
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.19
-
-      - name: Build Go
-        working-directory: tern/go
-        run: |
-          ls -la
-          pwd
-          go build -v ./...
-          ls -la
-          # TODO obviously parametrize
-          ./test
-
       - name: Restore SD cache 💰
         uses: actions/cache@v3
         with:
@@ -329,7 +313,7 @@ jobs:
           go-version: 1.19
 
       - name: Build Go
-        working-directory: go
+        working-directory: tern/go
         run: |
           go build -v ./...
           # TODO obviously parametrize
