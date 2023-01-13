@@ -317,7 +317,7 @@ jobs:
         run: |
           go build -v ./...
           # TODO obviously parametrize
-          ./test ../../_xml_coverage_reports/data/${{ env.diff_storage_branch }}/junit-result.xml ../../_xml_coverage_reports/data/main/junit-result.xml > output.md
+          ./test ../../_xml_coverage_reports/data/main/junit-result.xml ../../_xml_coverage_reports/data/${{ env.diff_storage_branch }}/junit-result.xml > output.md
           cat output.md
 
       - name: Post as comment
