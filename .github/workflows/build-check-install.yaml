@@ -132,17 +132,6 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
 
-      - name: Run XML comparison
-        uses: addnab/docker-run-action@v3
-        # if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          options: --entrypoint=/junit-xml-diff -v${PWD}:/xml
-          image: ghcr.io/insightsengineering/junit-xml-diff:latest
-          run: /xml/old.xml /xml/new.xml > output.md
-
       - name: Restore SD cache 💰
         uses: actions/cache@v3
         with:
@@ -362,25 +351,24 @@ jobs:
       - name: Copy files
         if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
         run: |
-          cp ${{ inputs.junit-xml-storage }}/data/main/junit-result.xml old.xml
+          # TODO if old.xml doesn't exist, copy new.xml as old.xml
+          # cp ${{ inputs.junit-xml-storage }}/data/main/junit-result.xml old.xml
           cp ${{ inputs.junit-xml-storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
+          cp new.xml old.xml
 
-      - name: Run XML comparison
-        uses: addnab/docker-run-action@v3
-        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
+      - name: Upload old JUnit XML as temporary artifacts
+        uses: actions/upload-artifact@v2
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          options: --entrypoint=/junit-xml-diff -v${PWD}:/xml
-          image: ghcr.io/insightsengineering/junit-xml-diff:latest
-          run: /xml/old.xml /xml/new.xml > output.md
+          name: old-junit-xml
+          path: old.xml
+          retention-days: 1
 
-      - name: Post as comment
-        uses: marocchino/sticky-pull-request-comment@v2
+      - name: Upload new JUnit XML as temporary artifacts
+        uses: actions/upload-artifact@v2
         with:
-          header: markdown-table
-          path: ${{ github.event.repository.name }}/output.md
+          name: new-junit-xml
+          path: new.xml
+          retention-days: 1
 
       - name: Catch warnings in R CMD check output 🗳
         id: catch-errors
@@ -461,6 +449,49 @@ jobs:
         with:
           path: ${{ github.event.repository.name }}/${{ env.PKGBUILD }}
           name: ${{ env.PKGBUILD }}
+
+  run-junit-xml-comparison:
+    name: Run JUnit XML comparison
+    runs-on: ubuntu-latest
+    needs: build-install-check
+    # This should be executed only:
+    # if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v3
+
+      - name: Download old JUnit XML
+        uses: actions/download-artifact@v2
+        with:
+          name: old-junit-xml
+          path: old.xml
+
+      - name: Download new JUnit XML
+        uses: actions/download-artifact@v2
+        with:
+          name: new-junit-xml
+          path: new.xml
+
+      - name: Log in to the Container registry 🗝
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run XML comparison
+        # is this possible?
+        # if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
+        run: |
+          docker run --entrypoint=/junit-xml-diff -v${PWD}:/app --rm ghcr.io/insightsengineering/junit-xml-diff:latest /app/old.xml /app/new.xml > /app/output.md
+          cat output.md
+
+      - name: Post as comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: markdown-table
+          path: output.md
+
 
   upload-release-assets:
     name: Upload build tar.gz
