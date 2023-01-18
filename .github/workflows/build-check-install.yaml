@@ -483,7 +483,7 @@ jobs:
         # is this possible?
         # if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
         run: |
-          docker run --entrypoint=/junit-xml-diff -v${PWD}:/app --rm ghcr.io/insightsengineering/junit-xml-diff:latest /app/old.xml /app/new.xml > /app/output.md
+          docker run --entrypoint=/junit-xml-diff -v${PWD}:/app --rm ghcr.io/insightsengineering/junit-xml-diff:latest /app/old.xml /app/new.xml > output.md
           cat output.md
 
       - name: Post as comment
