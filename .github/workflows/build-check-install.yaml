@@ -90,6 +90,7 @@ on:
         description: Branch name to store JUnit XML reports.
         required: false
         default: "_junit_xml_reports"
+        type: string
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
