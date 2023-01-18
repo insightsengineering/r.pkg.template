@@ -350,14 +350,12 @@ jobs:
 
       - name: Copy files
         if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
-        working-directory: ${{ github.event.repository.name }}
         run: |
-          cp ../${{ inputs.junit-xml-storage }}/data/main/junit-result.xml old.xml
-          cp ../${{ inputs.junit-xml-storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
+          cp ${{ inputs.junit-xml-storage }}/data/main/junit-result.xml old.xml
+          cp ${{ inputs.junit-xml-storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
 
       - name: Run XML comparison
         uses: addnab/docker-run-action@v3
-        working-directory: ${{ github.event.repository.name }}
         if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
         with:
           registry: ghcr.io
