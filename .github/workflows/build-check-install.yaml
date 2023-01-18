@@ -477,7 +477,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.REPO_GITHUB_TOKEN }}
 
       - name: Run XML comparison
         # is this possible?
