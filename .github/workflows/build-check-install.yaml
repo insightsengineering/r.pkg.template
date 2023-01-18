@@ -86,6 +86,10 @@ on:
         required: false
         default: ""
         type: string
+      junit-xml-storage:
+        description: Branch name to store JUnit XML reports.
+        required: false
+        default: "_junit_xml_reports"
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
@@ -250,6 +254,48 @@ jobs:
           _R_CHECK_VIGNETTES_NLINES_: 0
           _R_CHECK_FORCE_SUGGESTS_: ${{ inputs.R_CHECK_FORCE_SUGGESTS }}
 
+      - name: Fetch report from ${{ inputs.junit-xml-storage }}
+        uses: actions/checkout@v3
+        with:
+          path: ${{ inputs.junit-xml-storage }}
+          fetch-depth: 0
+
+      - name: Initialize storage branch
+        working-directory: ${{ inputs.junit-xml-storage }}
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          # Switch to the branch if it already exists
+          git switch ${{ inputs.junit-xml-storage }} || true
+          git pull origin ${{ inputs.junit-xml-storage }} || true
+          # Create the branch if it doesn't exist yet
+          git checkout --orphan ${{ inputs.junit-xml-storage }} || true
+          # Ensure that the bare minimum components exist in the branch
+          mkdir -p data
+          touch README.md data/.gitkeep
+          # Copy necessary files and folders to a temporary location
+          mkdir -p /tmp/${{ github.sha }}
+          echo "Copying data to /tmp/${{ github.sha }}"
+          cp -r .git README.md data /tmp/${{ github.sha }}
+          # Remove everything else
+          # Attribution: https://unix.stackexchange.com/a/77313
+          rm -rf ..?* .[!.]* *
+          # Restore files from the temporary location
+          echo "Copying data from /tmp/${{ github.sha }}"
+          cp -r /tmp/${{ github.sha }}/.git /tmp/${{ github.sha }}/README.md /tmp/${{ github.sha }}/data .
+          rm -rf /tmp/${{ github.sha }}
+          git add --all -f
+          git commit -m "Update storage branch: $(date)" || true
+        shell: bash
+
+      - name: Push storage branch
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          branch: ${{ inputs.junit-xml-storage }}
+          directory: ${{ inputs.junit-xml-storage }}
+          force: true
+
       - name: Check whether JUnit XML report exists 🚦
         id: check-junit-xml
         uses: andstor/file-existence-action@v2
@@ -264,67 +310,66 @@ jobs:
           check_name: Unit Tests Summary
           junit_files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
 
-      # TODO These steps will probably have to be a separate action.
-      # TODO Parametrize _xml_coverage_reports -> ${{ inputs.diff-storage }}
-      # TODO should the branch be initialized or the same one used as for coverage reports?
-      - name: Fetch JUnit XML reports from _xml_coverage_reports
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
+      - name: Fetch JUnit XML reports from ${{ inputs.junit-xml-storage }}
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
         uses: actions/checkout@v3
         with:
-          path: _xml_coverage_reports
+          path: ${{ inputs.junit-xml-storage }}
           fetch-depth: 0
 
-      - name: Copy data to _xml_coverage_reports
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
+      - name: Copy data to ${{ inputs.junit-xml-storage }}
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
         run: |
           BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           echo "diff_storage_branch=$BRANCH" >> $GITHUB_ENV
-          mkdir -p _xml_coverage_reports/data/${BRANCH}
+          mkdir -p ${{ inputs.junit-xml-storage }}/data/${BRANCH}
         shell: bash
 
       - name: Commit JUnit XML report
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
-        working-directory: _xml_coverage_reports/data
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
+        working-directory: ${{ inputs.junit-xml-storage }}/data
         run: |
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git switch _xml_coverage_reports || true
+          git switch ${{ inputs.junit-xml-storage }} || true
           git config pull.rebase false
-          git pull origin _xml_coverage_reports
+          git pull origin ${{ inputs.junit-xml-storage }}
           cp ../../${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml ./${{ env.diff_storage_branch }}/junit-result.xml
           git add -f "${{ env.diff_storage_branch }}/junit-result.xml"
           git commit -m "Add/Update JUnit report: ${{ github.sha }}" || true
         shell: bash
 
-      - name: Push JUnit XML report to _xml_coverage_reports
-        # if: >
-        #   contains(inputs.diff, 'true')
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
+      - name: Push JUnit XML report to ${{ inputs.junit-xml-storage }}
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
-          branch: _xml_coverage_reports
-          directory: _xml_coverage_reports/data
+          branch: ${{ inputs.junit-xml-storage }}
+          directory: ${{ inputs.junit-xml-storage }}/data
 
-      # Temporary - the Go binary will be downloaded.
-      - name: Set up Go
-        uses: actions/setup-go@v3
+      - name: Log in to the Container registry 🗝
+        uses: docker/login-action@v2
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
         with:
-          go-version: 1.19
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Go
-        working-directory: ${{ github.event.repository.name }}/go
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
+        working-directory: ${{ github.event.repository.name }}
         run: |
-          go build -v ./...
-          # TODO obviously parametrize
-          ./test ../../_xml_coverage_reports/data/main/junit-result.xml ../../_xml_coverage_reports/data/${{ env.diff_storage_branch }}/junit-result.xml > output.md
+          # TODO change target branch
+          cp ../${{ inputs.junit-xml-storage }}/data/main/junit-result.xml old.xml
+          cp ../${{ inputs.junit-xml-storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
+          docker run --name test6 --entrypoint=/junit-xml-diff -v${PWD}:/xml --rm ghcr.io/insightsengineering/junit-xml-diff:latest /xml/old.xml /xml/new.xml > output.md
           cat output.md
 
       - name: Post as comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: markdown-table
-          path: ${{ github.event.repository.name }}/go/output.md
+          path: ${{ github.event.repository.name }}/output.md
 
       - name: Catch warnings in R CMD check output 🗳
         id: catch-errors
