@@ -132,6 +132,17 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
 
+      - name: Run XML comparison
+        uses: addnab/docker-run-action@v3
+        # if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          options: --entrypoint=/junit-xml-diff -v${PWD}:/xml
+          image: ghcr.io/insightsengineering/junit-xml-diff:latest
+          run: /xml/old.xml /xml/new.xml > output.md
+
       - name: Restore SD cache 💰
         uses: actions/cache@v3
         with:
