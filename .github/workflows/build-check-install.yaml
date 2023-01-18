@@ -351,10 +351,14 @@ jobs:
       - name: Copy files
         if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
         run: |
-          # TODO if old.xml doesn't exist, copy new.xml as old.xml
-          # cp ${{ inputs.junit-xml-storage }}/data/main/junit-result.xml old.xml
           cp ${{ inputs.junit-xml-storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
-          cp new.xml old.xml
+          # TODO parametrize target branch
+          if [ ! -f ${{ inputs.junit-xml-storage }}/data/main/junit-result.xml ]; then
+            # If XML on target branch doesn't exist, compare file with itself
+            cp new.xml old.xml
+          else
+            cp ${{ inputs.junit-xml-storage }}/data/main/junit-result.xml old.xml
+          fi
 
       - name: Upload old JUnit XML as temporary artifacts
         uses: actions/upload-artifact@v2
@@ -464,13 +468,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: old-junit-xml
-          path: old.xml
 
       - name: Download new JUnit XML
         uses: actions/download-artifact@v2
         with:
           name: new-junit-xml
-          path: new.xml
 
       - name: Log in to the Container registry 🗝
         uses: docker/login-action@v2
