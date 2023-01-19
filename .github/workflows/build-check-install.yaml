@@ -127,7 +127,7 @@ jobs:
       - name: Normalize variables 📏
         run: |
           echo "junit_xml_storage=${${{ inputs.junit-xml-storage }}:-_junit_xml_reports}" >> $GITHUB_ENV
-          echo "junit_xml_diff_branch=${${{ junit-xml-diff-branch }}:-main}" >> $GITHUB_ENV
+          echo "junit_xml_diff_branch=${${{ inputs.junit-xml-diff-branch }}:-main}" >> $GITHUB_ENV
           echo "junit_xml_storage=${{ env.junit_xml_storage }}"
           echo "junit_xml_diff_branch=${{ env.junit_xml_diff_branch }}"
         shell: bash
