@@ -126,8 +126,10 @@ jobs:
 
       - name: Normalize variables 📏
         run: |
-          echo "junit_xml_storage=${${{ inputs.junit-xml-storage }}:-_junit_xml_reports}" >> $GITHUB_ENV
-          echo "junit_xml_diff_branch=${${{ inputs.junit-xml-diff-branch }}:-main}" >> $GITHUB_ENV
+          junit_xml_storage_input=${{ inputs.junit-xml-storage }}
+          junit_xml_diff_branch_input=${{ inputs.junit-xml-diff-branch }}
+          echo "junit_xml_storage=${junit_xml_storage_input:-_junit_xml_reports}" >> $GITHUB_ENV
+          echo "junit_xml_diff_branch=${junit_xml_diff_branch_input:-main}" >> $GITHUB_ENV
           echo "junit_xml_storage=${{ env.junit_xml_storage }}"
           echo "junit_xml_diff_branch=${{ env.junit_xml_diff_branch }}"
         shell: bash
@@ -271,14 +273,12 @@ jobs:
           _R_CHECK_FORCE_SUGGESTS_: ${{ inputs.R_CHECK_FORCE_SUGGESTS }}
 
       - name: Fetch report from ${{ inputs.junit-xml-storage }} ⤵️
-        if: github.event_name == 'workflow_call'
         uses: actions/checkout@v3
         with:
           path: ${{ inputs.junit-xml-storage }}
           fetch-depth: 0
 
       - name: Initialize storage branch ${{ inputs.junit-xml-storage }} 🗄️
-        if: github.event_name == 'workflow_call'
         working-directory: ${{ inputs.junit-xml-storage }}
         run: |
           git config --global --add safe.directory ${PWD}
@@ -308,7 +308,6 @@ jobs:
         shell: bash
 
       - name: Push storage branch ${{ inputs.junit-xml-storage }} 🗄️
-        if: github.event_name == 'workflow_call'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
@@ -480,7 +479,6 @@ jobs:
     name: Run JUnit XML comparison
     runs-on: ubuntu-latest
     needs: build-install-check
-    if: github.event_name == 'workflow_call'
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
