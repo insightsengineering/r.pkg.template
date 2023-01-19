@@ -271,6 +271,7 @@ jobs:
       - name: Initialize storage branch ${{ inputs.junit-xml-storage }} 🗄️
         working-directory: ${{ inputs.junit-xml-storage }}
         run: |
+          git config --global --add safe.directory ${PWD}
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           # Switch to the branch if it already exists
