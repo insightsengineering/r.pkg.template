@@ -372,7 +372,7 @@ jobs:
             echo "run_xml_comparison=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Upload old JUnit XML as temporary artifacts ⤴️
+      - name: Upload old JUnit XML ⤴️
         if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'workflow_call'
         uses: actions/upload-artifact@v2
         with:
@@ -380,7 +380,7 @@ jobs:
           path: old.xml
           retention-days: 1
 
-      - name: Upload new JUnit XML as temporary artifacts ⤴️
+      - name: Upload new JUnit XML ⤴️
         if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'workflow_call'
         uses: actions/upload-artifact@v2
         with:
