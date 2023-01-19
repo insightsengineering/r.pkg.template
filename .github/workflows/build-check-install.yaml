@@ -96,6 +96,11 @@ on:
         required: false
         default: main
         type: string
+      junit-xml-comparison:
+        description: Turn on JUnit XML comparison
+        required: false
+        default: true
+        type: boolean
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
@@ -128,8 +133,10 @@ jobs:
         run: |
           junit_xml_storage_input="${{ inputs.junit-xml-storage }}"
           junit_xml_diff_branch_input="${{ inputs.junit-xml-diff-branch }}"
+          junit_xml_comparison_input="${{ input.junit-xml-comparison }}"
           echo "junit_xml_storage=${junit_xml_storage_input:-_junit_xml_reports}" >> $GITHUB_ENV
           echo "junit_xml_diff_branch=${junit_xml_diff_branch_input:-main}" >> $GITHUB_ENV
+          echo "junit_xml_comparison=${junit_xml_comparison_input:-true}" >> $GITHUB_ENV
         shell: bash
 
       - name: Checkout repo (PR) 🛎
@@ -271,12 +278,14 @@ jobs:
           _R_CHECK_FORCE_SUGGESTS_: ${{ inputs.R_CHECK_FORCE_SUGGESTS }}
 
       - name: Fetch report from ${{ env.junit_xml_storage }} ⤵️
+        if: env.junit_xml_comparison == 'true'
         uses: actions/checkout@v3
         with:
           path: ${{ env.junit_xml_storage }}
           fetch-depth: 0
 
       - name: Initialize storage branch ${{ env.junit_xml_storage }} 🗄️
+        if: env.junit_xml_comparison == 'true'
         working-directory: ${{ env.junit_xml_storage }}
         run: |
           git config --global --add safe.directory ${PWD}
@@ -306,6 +315,7 @@ jobs:
         shell: bash
 
       - name: Push storage branch ${{ env.junit_xml_storage }} 🗄️
+        if: env.junit_xml_comparison == 'true'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
@@ -328,14 +338,14 @@ jobs:
           junit_files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
 
       - name: Fetch JUnit XML reports from ${{ env.junit_xml_storage }} ⤵️
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
         uses: actions/checkout@v3
         with:
           path: ${{ env.junit_xml_storage }}
           fetch-depth: 0
 
-      - name: Copy data to ${{ env.junit_xml_storage }} 🗃️
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
+      - name: Set up ${{ env.junit_xml_storage }} branch for reports 🗃️
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
         run: |
           BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           echo "diff_storage_branch=$BRANCH" >> $GITHUB_ENV
@@ -343,7 +353,7 @@ jobs:
         shell: bash
 
       - name: Commit JUnit XML report 📄
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
         working-directory: ${{ env.junit_xml_storage }}/data
         run: |
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -357,41 +367,35 @@ jobs:
         shell: bash
 
       - name: Push JUnit XML report to ${{ env.junit_xml_storage }} 📄
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
           branch: ${{ env.junit_xml_storage }}
           directory: ${{ env.junit_xml_storage }}/data
 
-      - name: Copy files 🗃️
+      - name: Run XML comparison 🔍
         id: copy-files
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
         run: |
           cp ${{ env.junit_xml_storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
           if [ ! -f ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml ]; then
             # If XML for the branch against which we're comparing doesn't exist, we're skipping the comparison.
-            echo "JUnit report for branch ${{ env.junit_xml_diff_branch }} doesn't exist yet on ${{ env.junit_xml_storage }} branch."
+            echo "JUnit report for branch ${{ env.junit_xml_diff_branch }} doesn't exist yet on ${{ env.junit_xml_storage }} branch." > output.md
           else
             cp ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml old.xml
-            echo "run_xml_comparison=true" >> $GITHUB_OUTPUT
+            wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.2/junit-xml-diff_0.2_linux_amd64.tar.gz -O junit-xml-diff.tar.gz
+            tar xzf junit-xml-diff.tar.gz
+            ./junit-xml-diff old.xml new.xml > output.md
           fi
+          cat output.md
 
-      - name: Upload old JUnit XML ⤴️
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
-        uses: actions/upload-artifact@v2
+      - name: Post as comment 💬
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
+        uses: marocchino/sticky-pull-request-comment@v2
         with:
-          name: old-junit-xml
-          path: old.xml
-          retention-days: 1
-
-      - name: Upload new JUnit XML ⤴️
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
-        uses: actions/upload-artifact@v2
-        with:
-          name: new-junit-xml
-          path: new.xml
-          retention-days: 1
+          header: markdown-table
+          path: output.md
 
       - name: Catch warnings in R CMD check output 🗳
         id: catch-errors
@@ -472,47 +476,6 @@ jobs:
         with:
           path: ${{ github.event.repository.name }}/${{ env.PKGBUILD }}
           name: ${{ env.PKGBUILD }}
-
-  run-junit-xml-comparison:
-    name: Run JUnit XML comparison
-    runs-on: ubuntu-latest
-    needs: build-install-check
-    steps:
-      - name: Checkout repo 🛎
-        uses: actions/checkout@v3
-
-      - name: Download old JUnit XML ⤵️
-        if: needs.build-install-check.outputs.run_xml_comparison == 'true'
-        uses: actions/download-artifact@v2
-        with:
-          name: old-junit-xml
-
-      - name: Download new JUnit XML ⤵️
-        if: needs.build-install-check.outputs.run_xml_comparison == 'true'
-        uses: actions/download-artifact@v2
-        with:
-          name: new-junit-xml
-
-      - name: Log in to the Container registry 🗝
-        if: needs.build-install-check.outputs.run_xml_comparison == 'true'
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.REPO_GITHUB_TOKEN }}
-
-      - name: Run XML comparison 🔍
-        if: needs.build-install-check.outputs.run_xml_comparison == 'true'
-        run: |
-          docker run --entrypoint=/junit-xml-diff -v${PWD}:/app --rm ghcr.io/insightsengineering/junit-xml-diff:latest /app/old.xml /app/new.xml > output.md
-          cat output.md
-
-      - name: Post as comment 💬
-        if: needs.build-install-check.outputs.run_xml_comparison == 'true' && github.event_name == 'pull_request'
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: markdown-table
-          path: output.md
 
   upload-release-assets:
     name: Upload build tar.gz
