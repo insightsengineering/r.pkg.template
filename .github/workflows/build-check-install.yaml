@@ -133,7 +133,7 @@ jobs:
         run: |
           junit_xml_storage_input="${{ inputs.junit-xml-storage }}"
           junit_xml_diff_branch_input="${{ inputs.junit-xml-diff-branch }}"
-          junit_xml_comparison_input="${{ input.junit-xml-comparison }}"
+          junit_xml_comparison_input="${{ inputs.junit-xml-comparison }}"
           echo "junit_xml_storage=${junit_xml_storage_input:-_junit_xml_reports}" >> $GITHUB_ENV
           echo "junit_xml_diff_branch=${junit_xml_diff_branch_input:-main}" >> $GITHUB_ENV
           echo "junit_xml_comparison=${junit_xml_comparison_input:-true}" >> $GITHUB_ENV
