@@ -328,14 +328,14 @@ jobs:
           junit_files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
 
       - name: Fetch JUnit XML reports from ${{ env.junit_xml_storage }} ⤵️
-        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'workflow_call'
+        if: steps.check-junit-xml.outputs.files_exists == 'true'
         uses: actions/checkout@v3
         with:
           path: ${{ env.junit_xml_storage }}
           fetch-depth: 0
 
       - name: Copy data to ${{ env.junit_xml_storage }} 🗃️
-        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'workflow_call'
+        if: steps.check-junit-xml.outputs.files_exists == 'true'
         run: |
           BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
           echo "diff_storage_branch=$BRANCH" >> $GITHUB_ENV
@@ -343,7 +343,7 @@ jobs:
         shell: bash
 
       - name: Commit JUnit XML report 📄
-        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'workflow_call'
+        if: steps.check-junit-xml.outputs.files_exists == 'true'
         working-directory: ${{ env.junit_xml_storage }}/data
         run: |
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -357,7 +357,7 @@ jobs:
         shell: bash
 
       - name: Push JUnit XML report to ${{ env.junit_xml_storage }} 📄
-        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'workflow_call'
+        if: steps.check-junit-xml.outputs.files_exists == 'true'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
@@ -366,7 +366,7 @@ jobs:
 
       - name: Copy files 🗃️
         id: copy-files
-        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'workflow_call'
+        if: steps.check-junit-xml.outputs.files_exists == 'true'
         run: |
           cp ${{ env.junit_xml_storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
           if [ ! -f ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml ]; then
@@ -378,7 +378,7 @@ jobs:
           fi
 
       - name: Upload old JUnit XML ⤴️
-        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'workflow_call'
+        if: steps.check-junit-xml.outputs.files_exists == 'true'
         uses: actions/upload-artifact@v2
         with:
           name: old-junit-xml
@@ -386,7 +386,7 @@ jobs:
           retention-days: 1
 
       - name: Upload new JUnit XML ⤴️
-        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'workflow_call'
+        if: steps.check-junit-xml.outputs.files_exists == 'true'
         uses: actions/upload-artifact@v2
         with:
           name: new-junit-xml
