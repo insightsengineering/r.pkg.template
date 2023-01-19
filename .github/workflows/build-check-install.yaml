@@ -130,8 +130,6 @@ jobs:
           junit_xml_diff_branch_input="${{ inputs.junit-xml-diff-branch }}"
           echo "junit_xml_storage=${junit_xml_storage_input:-_junit_xml_reports}" >> $GITHUB_ENV
           echo "junit_xml_diff_branch=${junit_xml_diff_branch_input:-main}" >> $GITHUB_ENV
-          echo "junit_xml_storage=${{ env.junit_xml_storage }}"
-          echo "junit_xml_diff_branch=${{ env.junit_xml_diff_branch }}"
         shell: bash
 
       - name: Checkout repo (PR) 🛎
@@ -272,23 +270,23 @@ jobs:
           _R_CHECK_VIGNETTES_NLINES_: 0
           _R_CHECK_FORCE_SUGGESTS_: ${{ inputs.R_CHECK_FORCE_SUGGESTS }}
 
-      - name: Fetch report from ${{ env.junit_xml_storage }}" ⤵️
+      - name: Fetch report from ${{ env.junit_xml_storage }} ⤵️
         uses: actions/checkout@v3
         with:
-          path: ${{ env.junit_xml_storage }}"
+          path: ${{ env.junit_xml_storage }}
           fetch-depth: 0
 
-      - name: Initialize storage branch ${{ env.junit_xml_storage }}" 🗄️
-        working-directory: ${{ env.junit_xml_storage }}"
+      - name: Initialize storage branch ${{ env.junit_xml_storage }} 🗄️
+        working-directory: ${{ env.junit_xml_storage }}
         run: |
           git config --global --add safe.directory ${PWD}
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           # Switch to the branch if it already exists
-          git switch ${{ env.junit_xml_storage }}" || true
-          git pull origin ${{ env.junit_xml_storage }}" || true
+          git switch ${{ env.junit_xml_storage }} || true
+          git pull origin ${{ env.junit_xml_storage }} || true
           # Create the branch if it doesn't exist yet
-          git checkout --orphan ${{ env.junit_xml_storage }}" || true
+          git checkout --orphan ${{ env.junit_xml_storage }} || true
           # Ensure that the bare minimum components exist in the branch
           mkdir -p data
           touch README.md data/.gitkeep
@@ -307,12 +305,12 @@ jobs:
           git commit -m "Update storage branch: $(date)" || true
         shell: bash
 
-      - name: Push storage branch ${{ env.junit_xml_storage }}" 🗄️
+      - name: Push storage branch ${{ env.junit_xml_storage }} 🗄️
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
-          branch: ${{ env.junit_xml_storage }}"
-          directory: ${{ env.junit_xml_storage }}"
+          branch: ${{ env.junit_xml_storage }}
+          directory: ${{ env.junit_xml_storage }}
           force: true
 
       - name: Check whether JUnit XML report exists 🚦
@@ -329,14 +327,14 @@ jobs:
           check_name: Unit Tests Summary
           junit_files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
 
-      - name: Fetch JUnit XML reports from ${{ env.junit_xml_storage }}" ⤵️
+      - name: Fetch JUnit XML reports from ${{ env.junit_xml_storage }} ⤵️
         if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'workflow_call'
         uses: actions/checkout@v3
         with:
-          path: ${{ env.junit_xml_storage }}"
+          path: ${{ env.junit_xml_storage }}
           fetch-depth: 0
 
-      - name: Copy data to ${{ env.junit_xml_storage }}" 🗃️
+      - name: Copy data to ${{ env.junit_xml_storage }} 🗃️
         if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'workflow_call'
         run: |
           BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
@@ -371,11 +369,11 @@ jobs:
         if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'workflow_call'
         run: |
           cp ${{ env.junit_xml_storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
-          if [ ! -f ${{ env.junit_xml_storage }}/data/${{ inputs.junit-xml-diff-branch }}/junit-result.xml ]; then
+          if [ ! -f ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml ]; then
             # If XML for the branch against which we're comparing doesn't exist, we're skipping the comparison.
-            echo "JUnit report for branch ${{ inputs.junit-xml-diff-branch }} doesn't exist yet on ${{ env.junit_xml_storage }} branch."
+            echo "JUnit report for branch ${{ env.junit_xml_diff_branch }} doesn't exist yet on ${{ env.junit_xml_storage }} branch."
           else
-            cp ${{ env.junit_xml_storage }}/data/${{ inputs.junit-xml-diff-branch }}/junit-result.xml old.xml
+            cp ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml old.xml
             echo "run_xml_comparison=true" >> $GITHUB_OUTPUT
           fi
 
