@@ -465,7 +465,6 @@ jobs:
     name: Run JUnit XML comparison
     runs-on: ubuntu-latest
     needs: build-install-check
-    if: steps.copy-files.outputs.skip-xml-comparison == 'false'
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
@@ -488,11 +487,13 @@ jobs:
           password: ${{ secrets.REPO_GITHUB_TOKEN }}
 
       - name: Run XML comparison
+        if: steps.copy-files.outputs.skip-xml-comparison == 'false'
         run: |
           docker run --entrypoint=/junit-xml-diff -v${PWD}:/app --rm ghcr.io/insightsengineering/junit-xml-diff:latest /app/old.xml /app/new.xml > output.md
           cat output.md
 
       - name: Post as comment
+        if: steps.copy-files.outputs.skip-xml-comparison == 'false'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: markdown-table
