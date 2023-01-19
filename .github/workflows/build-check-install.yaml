@@ -382,7 +382,7 @@ jobs:
           if [ ! -f ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml ]; then
             # If XML for the branch against which we're comparing doesn't exist, we're skipping the comparison.
             echo "JUnit report for branch \`${{ env.junit_xml_diff_branch }}\` doesn't exist on \`${{ env.junit_xml_storage }}\` branch yet." > output.md
-            echo "Once this workflow runs on \`${{ env.junit_xml_diff_branch }}\` branch, you'll see comparison of tests performance between branches as a PR comment." >> output.md
+            echo "Once this workflow runs on \`${{ env.junit_xml_diff_branch }}\` branch, you'll see comparison of tests performance between \`${{ env.junit_xml_diff_branch }}\` and \`${{ env.diff_storage_branch }}\` as a PR comment." >> output.md
           else
             cp ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml old.xml
             wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.2/junit-xml-diff_0.2_linux_amd64.tar.gz -O junit-xml-diff.tar.gz
