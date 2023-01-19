@@ -499,7 +499,7 @@ jobs:
           cat output.md
 
       - name: Post as comment
-        if: needs.build-install-check.outputs.run_xml_comparison == 'true'
+        if: needs.build-install-check.outputs.run_xml_comparison == 'true' && github.event_name == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: markdown-table
