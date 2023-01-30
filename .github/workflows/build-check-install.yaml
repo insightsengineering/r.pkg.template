@@ -129,16 +129,19 @@ jobs:
         id: branch-name
         uses: tj-actions/branch-names@v6
 
+      # TODO temporary remove
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
           go-version: 1.19
 
+      # TODO temporary remove
       - name: Build Go
         run: |
           git clone -b report-updates https://github.com/insightsengineering/junit-xml-diff.git
           cd junit-xml-diff
           go build
+          ls -la
 
       - name: Normalize variables 📏
         run: |
@@ -398,7 +401,7 @@ jobs:
             cp ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml old.xml
             # wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.2/junit-xml-diff_0.2_linux_amd64.tar.gz -O junit-xml-diff.tar.gz
             # tar xzf junit-xml-diff.tar.gz
-            # TODO fix ./junit-xml-diff
+            # TODO temporary remove, change to ./junit-xml-diff
             ./junit-xml-diff/junit-xml-diff old.xml new.xml > output.md
           fi
           cat output.md
