@@ -399,9 +399,10 @@ jobs:
             echo "Once this workflow runs on \`${{ env.junit_xml_diff_branch }}\` branch, you'll see comparison of tests performance between \`${{ env.junit_xml_diff_branch }}\` and \`${{ env.diff_storage_branch }}\` as a PR comment." >> output.md
           else
             cp ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml old.xml
+            # TODO uncomment, and change to new version after releasing
             # wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.2/junit-xml-diff_0.2_linux_amd64.tar.gz -O junit-xml-diff.tar.gz
             # tar xzf junit-xml-diff.tar.gz
-            # TODO temporary remove, change to ./junit-xml-diff
+            # TODO temporary, change to ./junit-xml-diff
             ./junit-xml-diff/junit-xml-diff old.xml new.xml > output.md
           fi
           cat output.md
