@@ -87,7 +87,7 @@ on:
         default: ""
         type: string
       junit-xml-storage:
-        description: Branch name to store JUnit XML reports.
+        description: Branch name to store JUnit XML reports
         required: false
         default: "_junit_xml_reports"
         type: string
@@ -101,6 +101,24 @@ on:
         required: false
         default: true
         type: boolean
+      junit-xml-negative-threshold:
+        description: |
+          If time difference during JUnit XML comparison is between negative-threshold and 0: it's treated as 0.
+          This means that if test suite/case executes up to negative-threshold seconds faster, this time difference
+          is ignored as insignificant
+        required: false
+        # TODO change to 1.0
+        default: 0.3
+        type: string
+      junit-xml-positive-threshold:
+        description: |
+          If time difference during JUnit XML comparison is between 0 and positive-threshold: it's treated as 0.
+          This means that if test suite/case executes up to positive-threshold seconds slower, this time difference
+          is ignored as insignificant
+        required: false
+        # TODO change to 1.0
+        default: 0.3
+        type: string
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
@@ -148,9 +166,13 @@ jobs:
           junit_xml_storage_input="${{ inputs.junit-xml-storage }}"
           junit_xml_diff_branch_input="${{ inputs.junit-xml-diff-branch }}"
           junit_xml_comparison_input="${{ inputs.junit-xml-comparison }}"
+          junit_xml_positive_threshold="${{ input.junit-xml-positive-threshold }}"
+          junit_xml_negative_threshold="${{ input.junit-xml-negative-threshold }}"
           echo "junit_xml_storage=${junit_xml_storage_input:-_junit_xml_reports}" >> $GITHUB_ENV
           echo "junit_xml_diff_branch=${junit_xml_diff_branch_input:-main}" >> $GITHUB_ENV
           echo "junit_xml_comparison=${junit_xml_comparison_input:-true}" >> $GITHUB_ENV
+          echo "junit_xml_positive_threshold=${junit_xml_positive_threshold:-1.0}" >> $GITHUB_ENV
+          echo "junit_xml_negative_threshold=${junit_xml_negative_threshold:-1.0}" >> $GITHUB_ENV
         shell: bash
 
       - name: Checkout repo (PR) 🛎
@@ -397,23 +419,37 @@ jobs:
             # If XML for the branch against which we're comparing doesn't exist, we're skipping the comparison.
             echo "JUnit report for branch \`${{ env.junit_xml_diff_branch }}\` doesn't exist on \`${{ env.junit_xml_storage }}\` branch yet." > output.md
             echo "Once this workflow runs on \`${{ env.junit_xml_diff_branch }}\` branch, you'll see comparison of tests performance between \`${{ env.junit_xml_diff_branch }}\` and \`${{ env.diff_storage_branch }}\` as a PR comment." >> output.md
+            echo "junit_xml_comparison_result_method=comment" >> $GITHUB_ENV
           else
             cp ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml old.xml
             # TODO uncomment, and change to new version after releasing
             # wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.2/junit-xml-diff_0.2_linux_amd64.tar.gz -O junit-xml-diff.tar.gz
             # tar xzf junit-xml-diff.tar.gz
             # TODO temporary, change to ./junit-xml-diff
-            ./junit-xml-diff/junit-xml-diff old.xml new.xml output.md '${{ env.junit_xml_diff_branch }}' 0.2 0.2
-            # TODO parametrize threshold
+            ./junit-xml-diff/junit-xml-diff old.xml new.xml output.md '${{ env.junit_xml_diff_branch }}' '${{ env.junit_xml_positive_threshold }}' '${{ env.junit_xml_negative_threshold }}'
+            if [ "$(du -b output.md | awk '{print $1}')" -ge "65500" ]; then
+              # Output markdown is bigger than 65000 bytes.
+              # We're going to post it as an artifact rather than PR comment.
+              echo "junit_xml_comparison_result_method=artifact" >> $GITHUB_ENV
+            else
+              echo "junit_xml_comparison_result_method=comment" >> $GITHUB_ENV
+            fi
           fi
           cat output.md
 
-      - name: Post as comment 💬
-        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
+      - name: Post JUnit XML comparison as comment 💬
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true' && env.junit_xml_comparison_result_method == 'comment'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: markdown-table
           path: output.md
+
+      - name: Upload JUnit XML comparison ⤴
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true' && env.junit_xml_comparison_result_method == 'artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          path: output.md
+          name: junit-xml-report-comparison
 
       - name: Catch warnings in R CMD check output 🗳
         id: catch-errors
