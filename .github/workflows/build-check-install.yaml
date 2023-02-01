@@ -160,6 +160,33 @@ jobs:
           cd junit-xml-diff
           go build
           ls -la
+          for i in `seq 1 30000`; do echo "a" >> test60; done
+          for i in `seq 1 35000`; do echo "a" >> test70; done
+          for i in `seq 1 40000`; do echo "a" >> test80; done
+          for i in `seq 1 45000`; do echo "a" >> test90; done
+
+        # TODO temporary remove
+      - name: Post JUnit XML comparison as comment 💬
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: test60
+          path: test60
+      - name: Post JUnit XML comparison as comment 💬
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: test70
+          path: test70
+      - name: Post JUnit XML comparison as comment 💬
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: test80
+          path: test80
+
+      - name: Post JUnit XML comparison as comment 💬
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: test90
+          path: test90
 
       - name: Normalize variables 📏
         run: |
