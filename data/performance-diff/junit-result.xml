@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="api" timestamp="2023-02-01T13:26:39Z" hostname="1ae7dc7032c9" tests="1" skipped="0" failures="0" errors="0" time="4.048">
-    <testcase time="4.048" classname="api" name="API_greets_the_person"/>
+  <testsuite name="api" timestamp="2023-02-01T13:45:47Z" hostname="f87f0ecd3489" tests="1" skipped="0" failures="0" errors="0" time="4.031">
+    <testcase time="4.031" classname="api" name="API_greets_the_person"/>
   </testsuite>
-  <testsuite name="hello" timestamp="2023-02-01T13:26:43Z" hostname="1ae7dc7032c9" tests="1" skipped="0" failures="0" errors="0" time="0.087">
-    <testcase time="0.0869999999999997" classname="hello" name="hello_greets_the_entity"/>
+  <testsuite name="hello" timestamp="2023-02-01T13:45:51Z" hostname="f87f0ecd3489" tests="1" skipped="0" failures="0" errors="0" time="0.093">
+    <testcase time="0.093" classname="hello" name="hello_greets_the_entity"/>
   </testsuite>
-  <testsuite name="shiny" timestamp="2023-02-01T13:26:43Z" hostname="1ae7dc7032c9" tests="1" skipped="0" failures="0" errors="0" time="3.488">
-    <testcase time="3.488" classname="shiny" name="The_Shiny_App_returns_a_proper_greeting"/>
+  <testsuite name="shiny" timestamp="2023-02-01T13:45:51Z" hostname="f87f0ecd3489" tests="1" skipped="0" failures="0" errors="0" time="3.341">
+    <testcase time="3.341" classname="shiny" name="The_Shiny_App_returns_a_proper_greeting"/>
   </testsuite>
 </testsuites>
