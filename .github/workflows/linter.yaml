@@ -15,6 +15,12 @@ on:
       - main
   workflow_dispatch:
   workflow_call:
+    inputs:
+      lintr_error_on_lint:
+        description: Produce an error when lints are found
+        required: false
+        type: boolean
+        default: true
 
 concurrency:
   group: lint-${{ github.event.pull_request.number || github.ref }}
@@ -71,4 +77,4 @@ jobs:
           MARKDOWN_CONFIG_FILE: .markdownlint.yaml
           VALIDATE_R: true
           VALIDATE_YAML: true
-          LINTR_ERROR_ON_LINT: true
+          LINTR_ERROR_ON_LINT: ${{ inputs.lintr_error_on_lint }}
