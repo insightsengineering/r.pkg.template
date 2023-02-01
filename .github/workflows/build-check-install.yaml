@@ -160,6 +160,7 @@ jobs:
           cd junit-xml-diff
           go build
           ls -la
+          cd ..
           for i in `seq 1 30000`; do echo "a" >> test60; done
           for i in `seq 1 35000`; do echo "a" >> test70; done
           for i in `seq 1 40000`; do echo "a" >> test80; done
