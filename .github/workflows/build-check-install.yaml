@@ -137,8 +137,6 @@ jobs:
         && github.event.pull_request.draft == false
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
-    outputs:
-      run_xml_comparison: ${{ steps.copy-files.outputs.run_xml_comparison }}
 
     steps:
       - name: Get branch names 🌿
