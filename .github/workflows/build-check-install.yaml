@@ -105,19 +105,17 @@ on:
         description: |
           If time difference during JUnit XML comparison is between negative-threshold and 0: it's treated as 0.
           This means that if test suite/case executes up to negative-threshold seconds faster, this time difference
-          is ignored as insignificant
+          is ignored as insignificant, and test suite/case is not shown in the table
         required: false
-        # TODO change to 1.0
-        default: 0.3
+        default: 1.0
         type: string
       junit-xml-positive-threshold:
         description: |
           If time difference during JUnit XML comparison is between 0 and positive-threshold: it's treated as 0.
           This means that if test suite/case executes up to positive-threshold seconds slower, this time difference
-          is ignored as insignificant
+          is ignored as insignificant, and test suite/case is not shown in the table
         required: false
-        # TODO change to 1.0
-        default: 0.3
+        default: 1.0
         type: string
 
 concurrency:
@@ -146,19 +144,6 @@ jobs:
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v6
-
-      # TODO temporary remove
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: 1.19
-
-      # TODO temporary remove
-      - name: Build Go
-        run: |
-          git clone -b report-updates https://github.com/insightsengineering/junit-xml-diff.git
-          cd junit-xml-diff
-          go build
 
       - name: Normalize variables 📏
         run: |
@@ -421,15 +406,13 @@ jobs:
             echo "junit_xml_comparison_result_method=comment" >> $GITHUB_ENV
           else
             cp ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml old.xml
-            # TODO uncomment, and change to new version after releasing
-            # wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.2/junit-xml-diff_0.2_linux_amd64.tar.gz -O junit-xml-diff.tar.gz
-            # tar xzf junit-xml-diff.tar.gz
-            # TODO temporary, change to ./junit-xml-diff
-            ./junit-xml-diff/junit-xml-diff old.xml new.xml output.md '${{ env.junit_xml_diff_branch }}' '${{ env.junit_xml_positive_threshold }}' '${{ env.junit_xml_negative_threshold }}'
+            wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.3.0/junit-xml-diff_0.3.0_linux_amd64.tar.gz -O junit-xml-diff.tar.gz
+            tar xzf junit-xml-diff.tar.gz
+            ./junit-xml-diff old.xml new.xml output.md '${{ env.junit_xml_diff_branch }}' '${{ env.junit_xml_positive_threshold }}' '${{ env.junit_xml_negative_threshold }}'
             echo "Results for commit ${{ github.sha }}" >> output.md
             echo "" >> output.md
             echo "♻️ This comment has been updated with latest results." >> output.md
-            echo "Size of markdown: $(du -b output.md | awk '{print $1}')"
+            echo "Size of markdown: $(du -b output.md | awk '{print $1}') bytes"
             if [ "$(du -b output.md | awk '{print $1}')" -ge "60000" ]; then
               # Output markdown is bigger than 60000 bytes.
               # We're going to post it as an artifact rather than PR comment.
@@ -438,6 +421,7 @@ jobs:
               echo "junit_xml_comparison_result_method=comment" >> $GITHUB_ENV
             fi
           fi
+          echo "Markdown output:"
           cat output.md
 
       - name: Post JUnit XML comparison as comment 💬
