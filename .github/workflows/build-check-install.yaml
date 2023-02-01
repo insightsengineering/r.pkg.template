@@ -400,7 +400,7 @@ jobs:
           cp ${{ env.junit_xml_storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
           if [ ! -f ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml ]; then
             # If XML for the branch against which we're comparing doesn't exist, we're skipping the comparison.
-            echo "JUnit report for branch \`${{ env.junit_xml_diff_branch }}\`" \
+            echo "JUnit report for branch \`${{ env.junit_xml_diff_branch }}\` " \
               "doesn't exist on \`${{ env.junit_xml_storage }}\` branch yet." > output.md
             echo "Once this workflow runs on \`${{ env.junit_xml_diff_branch }}\` branch, " \
               "you'll see comparison of tests performance between \`${{ env.junit_xml_diff_branch }}\` " \
