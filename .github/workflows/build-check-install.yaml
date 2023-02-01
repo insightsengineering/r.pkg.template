@@ -159,35 +159,6 @@ jobs:
           git clone -b report-updates https://github.com/insightsengineering/junit-xml-diff.git
           cd junit-xml-diff
           go build
-          ls -la
-          cd ..
-          for i in `seq 1 30000`; do echo "a" >> test60; done
-          for i in `seq 1 35000`; do echo "a" >> test70; done
-          for i in `seq 1 40000`; do echo "a" >> test80; done
-          for i in `seq 1 45000`; do echo "a" >> test90; done
-
-        # TODO temporary remove
-      - name: Post JUnit XML comparison as comment 💬
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: test60
-          path: test60
-      - name: Post JUnit XML comparison as comment 💬
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: test70
-          path: test70
-      - name: Post JUnit XML comparison as comment 💬
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: test80
-          path: test80
-
-      - name: Post JUnit XML comparison as comment 💬
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: test90
-          path: test90
 
       - name: Normalize variables 📏
         run: |
@@ -455,20 +426,11 @@ jobs:
             # tar xzf junit-xml-diff.tar.gz
             # TODO temporary, change to ./junit-xml-diff
             ./junit-xml-diff/junit-xml-diff old.xml new.xml output.md '${{ env.junit_xml_diff_branch }}' '${{ env.junit_xml_positive_threshold }}' '${{ env.junit_xml_negative_threshold }}'
-            # TODO this is test - remove
-            cp output.md output2.md
-            cat output2.md >> output.md
-            cat output2.md >> output.md
-            cat output2.md >> output.md
-            cat output2.md >> output.md
-            cat output2.md >> output.md
             echo "Size of markdown: $(du -b output.md | awk '{print $1}')"
-            if [ "$(du -b output.md | awk '{print $1}')" -ge "65500" ]; then
-              # Output markdown is bigger than 65500 bytes.
+            if [ "$(du -b output.md | awk '{print $1}')" -ge "60000" ]; then
+              # Output markdown is bigger than 60000 bytes.
               # We're going to post it as an artifact rather than PR comment.
-              # TODO update this
-              # echo "junit_xml_comparison_result_method=artifact" >> $GITHUB_ENV
-              echo "junit_xml_comparison_result_method=comment" >> $GITHUB_ENV
+              echo "junit_xml_comparison_result_method=artifact" >> $GITHUB_ENV
             else
               echo "junit_xml_comparison_result_method=comment" >> $GITHUB_ENV
             fi
