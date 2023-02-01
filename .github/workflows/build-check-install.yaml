@@ -86,6 +86,37 @@ on:
         required: false
         default: ""
         type: string
+      junit-xml-storage:
+        description: Branch name to store JUnit XML reports
+        required: false
+        default: "_junit_xml_reports"
+        type: string
+      junit-xml-diff-branch:
+        description: Against which branch should the JUnit XML report from the current branch be compared?
+        required: false
+        default: main
+        type: string
+      junit-xml-comparison:
+        description: Turn on JUnit XML comparison
+        required: false
+        default: true
+        type: boolean
+      junit-xml-negative-threshold:
+        description: |
+          If time difference during JUnit XML comparison is between negative-threshold and 0: it's treated as 0.
+          This means that if test suite/case executes up to negative-threshold seconds faster,
+          this time difference is ignored as insignificant, and test suite/case is not shown in the table
+        required: false
+        default: 1.0
+        type: string
+      junit-xml-positive-threshold:
+        description: |
+          If time difference during JUnit XML comparison is between 0 and positive-threshold: it's treated as 0.
+          This means that if test suite/case executes up to positive-threshold seconds slower,
+          this time difference is ignored as insignificant, and test suite/case is not shown in the table
+        required: false
+        default: 1.0
+        type: string
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
@@ -111,6 +142,20 @@ jobs:
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v6
+
+      - name: Normalize variables 📏
+        run: |
+          junit_xml_storage_input="${{ inputs.junit-xml-storage }}"
+          junit_xml_diff_branch_input="${{ inputs.junit-xml-diff-branch }}"
+          junit_xml_comparison_input="${{ inputs.junit-xml-comparison }}"
+          junit_xml_positive_threshold="${{ inputs.junit-xml-positive-threshold }}"
+          junit_xml_negative_threshold="${{ inputs.junit-xml-negative-threshold }}"
+          echo "junit_xml_storage=${junit_xml_storage_input:-_junit_xml_reports}" >> $GITHUB_ENV
+          echo "junit_xml_diff_branch=${junit_xml_diff_branch_input:-main}" >> $GITHUB_ENV
+          echo "junit_xml_comparison=${junit_xml_comparison_input:-true}" >> $GITHUB_ENV
+          echo "junit_xml_positive_threshold=${junit_xml_positive_threshold:-1.0}" >> $GITHUB_ENV
+          echo "junit_xml_negative_threshold=${junit_xml_negative_threshold:-1.0}" >> $GITHUB_ENV
+        shell: bash
 
       - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v3
@@ -250,6 +295,52 @@ jobs:
           _R_CHECK_VIGNETTES_NLINES_: 0
           _R_CHECK_FORCE_SUGGESTS_: ${{ inputs.R_CHECK_FORCE_SUGGESTS }}
 
+      - name: Fetch report from ${{ env.junit_xml_storage }} ⤵️
+        if: env.junit_xml_comparison == 'true'
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.junit_xml_storage }}
+          fetch-depth: 0
+
+      - name: Initialize storage branch ${{ env.junit_xml_storage }} 🗄️
+        if: env.junit_xml_comparison == 'true'
+        working-directory: ${{ env.junit_xml_storage }}
+        run: |
+          git config --global --add safe.directory ${PWD}
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          # Switch to the branch if it already exists
+          git switch ${{ env.junit_xml_storage }} || true
+          git pull origin ${{ env.junit_xml_storage }} || true
+          # Create the branch if it doesn't exist yet
+          git checkout --orphan ${{ env.junit_xml_storage }} || true
+          # Ensure that the bare minimum components exist in the branch
+          mkdir -p data
+          touch README.md data/.gitkeep
+          # Copy necessary files and folders to a temporary location
+          mkdir -p /tmp/${{ github.sha }}
+          echo "Copying data to /tmp/${{ github.sha }}"
+          cp -r .git README.md data /tmp/${{ github.sha }}
+          # Remove everything else
+          # Attribution: https://unix.stackexchange.com/a/77313
+          rm -rf ..?* .[!.]* *
+          # Restore files from the temporary location
+          echo "Copying data from /tmp/${{ github.sha }}"
+          cp -r /tmp/${{ github.sha }}/.git /tmp/${{ github.sha }}/README.md /tmp/${{ github.sha }}/data .
+          rm -rf /tmp/${{ github.sha }}
+          git add --all -f
+          git commit -m "Update storage branch: $(date)" || true
+        shell: bash
+
+      - name: Push storage branch ${{ env.junit_xml_storage }} 🗄️
+        if: env.junit_xml_comparison == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          branch: ${{ env.junit_xml_storage }}
+          directory: ${{ env.junit_xml_storage }}
+          force: true
+
       - name: Check whether JUnit XML report exists 🚦
         id: check-junit-xml
         uses: andstor/file-existence-action@v2
@@ -263,6 +354,95 @@ jobs:
         with:
           check_name: Unit Tests Summary
           junit_files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
+
+      - name: Fetch JUnit XML reports from ${{ env.junit_xml_storage }} ⤵️
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.junit_xml_storage }}
+          fetch-depth: 0
+
+      - name: Set up ${{ env.junit_xml_storage }} branch for reports 🗃️
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
+        run: |
+          BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          echo "diff_storage_branch=$BRANCH" >> $GITHUB_ENV
+          mkdir -p ${{ env.junit_xml_storage }}/data/${BRANCH}
+        shell: bash
+
+      - name: Commit JUnit XML report 📄
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
+        working-directory: ${{ env.junit_xml_storage }}/data
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git switch ${{ env.junit_xml_storage }} || true
+          git config pull.rebase false
+          git pull origin ${{ env.junit_xml_storage }}
+          cp ../../${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml \
+            ./${{ env.diff_storage_branch }}/junit-result.xml
+          git add -f "${{ env.diff_storage_branch }}/junit-result.xml"
+          git commit -m "Add/Update JUnit report: ${{ github.sha }}" || true
+        shell: bash
+
+      - name: Push JUnit XML report to ${{ env.junit_xml_storage }} 📄
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          branch: ${{ env.junit_xml_storage }}
+          directory: ${{ env.junit_xml_storage }}/data
+
+      - name: Run XML comparison 🔍
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
+        run: |
+          cp ${{ env.junit_xml_storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
+          if [ ! -f ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml ]; then
+            # If XML for the branch against which we're comparing doesn't exist, we're skipping the comparison.
+            echo "JUnit report for branch \`${{ env.junit_xml_diff_branch }}\` " \
+              "doesn't exist on \`${{ env.junit_xml_storage }}\` branch yet." > output.md
+            echo "Once this workflow runs on \`${{ env.junit_xml_diff_branch }}\` branch, " \
+              "you'll see comparison of tests performance between \`${{ env.junit_xml_diff_branch }}\` " \
+              "and \`${{ env.diff_storage_branch }}\` as a PR comment." >> output.md
+          else
+            cp ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml old.xml
+            wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.3.0/junit-xml-diff_0.3.0_linux_amd64.tar.gz \
+              -O junit-xml-diff.tar.gz
+            tar xzf junit-xml-diff.tar.gz
+            ./junit-xml-diff old.xml new.xml output.md '${{ env.junit_xml_diff_branch }}' \
+              '${{ env.junit_xml_positive_threshold }}' '${{ env.junit_xml_negative_threshold }}'
+            echo "Results for commit ${{ github.sha }}" >> output.md
+            echo "" >> output.md
+            echo "♻️ This comment has been updated with latest results." >> output.md
+            cp output.md output-artifact.md
+            echo "Size of markdown: $(du -b output.md | awk '{print $1}') bytes"
+            if [ "$(du -b output.md | awk '{print $1}')" -ge "60000" ]; then
+              echo "The result of JUnit XML file comparison exceeded maximum size. " \
+                "The report has therefore been uploaded as an R CMD check workflow artifact." > output.md
+              echo "junit_xml_comparison_result_method=artifact" >> $GITHUB_ENV
+            fi
+          fi
+          echo "Markdown output:"
+          cat output.md
+
+      - name: Post JUnit XML comparison as comment 💬
+        if: >
+          steps.check-junit-xml.outputs.files_exists == 'true' &&
+          env.junit_xml_comparison == 'true'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: markdown-table
+          path: output.md
+
+      - name: Upload JUnit XML comparison ⤴
+        if: >
+          steps.check-junit-xml.outputs.files_exists == 'true' &&
+          env.junit_xml_comparison == 'true' &&
+          env.junit_xml_comparison_result_method == 'artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          path: output-artifact.md
+          name: junit-xml-report-comparison
 
       - name: Catch warnings in R CMD check output 🗳
         id: catch-errors
