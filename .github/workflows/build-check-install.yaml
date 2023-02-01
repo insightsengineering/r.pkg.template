@@ -415,6 +415,7 @@ jobs:
             echo "Results for commit ${{ github.sha }}" >> output.md
             echo "" >> output.md
             echo "♻️ This comment has been updated with latest results." >> output.md
+            cp output.md output-artifact.md
             echo "Size of markdown: $(du -b output.md | awk '{print $1}') bytes"
             if [ "$(du -b output.md | awk '{print $1}')" -ge "600" ]; then
               echo "The result of JUnit XML files comparison exceeded maximum size. " \
@@ -441,7 +442,7 @@ jobs:
           env.junit_xml_comparison_result_method == 'artifact'
         uses: actions/upload-artifact@v3
         with:
-          path: output.md
+          path: output-artifact.md
           name: junit-xml-report-comparison
 
       - name: Catch warnings in R CMD check output 🗳
