@@ -417,9 +417,10 @@ jobs:
             echo "" >> output.md
             echo "♻️ This comment has been updated with latest results." >> output.md
             echo "Size of markdown: $(du -b output.md | awk '{print $1}') bytes"
-            if [ "$(du -b output.md | awk '{print $1}')" -ge "60000" ]; then
-              # Output markdown is bigger than 60000 bytes.
-              # We're going to post it as an artifact rather than PR comment.
+            # TODO update maximum size
+            if [ "$(du -b output.md | awk '{print $1}')" -ge "600" ]; then
+              echo "The result of JUnit XML files comparison exceeded maximum size. " \
+                "The report has therefore been uploaded as an R CMD check workflow artifact." > output.md
               echo "junit_xml_comparison_result_method=artifact" >> $GITHUB_ENV
             else
               echo "junit_xml_comparison_result_method=comment" >> $GITHUB_ENV
