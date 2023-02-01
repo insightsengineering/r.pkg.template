@@ -394,7 +394,6 @@ jobs:
           directory: ${{ env.junit_xml_storage }}/data
 
       - name: Run XML comparison 🔍
-        id: copy-files
         if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
         run: |
           cp ${{ env.junit_xml_storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
