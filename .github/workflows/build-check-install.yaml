@@ -428,9 +428,11 @@ jobs:
             # TODO temporary, change to ./junit-xml-diff
             ./junit-xml-diff/junit-xml-diff old.xml new.xml output.md '${{ env.junit_xml_diff_branch }}' '${{ env.junit_xml_positive_threshold }}' '${{ env.junit_xml_negative_threshold }}'
             if [ "$(du -b output.md | awk '{print $1}')" -ge "65500" ]; then
-              # Output markdown is bigger than 65000 bytes.
+              # Output markdown is bigger than 65500 bytes.
               # We're going to post it as an artifact rather than PR comment.
-              echo "junit_xml_comparison_result_method=artifact" >> $GITHUB_ENV
+              # TODO update this
+              # echo "junit_xml_comparison_result_method=artifact" >> $GITHUB_ENV
+              echo "junit_xml_comparison_result_method=comment" >> $GITHUB_ENV
             else
               echo "junit_xml_comparison_result_method=comment" >> $GITHUB_ENV
             fi
