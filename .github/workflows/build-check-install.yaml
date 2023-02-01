@@ -427,6 +427,14 @@ jobs:
             # tar xzf junit-xml-diff.tar.gz
             # TODO temporary, change to ./junit-xml-diff
             ./junit-xml-diff/junit-xml-diff old.xml new.xml output.md '${{ env.junit_xml_diff_branch }}' '${{ env.junit_xml_positive_threshold }}' '${{ env.junit_xml_negative_threshold }}'
+            # TODO this is test - remove
+            cp output.md output2.md
+            cat output2.md >> output.md
+            cat output2.md >> output.md
+            cat output2.md >> output.md
+            cat output2.md >> output.md
+            cat output2.md >> output.md
+            echo "Size of markdown: $(du -b output.md | awk '{print $1}')"
             if [ "$(du -b output.md | awk '{print $1}')" -ge "65500" ]; then
               # Output markdown is bigger than 65500 bytes.
               # We're going to post it as an artifact rather than PR comment.
