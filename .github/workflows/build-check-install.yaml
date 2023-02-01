@@ -104,16 +104,16 @@ on:
       junit-xml-negative-threshold:
         description: |
           If time difference during JUnit XML comparison is between negative-threshold and 0: it's treated as 0.
-          This means that if test suite/case executes up to negative-threshold seconds faster, this time difference
-          is ignored as insignificant, and test suite/case is not shown in the table
+          This means that if test suite/case executes up to negative-threshold seconds faster,
+          this time difference is ignored as insignificant, and test suite/case is not shown in the table
         required: false
         default: 1.0
         type: string
       junit-xml-positive-threshold:
         description: |
           If time difference during JUnit XML comparison is between 0 and positive-threshold: it's treated as 0.
-          This means that if test suite/case executes up to positive-threshold seconds slower, this time difference
-          is ignored as insignificant, and test suite/case is not shown in the table
+          This means that if test suite/case executes up to positive-threshold seconds slower,
+          this time difference is ignored as insignificant, and test suite/case is not shown in the table
         required: false
         default: 1.0
         type: string
@@ -379,7 +379,8 @@ jobs:
           git switch ${{ env.junit_xml_storage }} || true
           git config pull.rebase false
           git pull origin ${{ env.junit_xml_storage }}
-          cp ../../${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml ./${{ env.diff_storage_branch }}/junit-result.xml
+          cp ../../${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml \
+            ./${{ env.diff_storage_branch }}/junit-result.xml
           git add -f "${{ env.diff_storage_branch }}/junit-result.xml"
           git commit -m "Add/Update JUnit report: ${{ github.sha }}" || true
         shell: bash
@@ -399,14 +400,19 @@ jobs:
           cp ${{ env.junit_xml_storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
           if [ ! -f ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml ]; then
             # If XML for the branch against which we're comparing doesn't exist, we're skipping the comparison.
-            echo "JUnit report for branch \`${{ env.junit_xml_diff_branch }}\` doesn't exist on \`${{ env.junit_xml_storage }}\` branch yet." > output.md
-            echo "Once this workflow runs on \`${{ env.junit_xml_diff_branch }}\` branch, you'll see comparison of tests performance between \`${{ env.junit_xml_diff_branch }}\` and \`${{ env.diff_storage_branch }}\` as a PR comment." >> output.md
+            echo "JUnit report for branch \`${{ env.junit_xml_diff_branch }}\`" \
+              "doesn't exist on \`${{ env.junit_xml_storage }}\` branch yet." > output.md
+            echo "Once this workflow runs on \`${{ env.junit_xml_diff_branch }}\` branch, " \
+              "you'll see comparison of tests performance between \`${{ env.junit_xml_diff_branch }}\` " \
+              "and \`${{ env.diff_storage_branch }}\` as a PR comment." >> output.md
             echo "junit_xml_comparison_result_method=comment" >> $GITHUB_ENV
           else
             cp ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml old.xml
-            wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.3.0/junit-xml-diff_0.3.0_linux_amd64.tar.gz -O junit-xml-diff.tar.gz
+            wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.3.0/junit-xml-diff_0.3.0_linux_amd64.tar.gz \
+              -O junit-xml-diff.tar.gz
             tar xzf junit-xml-diff.tar.gz
-            ./junit-xml-diff old.xml new.xml output.md '${{ env.junit_xml_diff_branch }}' '${{ env.junit_xml_positive_threshold }}' '${{ env.junit_xml_negative_threshold }}'
+            ./junit-xml-diff old.xml new.xml output.md '${{ env.junit_xml_diff_branch }}' \
+              '${{ env.junit_xml_positive_threshold }}' '${{ env.junit_xml_negative_threshold }}'
             echo "Results for commit ${{ github.sha }}" >> output.md
             echo "" >> output.md
             echo "♻️ This comment has been updated with latest results." >> output.md
@@ -423,14 +429,20 @@ jobs:
           cat output.md
 
       - name: Post JUnit XML comparison as comment 💬
-        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true' && env.junit_xml_comparison_result_method == 'comment'
+        if: >
+          steps.check-junit-xml.outputs.files_exists == 'true' &&
+          env.junit_xml_comparison == 'true' &&
+          env.junit_xml_comparison_result_method == 'comment'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: markdown-table
           path: output.md
 
       - name: Upload JUnit XML comparison ⤴
-        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true' && env.junit_xml_comparison_result_method == 'artifact'
+        if: >
+          steps.check-junit-xml.outputs.files_exists == 'true' &&
+          env.junit_xml_comparison == 'true' &&
+          env.junit_xml_comparison_result_method == 'artifact'
         uses: actions/upload-artifact@v3
         with:
           path: output.md
