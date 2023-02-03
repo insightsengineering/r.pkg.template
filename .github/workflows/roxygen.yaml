@@ -126,10 +126,11 @@ jobs:
               git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
               git add man/* DESCRIPTION
               git commit -m "[skip actions] Roxygen Man Pages Auto Update"
-              git pull origin ${GITHUB_HEAD_REF}
-              git push -v origin ${GITHUB_HEAD_REF}
-            }
-            else {
+              BRANCH_NAME="${{ steps.branch-name.outputs.head_ref_branch }}"
+              git pull origin ${BRANCH_NAME}
+              git push -v origin HEAD:${BRANCH_NAME} || \
+                echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)"
+            } else {
               echo -e "\n💻 Please rerun the following command on your workstation and push your changes"
               echo "--------------------------------------------------------------------"
               echo "roxygen2::roxygenize('.', roclets = c('rd', 'collate', 'namespace'))"

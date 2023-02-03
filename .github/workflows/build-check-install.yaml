@@ -340,6 +340,7 @@ jobs:
           branch: ${{ env.junit_xml_storage }}
           directory: ${{ env.junit_xml_storage }}
           force: true
+        continue-on-error: true
 
       - name: Check whether JUnit XML report exists 🚦
         id: check-junit-xml
@@ -392,6 +393,7 @@ jobs:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
           branch: ${{ env.junit_xml_storage }}
           directory: ${{ env.junit_xml_storage }}/data
+        continue-on-error: true
 
       - name: Run XML comparison 🔍
         if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
