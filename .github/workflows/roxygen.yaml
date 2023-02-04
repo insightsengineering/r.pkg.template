@@ -113,13 +113,15 @@ jobs:
 
       - name: Roxygen check 🅾
         run: |
+          AUTO_UPDATE=${{ inputs.auto-update }}
           if [[ -n `git status -s | grep -E "man|DESCRIPTION"` ]]
           then {
             ROXYGEN_VERSION="$(Rscript -e 'packageVersion("roxygen2")' | awk '{print $NF}')"
             echo "🙈 Manuals are not up-to-date with roxygen comments!"
             echo "🔀 The following differences were noted:"
             git diff man/* DESCRIPTION
-            if [ "${{ inputs.auto-update }}" == "true" ]
+            # Attempt to commit and push man-page updates            
+            if [ "${AUTO_UPDATE}" == "true" ]
             then {
               echo "Regenerating man pages via auto-update"
               git config --global user.name "github-actions"
@@ -129,8 +131,13 @@ jobs:
               BRANCH_NAME="${{ steps.branch-name.outputs.head_ref_branch }}"
               git pull origin ${BRANCH_NAME}
               git push -v origin HEAD:${BRANCH_NAME} || \
-                echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)"
-            } else {
+                echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)" && \
+                AUTO_UPDATE=failed
+            }
+            fi
+            # If auto-update is disabled or is unsuccessful, let 'em know to fix manually
+            if [ "${AUTO_UPDATE}" != "true" ]
+            then {
               echo -e "\n💻 Please rerun the following command on your workstation and push your changes"
               echo "--------------------------------------------------------------------"
               echo "roxygen2::roxygenize('.', roclets = c('rd', 'collate', 'namespace'))"

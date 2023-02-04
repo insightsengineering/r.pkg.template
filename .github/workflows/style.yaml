@@ -91,13 +91,13 @@ jobs:
         shell: Rscript {0}
         working-directory: ${{ github.event.repository.name }}
 
-      - name: Check file existence
+      - name: Check file existence 🤔
         id: check_files
         uses: andstor/file-existence-action@v2
         with:
           files: "/tmp/style-problems.R, /tmp/style-problems.txt"
 
-      - name: Get problematic files
+      - name: Get problematic files 🧟‍♂️
         id: problem-files
         if: steps.check_files.outputs.files_exists  == 'true'
         run: |
@@ -105,7 +105,7 @@ jobs:
           echo "unstyled-files=$(cat /tmp/style-problems.txt)" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Autocommit styled files
+      - name: Autocommit styled files ↗️
         if: >
           inputs.auto-update
             && steps.check_files.outputs.files_exists == 'true'
