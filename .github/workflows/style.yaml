@@ -65,6 +65,7 @@ jobs:
             **.Rnw
             **.Rmarkdown
             **.qmd
+        continue-on-error: true
 
       - name: Run styler 👟
         run: |
