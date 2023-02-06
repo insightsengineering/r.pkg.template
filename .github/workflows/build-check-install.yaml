@@ -445,7 +445,7 @@ jobs:
               echo "Markdown output:"
               cat output.md
             else
-              echo "No test suites/cases detected in XML files."
+              echo "No test suites/cases in JUnit XML file difference."
             fi
           fi
 
