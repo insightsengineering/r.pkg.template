@@ -53,7 +53,7 @@ jobs:
           install.packages("styler", repos = "https://cloud.r-project.org")
         shell: Rscript {0}
 
-      - name: Get changed files
+      - name: Get changed files all
         id: changed-files-all
         uses: tj-actions/changed-files@v35
 
