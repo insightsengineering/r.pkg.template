@@ -72,12 +72,13 @@ jobs:
         with:
           path: ${{ github.event.repository.name }}
           separator: ","
+          include-deleted-files: false
           files: |
-            **.R
-            **.Rmd
-            **.Rnw
-            **.Rmarkdown
-            **.qmd
+            **/*.R
+            **/*.Rmd
+            **/*.Rnw
+            **/*.Rmarkdown
+            **/*.qmd
 
       - name: List R-like files changed
         run: |
