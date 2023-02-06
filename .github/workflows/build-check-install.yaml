@@ -8,12 +8,11 @@ on:
     branches:
       - main
   pull_request:
-    # TODO uncomment
-    # types:
-    #   - opened
-    #   - synchronize
-    #   - reopened
-    #   - ready_for_review
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
     branches:
       - main
   workflow_dispatch:
@@ -424,7 +423,7 @@ jobs:
             cp ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml old.xml
             # TODO uncomment
             # wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.3.0/junit-xml-diff_0.3.0_linux_amd64.tar.gz \
-              -O junit-xml-diff.tar.gz
+            #  -O junit-xml-diff.tar.gz
             # tar xzf junit-xml-diff.tar.gz
             # TODO change to ./junit-xml-diff
             ./junit-xml-diff/junit-xml-diff old.xml new.xml output.md '${{ env.junit_xml_diff_branch }}' \
