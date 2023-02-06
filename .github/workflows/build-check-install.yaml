@@ -408,29 +408,37 @@ jobs:
               "and \`${{ env.diff_storage_branch }}\` as a PR comment." >> output.md
           else
             cp ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml old.xml
-            wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.3.0/junit-xml-diff_0.3.0_linux_amd64.tar.gz \
-              -O junit-xml-diff.tar.gz
+            wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.4.0/junit-xml-diff_0.4.0_linux_amd64.tar.gz \
+             -O junit-xml-diff.tar.gz
             tar xzf junit-xml-diff.tar.gz
             ./junit-xml-diff old.xml new.xml output.md '${{ env.junit_xml_diff_branch }}' \
               '${{ env.junit_xml_positive_threshold }}' '${{ env.junit_xml_negative_threshold }}'
-            echo "Results for commit ${{ github.sha }}" >> output.md
-            echo "" >> output.md
-            echo "♻️ This comment has been updated with latest results." >> output.md
-            cp output.md output-artifact.md
-            echo "Size of markdown: $(du -b output.md | awk '{print $1}') bytes"
-            if [ "$(du -b output.md | awk '{print $1}')" -ge "60000" ]; then
-              echo "The result of JUnit XML file comparison exceeded maximum size. " \
-                "The report has therefore been uploaded as an R CMD check workflow artifact." > output.md
-              echo "junit_xml_comparison_result_method=artifact" >> $GITHUB_ENV
+            if [ "$(du -b output.md | awk '{print $1}')" != "0" ]; then
+              # Non-empty output which means that there is at least one test suite/case in the table.
+              # Empty table won't be published since junit_xml_comparison_result_method won't be set.
+              echo "junit_xml_comparison_result_method=comment" >> $GITHUB_ENV
+              echo "Results for commit ${{ github.sha }}" >> output.md
+              echo "" >> output.md
+              echo "♻️ This comment has been updated with latest results." >> output.md
+              cp output.md output-artifact.md
+              echo "Size of markdown: $(du -b output.md | awk '{print $1}') bytes"
+              if [ "$(du -b output.md | awk '{print $1}')" -ge "60000" ]; then
+                echo "The result of JUnit XML file comparison exceeded maximum size. " \
+                  "The report has therefore been uploaded as an R CMD check workflow artifact." > output.md
+                echo "junit_xml_comparison_result_method=artifact" >> $GITHUB_ENV
+              fi
+              echo "Markdown output:"
+              cat output.md
+            else
+              echo "No test suites/cases in JUnit XML file difference."
             fi
           fi
-          echo "Markdown output:"
-          cat output.md
 
       - name: Post JUnit XML comparison as comment 💬
         if: >
           steps.check-junit-xml.outputs.files_exists == 'true' &&
-          env.junit_xml_comparison == 'true'
+          env.junit_xml_comparison == 'true' &&
+          env.junit_xml_comparison_result_method == 'comment'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: markdown-table
