@@ -56,7 +56,10 @@ jobs:
       - name: Get changed files all
         id: changed-files-all
         uses: tj-actions/changed-files@v35
-
+        with:
+          path: ${{ github.event.repository.name }}
+          separator: ","
+          
       - name: List all changed files
         run: |
           for file in ${{ steps.changed-files-all.outputs.all_changed_files }}; do
@@ -65,7 +68,7 @@ jobs:
 
       - name: Get changed files 🗞
         id: changed-files
-        uses: tj-actions/changed-files@v33
+        uses: tj-actions/changed-files@v35
         with:
           path: ${{ github.event.repository.name }}
           separator: ","
