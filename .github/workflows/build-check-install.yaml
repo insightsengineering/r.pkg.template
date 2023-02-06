@@ -444,6 +444,8 @@ jobs:
               fi
               echo "Markdown output:"
               cat output.md
+            else
+              echo "No test suites/cases detected in XML files."
             fi
           fi
 
