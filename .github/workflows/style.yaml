@@ -58,10 +58,10 @@ jobs:
         uses: tj-actions/changed-files@v35
 
       - name: List all changed files
-          run: |
-            for file in ${{ steps.changed-files-all.outputs.all_changed_files }}; do
-              echo "$file was changed"
-            done
+        run: |
+          for file in ${{ steps.changed-files-all.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
 
       - name: Get changed files 🗞
         id: changed-files
@@ -77,10 +77,10 @@ jobs:
             **.qmd
 
       - name: List R-like files changed
-          run: |
-            for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-              echo "$file was changed"
-            done
+        run: |
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            echo "$file was changed"
+          done
 
       - name: Run styler 👟
         run: |
