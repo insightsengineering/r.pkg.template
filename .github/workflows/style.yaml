@@ -72,11 +72,16 @@ jobs:
             "${{ steps.changed-files.outputs.all_changed_files }}",
             split=","
           ))
+          print("Files changed:")
+          print(changed_files)
           is_r_file <- function(x) {
               ext <- tools::file_ext(x)
               ext %in% c("R", "Rmd", "Rnw", "Rmarkdown", "qmd")
           }
           changed_r_files <- Filter(is_r_file, changed_files)
+          changed_r_files <- Filter(file.exists, changed_r_files)
+          print("Running styler on files:")
+          print(changed_r_files)
           dry <- if(isTRUE(as.logical("${{ inputs.auto-update }}"))) "off" else "on"
           detect <- styler::style_file(changed_r_files, dry = dry)
           if (TRUE %in% detect$changed) {
