@@ -53,19 +53,6 @@ jobs:
           install.packages("styler", repos = "https://cloud.r-project.org")
         shell: Rscript {0}
 
-      - name: Get changed files all
-        id: changed-files-all
-        uses: tj-actions/changed-files@v35
-        with:
-          path: ${{ github.event.repository.name }}
-          separator: ","
-          
-      - name: List all changed files
-        run: |
-          for file in ${{ steps.changed-files-all.outputs.all_changed_files }}; do
-            echo "$file was changed"
-          done
-
       - name: Get changed files 🗞
         id: changed-files
         uses: tj-actions/changed-files@v35
@@ -80,20 +67,12 @@ jobs:
             **/*.Rmarkdown
             **/*.qmd
 
-      - name: List R-like files changed
-        run: |
-          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-            echo "$file was changed"
-          done
-
       - name: Run styler 👟
         run: |
           changed_files <- unlist(strsplit(
             "${{ steps.changed-files.outputs.all_changed_files }}",
             split=","
           ))
-          print("Files changed:")
-          print(changed_files)
           is_r_file <- function(x) {
               ext <- tools::file_ext(x)
               ext %in% c("R", "Rmd", "Rnw", "Rmarkdown", "qmd")
