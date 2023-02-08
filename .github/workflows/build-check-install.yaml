@@ -417,6 +417,7 @@ jobs:
               # Non-empty output which means that there is at least one test suite/case in the table.
               # Empty table won't be published since junit_xml_comparison_result_method won't be set.
               echo "junit_xml_comparison_result_method=comment" >> $GITHUB_ENV
+              echo "" >> output.md
               echo "Results for commit ${{ github.sha }}" >> output.md
               echo "" >> output.md
               echo "♻️ This comment has been updated with latest results." >> output.md
