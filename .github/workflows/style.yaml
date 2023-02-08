@@ -60,11 +60,11 @@ jobs:
           path: ${{ github.event.repository.name }}
           separator: ","
           files: |
-            **.R
-            **.Rmd
-            **.Rnw
-            **.Rmarkdown
-            **.qmd
+            **/*.R
+            **/*.Rmd
+            **/*.Rnw
+            **/*.Rmarkdown
+            **/*.qmd
         continue-on-error: true
 
       - name: Run styler 👟
