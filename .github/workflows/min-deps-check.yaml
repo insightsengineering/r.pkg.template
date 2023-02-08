@@ -1,0 +1,48 @@
+---
+name: Minimum dependency check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+    branches:
+      - main
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with read access to repositories, required for dependencies installation
+        required: false
+
+concurrency:
+  group: min-dep-check-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+
+# TODO add emojis
+jobs:
+  min-dep-check:
+    name: Minimum dependency check
+    runs-on: ubuntu-latest
+    if: >
+      !contains(github.event.commits[0].message, '[skip min-deps-check]')
+        && github.event.pull_request.draft == false
+    container:
+      image: ghcr.io/insightsengineering/rstudio_4.2.2_bioc_3.16:latest
+
+    steps:
+      - name: Checkout Code 🛎
+        uses: actions/checkout@v3
+
+      - name: Run dependency check
+        # TODO change to proper branch
+        uses: insightsengineering/r-min-deps-check-action@initialize-r-min-deps-check-action
+        with:
+          github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
