@@ -40,6 +40,8 @@ jobs:
     steps:
       - name: Checkout Code 🛎
         uses: actions/checkout@v3
+        with:
+          path: repository
 
       - name: Run dependency check
         # TODO change to proper branch
