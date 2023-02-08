@@ -48,3 +48,10 @@ jobs:
         uses: insightsengineering/r-min-deps-check-action@initialize-r-min-deps-check-action
         with:
           github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
+
+      - name: Upload lock file
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: lock-file
+          path: pkg.lock
