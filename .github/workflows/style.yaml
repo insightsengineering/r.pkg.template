@@ -107,6 +107,7 @@ jobs:
         shell: bash
 
       - name: Autocommit styled files ↗️
+        id: autocommit-styled-files
         if: >
           inputs.auto-update
             && steps.check_files.outputs.files_exists == 'true'
@@ -120,11 +121,13 @@ jobs:
             echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)"
         shell: bash
         working-directory: ${{ github.event.repository.name }}
+        continue-on-error: true
 
       - name: Styler check summary 🅾
         if: >
-          inputs.auto-update != true
-            && steps.check_files.outputs.files_exists == 'true'
+          (inputs.auto-update != true
+            && steps.check_files.outputs.files_exists == 'true')
+            || steps.autocommit-styled-files.outcome != 'success'
         run: |
           cat(paste(
             "☠ One or more files had styling errors.",
