@@ -1,5 +1,5 @@
 ---
-name: Minimum dependency check
+name: Minimum dependency check 🖇️
 
 on:
   push:
@@ -25,11 +25,9 @@ concurrency:
   group: min-dep-check-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
-
-# TODO add emojis
 jobs:
   min-dep-check:
-    name: Minimum dependency check
+    name: Minimum dependency check 🖇️
     runs-on: ubuntu-latest
     if: >
       !contains(github.event.commits[0].message, '[skip min-deps-check]')
@@ -43,13 +41,13 @@ jobs:
         with:
           path: repository
 
-      - name: Run dependency check
+      - name: Run dependency check 🖇️
         # TODO change to proper branch
         uses: insightsengineering/r-min-deps-check-action@initialize-r-min-deps-check-action
         with:
           github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
 
-      - name: Upload lock file
+      - name: Upload lock file ⤴️
         if: always()
         uses: actions/upload-artifact@v3
         with:
