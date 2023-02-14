@@ -127,7 +127,8 @@ jobs:
         if: >
           (inputs.auto-update != true
             && steps.check_files.outputs.files_exists == 'true')
-            || steps.autocommit-styled-files.outcome != 'success'
+            || (steps.autocommit-styled-files.outcome != 'success'
+            && steps.autocommit-styled-files.outcome != 'skipped')
         run: |
           cat(paste(
             "☠ One or more files had styling errors.",
