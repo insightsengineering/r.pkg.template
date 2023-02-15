@@ -43,7 +43,7 @@ jobs:
 
       - name: Run dependency check 🖇️
         # TODO change to proper branch
-        uses: insightsengineering/r-min-deps-check-action@initialize-r-min-deps-check-action
+        uses: insightsengineering/r-mindepscheck-action@initialize-r-min-deps-check-action
         with:
           github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
 
