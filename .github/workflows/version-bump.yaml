@@ -11,6 +11,12 @@ on:
       REPO_GITHUB_TOKEN:
         description: Github token with write access to the repo
         required: false
+    inputs:
+      disable-precommit-autoupdate:
+        description: Disable precommit autoupdate
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: vbump-${{ github.event.pull_request.number || github.ref }}
@@ -59,6 +65,7 @@ jobs:
         shell: bash
 
       - name: Precommit autoupdate 🅿️
+        if: inputs.disable-precommit-autoupdate != 'true'
         run: |
           apt update && apt install -y python3-pip
           pip3 install pre-commit
