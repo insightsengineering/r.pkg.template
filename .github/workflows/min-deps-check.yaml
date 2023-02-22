@@ -20,6 +20,27 @@ on:
         description: |
           Github token with read access to repositories, required for dependencies installation
         required: false
+    inputs:
+      check-args:
+        description: Additional check arguments.
+        required: false
+        default: ""
+        type: string
+      build-args:
+        description: Additional build arguments.
+        required: false
+        default: ""
+        type: string
+      additional-env-vars:
+        description: |
+          Extra environment variables, as a 'key=value' pair, with each pair on a new line.
+          Example usage:
+          additional-env-vars: |
+            ABC=123
+            XYZ=456
+        required: false
+        default: ""
+        type: string
 
 concurrency:
   group: min-dep-check-${{ github.event.pull_request.number || github.ref }}
@@ -43,9 +64,12 @@ jobs:
 
       - name: Run dependency check 🖇️
         # TODO change to proper branch
-        uses: insightsengineering/r-min-deps-check-action@initialize-r-min-deps-check-action
+        uses: insightsengineering/r-mindepscheck-action@initialize-r-min-deps-check-action
         with:
           github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          check-args: ${{ inputs.check-args }}
+          build-args: ${{ inputs.build-args }}
+          additional-env-vars:  ${{ inputs.additional-env-vars }}
 
       - name: Upload lock file ⤴️
         if: always()
