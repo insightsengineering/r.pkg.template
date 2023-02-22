@@ -28,6 +28,11 @@ on:
         required: false
         default: true
         type: boolean
+      sd-direction:
+        description: The direction to use to install staged dependencies. Choose between 'upstream', 'downstream' and 'all'
+        required: false
+        type: string
+        default: all
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -68,6 +73,7 @@ jobs:
         with:
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
+          direction: ${{ inputs.sd-direction }}
 
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v1
