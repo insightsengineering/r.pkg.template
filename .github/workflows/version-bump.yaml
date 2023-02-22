@@ -58,12 +58,19 @@ jobs:
           echo "NEW_PKG_VERSION=${DESC_VERSION}" >> $GITHUB_ENV
         shell: bash
 
+      - name: Precommit autoupdate 🅿️
+        run: |
+          apt update && apt install -y python3-pip
+          pip3 install pre-commit
+          pre-commit --version
+          pre-commit autoupdate
+
       - name: Commit and push changes 📌
         if: ${{ env.NEW_PKG_VERSION }}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "[skip actions] Bump version to ${{ env.NEW_PKG_VERSION }}"
-          file_pattern: NEWS.md DESCRIPTION
+          file_pattern: NEWS.md DESCRIPTION .pre-commit-config.yaml
           commit_user_name: insights-engineering-bot
           commit_user_email: >-
             68416928+insights-engineering-bot@users.noreply.github.com
