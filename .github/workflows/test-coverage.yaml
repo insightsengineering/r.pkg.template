@@ -55,7 +55,7 @@ on:
         description: The direction to use to install staged dependencies. Choose between 'upstream', 'downstream' and 'all'
         required: false
         type: string
-        default: all
+        default: upstream
     secrets:
       REPO_GITHUB_TOKEN:
         description: |

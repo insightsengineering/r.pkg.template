@@ -31,7 +31,7 @@ on:
       enable-staged-dependencies-check:
         description: Enable staged dependencies YAML check
         required: false
-        default: true
+        default: false
         type: boolean
       R_CHECK_FORCE_SUGGESTS:
         description: If true, give an error if suggested packages are not available
@@ -121,7 +121,7 @@ on:
         description: The direction to use to install staged dependencies. Choose between 'upstream', 'downstream' and 'all'
         required: false
         type: string
-        default: all
+        default: upstream
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}

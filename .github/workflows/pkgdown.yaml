@@ -80,7 +80,7 @@ on:
         description: The direction to use to install staged dependencies. Choose between 'upstream', 'downstream' and 'all'
         required: false
         type: string
-        default: all
+        default: upstream
 
 concurrency:
   group: docs-${{ github.event.pull_request.number || github.ref }}
