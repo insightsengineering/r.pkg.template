@@ -31,7 +31,7 @@ jobs:
          contains(github.event.head_commit.message, '[skip vbump]')
          )
     container:
-      image: docker.io/rocker/tidyverse:4.2.1
+      image: docker.io/rocker/tidyverse:4.2.2
 
     steps:
       - name: Checkout repo 🛎
@@ -73,9 +73,7 @@ jobs:
       - name: Precommit autoupdate 🅿️
         if: inputs.disable-precommit-autoupdate != 'true'
         run: |
-          wget https://bootstrap.pypa.io/get-pip.py
-          python get-pip.py
-          pip install -q pre-commit
+          python -m pip install pre-commit
           pre-commit --version
           pre-commit autoupdate
 
