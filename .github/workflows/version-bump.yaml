@@ -70,10 +70,15 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Install pre-commit 🅿️
+        if: inputs.disable-precommit-autoupdate != 'true'
+        uses: BSFishy/pip-action@v1
+        with:
+          packages: pre-commit==3.1.0
+
       - name: Precommit autoupdate 🅿️
         if: inputs.disable-precommit-autoupdate != 'true'
         run: |
-          pip install pre-commit
           pre-commit --version
           pre-commit autoupdate
 
