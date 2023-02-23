@@ -65,6 +65,7 @@ perl -p -i -e "s/insightsengineering/${owner}/g" staged_dependencies.yaml
 grep -rl --exclude=init.sh --exclude=*.shared \
     --exclude-dir=.git "REPO_GITHUB_TOKEN" . | \
     xargs perl -p -i -e 's/REPO_GITHUB_TOKEN/GITHUB_TOKEN/g'
+perl -p -i -e 's@secrets.REPO_GITHUB_TOKEN@secrets.GITHUB_TOKEN@g' .github/workflows/*.shared
 grep -rl --exclude=init.sh --exclude=*.shared \
     --exclude-dir=.git \
     "68416928+insights-engineering-bot@users.noreply.github.com" .github/workflows/ | \
