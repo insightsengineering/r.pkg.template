@@ -36,13 +36,18 @@ on:
       enable-staged-dependencies-check:
         description: Enable staged dependencies YAML check
         required: false
-        default: true
+        default: false
         type: boolean
       allow-failure:
-        description: BiocCheck errors will not fail, but will give a warning.
+        description: BiocCheck errors will not fail, but will give a warning
         required: false
         type: boolean
         default: false
+      sd-direction:
+        description: The direction to use to install staged dependencies. Choose between 'upstream', 'downstream' and 'all'
+        required: false
+        type: string
+        default: upstream
 
 concurrency:
   group: bioccheck-${{ github.event.pull_request.number || github.ref }}
@@ -99,6 +104,7 @@ jobs:
           path: ${{ github.event.repository.name }}
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
+          direction: ${{ inputs.sd-direction }}
 
       - name: Run BiocCheck ☣️
         uses: insightsengineering/bioc-check-action@v1
