@@ -259,6 +259,7 @@ jobs:
     name: Publish coverage report
     runs-on: ubuntu-latest
     needs: coverage
+    if: needs.coverage.outputs.publish-report == 'true'
     # Only one job can publish to gh-pages branch.
     concurrency:
       group: ghpages
@@ -266,10 +267,12 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: coverage-report
+          path: coverage-report
       - name: Display structure of downloaded files
-        run: ls -R
-      # - name: Upload coverage report to GitHub pages
-      #   uses: peaceiris/actions-gh-pages@v3
-      #   with:
-      #     github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
-      #     publish_dir: ./public
+        run: ls -l coverage-report
+      - name: Upload coverage report to GitHub pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          publish_dir: ./coverage-report
+          destination_dir: coverage-report-test-dir
