@@ -11,6 +11,12 @@ on:
       REPO_GITHUB_TOKEN:
         description: Github token with write access to the repo
         required: false
+    inputs:
+      disable-precommit-autoupdate:
+        description: Disable precommit autoupdate
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: vbump-${{ github.event.pull_request.number || github.ref }}
@@ -25,7 +31,7 @@ jobs:
          contains(github.event.head_commit.message, '[skip vbump]')
          )
     container:
-      image: docker.io/rocker/tidyverse:4.2.1
+      image: docker.io/rocker/tidyverse:4.2.2
 
     steps:
       - name: Checkout repo 🛎
@@ -58,12 +64,25 @@ jobs:
           echo "NEW_PKG_VERSION=${DESC_VERSION}" >> $GITHUB_ENV
         shell: bash
 
+      - name: Setup Python 🐍
+        if: inputs.disable-precommit-autoupdate != 'true'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Precommit autoupdate 🅿️
+        if: inputs.disable-precommit-autoupdate != 'true'
+        run: |
+          python -m pip install pre-commit
+          pre-commit --version
+          pre-commit autoupdate
+
       - name: Commit and push changes 📌
         if: ${{ env.NEW_PKG_VERSION }}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "[skip actions] Bump version to ${{ env.NEW_PKG_VERSION }}"
-          file_pattern: NEWS.md DESCRIPTION
+          file_pattern: NEWS.md DESCRIPTION .pre-commit-config.yaml
           commit_user_name: insights-engineering-bot
           commit_user_email: >-
             68416928+insights-engineering-bot@users.noreply.github.com
