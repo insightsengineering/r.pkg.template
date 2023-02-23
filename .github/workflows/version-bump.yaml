@@ -73,7 +73,7 @@ jobs:
       - name: Precommit autoupdate 🅿️
         if: inputs.disable-precommit-autoupdate != 'true'
         run: |
-          pip3 install pre-commit
+          pip install pre-commit
           pre-commit --version
           pre-commit autoupdate
 
