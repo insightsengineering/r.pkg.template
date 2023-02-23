@@ -65,6 +65,7 @@ jobs:
         shell: bash
 
       - name: Setup Python 🐍
+        if: inputs.disable-precommit-autoupdate != 'true'
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
