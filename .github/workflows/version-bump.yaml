@@ -73,7 +73,9 @@ jobs:
       - name: Precommit autoupdate 🅿️
         if: inputs.disable-precommit-autoupdate != 'true'
         run: |
-          python -m pip install pre-commit
+          wget https://bootstrap.pypa.io/get-pip.py
+          python get-pip.py
+          pip install -q pre-commit
           pre-commit --version
           pre-commit autoupdate
 
