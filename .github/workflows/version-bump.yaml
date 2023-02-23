@@ -68,7 +68,7 @@ jobs:
         if: inputs.disable-precommit-autoupdate != 'true'
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.9'
 
       - name: Install pre-commit 🅿️
         if: inputs.disable-precommit-autoupdate != 'true'
