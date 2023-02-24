@@ -208,7 +208,7 @@ jobs:
     name: Multi-version docs 📑
     needs: docs
     runs-on: ubuntu-latest
-    # Only one job can publish to gh-pages branch.
+    # Only one job can publish to gh-pages branch concurrently.
     concurrency:
       group: ghpages
     if: >

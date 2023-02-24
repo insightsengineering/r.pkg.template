@@ -142,6 +142,8 @@ jobs:
         && github.event.pull_request.draft == false
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
+    outputs:
+      publish-report: ${{ steps.junit-output.outputs.junit-upload }}
 
     steps:
       - name: Get branch names 🌿
@@ -353,6 +355,20 @@ jobs:
         uses: andstor/file-existence-action@v2
         with:
           files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
+
+      # TODO convert XML to HTML
+      - name: Publish JUnit XML as artifact
+        if: steps.check-junit-xml.outputs.files_exists == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: junit-report
+          path: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
+
+      - name: Set output
+        id: junit-output
+        if: steps.check-junit-xml.outputs.files_exists == 'true'
+        run: |
+          echo "junit-upload=true" >> $GITHUB_OUTPUT
 
       - name: Publish Unit Test Summary 📑
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -572,3 +588,23 @@ jobs:
           asset_name: ${{ env.PKGBUILD }}
           tag: ${{ github.ref }}
           overwrite: true
+
+  publish-coverage-report:
+    name: Publish JUnit report
+    runs-on: ubuntu-latest
+    needs: build-install-check
+    if: needs.build-install-check.outputs.publish-report == 'true'
+    # Only one job can publish to gh-pages branch concurrently.
+    concurrency:
+      group: ghpages
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: junit-report
+          path: junit-report
+      - name: Upload coverage report to GitHub pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          publish_dir: ./junit-report
+          destination_dir: ${{ github.ref_name }}/junit-report
