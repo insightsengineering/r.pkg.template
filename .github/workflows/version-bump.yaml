@@ -27,9 +27,9 @@ jobs:
     name: Bump version ⤴
     runs-on: ubuntu-latest
     if: |
-      !( contains(github.event.commits[0].message, '[skip vbump]') ||
-         contains(github.event.head_commit.message, '[skip vbump]')
-         )
+      !(contains(github.event.commits[0].message, '[skip vbump]') ||
+        contains(github.event.head_commit.message, '[skip vbump]')
+      )
     container:
       image: docker.io/rocker/tidyverse:4.2.2
 
@@ -68,13 +68,12 @@ jobs:
         if: inputs.disable-precommit-autoupdate != 'true'
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Precommit autoupdate 🅿️
         if: inputs.disable-precommit-autoupdate != 'true'
         run: |
-          python -m pip install pre-commit
-          pre-commit --version
+          python -m pip -q install pre-commit
           pre-commit autoupdate
 
       - name: Commit and push changes 📌
@@ -86,3 +85,4 @@ jobs:
           commit_user_name: insights-engineering-bot
           commit_user_email: >-
             68416928+insights-engineering-bot@users.noreply.github.com
+        continue-on-error: true
