@@ -96,6 +96,7 @@ jobs:
             echo "Current branch: ${{ steps.branch-name.outputs.current_branch }}"
             echo "ref-name=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
           fi
+        shell: bash
 
       - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v3
