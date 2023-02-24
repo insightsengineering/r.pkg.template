@@ -3,6 +3,8 @@ name: Coverage 📔
 
 on:
   push:
+    tags:
+      - "v*"
     branches:
       - main
   pull_request:
@@ -82,6 +84,11 @@ jobs:
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v6
+
+      # TODO delete
+      - name: Debug
+        run: |
+          echo "${GITHUB_REF#refs/*/}/coverage-report"
 
       - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v3
