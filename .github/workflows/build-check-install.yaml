@@ -194,7 +194,9 @@ jobs:
 
       - name: Install xunit-viewer
         if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: npm i -g xunit-viewer
+        run: |
+          npm i -g xunit-viewer
+          xunit-viewer --help
         shell: bash
 
       - name: Checkout repo (PR) 🛎
@@ -389,13 +391,17 @@ jobs:
         with:
           files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
 
-      # TODO convert XML to HTML
+      - name: Convert JUnit XML to HTML
+        run: |
+          xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" -o junit-result.html
+        shell: bash
+
       - name: Publish JUnit XML as artifact
         if: steps.check-junit-xml.outputs.files_exists == 'true'
         uses: actions/upload-artifact@v3
         with:
           name: junit-report
-          path: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
+          path: "junit-result.html"
 
       - name: Set output
         id: junit-output
