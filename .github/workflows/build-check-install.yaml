@@ -177,6 +177,26 @@ jobs:
           echo "junit_xml_negative_threshold=${junit_xml_negative_threshold:-1.0}" >> $GITHUB_ENV
         shell: bash
 
+      # Required for xunit-viewer
+      - name: Restore npm cache 💰
+        uses: actions/cache@v3
+        with:
+          key: npm-${{ runner.os }}-${{ github.job }}
+          restore-keys: |
+            npm-${{ runner.os }}-
+          path: node_modules
+
+      - name: Setup NodeJS ☊
+        uses: actions/setup-node@v3
+        id: npm-cache
+        with:
+          node-version: 18
+
+      - name: Install xunit-viewer
+        if: steps.npm-cache.outputs.cache-hit != 'true'
+        run: npm i -g xunit-viewer
+        shell: bash
+
       - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v3
         if: github.event_name == 'pull_request'
