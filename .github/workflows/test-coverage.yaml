@@ -90,8 +90,8 @@ jobs:
         id: current-branch-or-tag
         run: |
           if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
-            echo "Current tag: ${{ steps.branch-name.outputs.current_tag }}"
-            echo "ref-name=${{ steps.branch-name.outputs.tag_name }}" >> $GITHUB_OUTPUT
+            echo "Current tag: ${{ steps.branch-name.outputs.tag }}"
+            echo "ref-name=${{ steps.branch-name.outputs.tag }}" >> $GITHUB_OUTPUT
           else
             echo "Current branch: ${{ steps.branch-name.outputs.current_branch }}"
             echo "ref-name=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT

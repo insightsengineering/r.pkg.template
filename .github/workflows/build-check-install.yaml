@@ -144,11 +144,23 @@ jobs:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
     outputs:
       publish-report: ${{ steps.junit-output.outputs.junit-upload }}
+      current-branch-or-tag: ${{ steps.current-branch-or-tag.outputs.ref-name }}
 
     steps:
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v6
+
+      - name: Get current branch or tag
+        id: current-branch-or-tag
+        run: |
+          if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
+            echo "Current tag: ${{ steps.branch-name.outputs.tag }}"
+            echo "ref-name=${{ steps.branch-name.outputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "Current branch: ${{ steps.branch-name.outputs.current_branch }}"
+            echo "ref-name=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Normalize variables 📏
         run: |
@@ -607,4 +619,4 @@ jobs:
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
           publish_dir: ./junit-report
-          destination_dir: ${GITHUB_REF#refs/*/}/junit-report
+          destination_dir: ${{ needs.coverage.outputs.current-branch-or-tag }}/junit-report
