@@ -614,9 +614,9 @@ jobs:
         with:
           name: junit-report
           path: junit-report
-      - name: Upload coverage report to GitHub pages
+      - name: Upload JUnit report to GitHub pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
           publish_dir: ./junit-report
-          destination_dir: ${{ needs.coverage.outputs.current-branch-or-tag }}/junit-report
+          destination_dir: ${{ needs.build-install-check.outputs.current-branch-or-tag }}/junit-report
