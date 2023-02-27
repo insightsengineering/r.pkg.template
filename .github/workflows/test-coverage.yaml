@@ -86,7 +86,7 @@ jobs:
         id: branch-name
         uses: tj-actions/branch-names@v6
 
-      - name: Get current branch or tag
+      - name: Get current branch or tag 🏷️
         id: current-branch-or-tag
         run: |
           if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
@@ -220,7 +220,7 @@ jobs:
             ${{ github.event.repository.name }}/lib/
         continue-on-error: true
 
-      - name: Set output
+      - name: Set output ⚙
         id: coverage-output
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
         run: |
@@ -271,7 +271,7 @@ jobs:
           allow-failure: ${{ inputs.allow-failure }}
 
   publish-coverage-report:
-    name: Publish coverage report
+    name: Publish coverage report 📰
     runs-on: ubuntu-latest
     needs: coverage
     # TODO Is it enough to filter out pull requests?
@@ -283,11 +283,12 @@ jobs:
     concurrency:
       group: ghpages
     steps:
-      - uses: actions/download-artifact@v3
+      - name: Download coverage report as artifact ⤵️
+        uses: actions/download-artifact@v3
         with:
           name: coverage-report
           path: coverage-report
-      - name: Upload coverage report to GitHub pages
+      - name: Upload coverage report to GitHub pages 🗞️
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
