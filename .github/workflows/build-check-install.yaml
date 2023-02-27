@@ -418,7 +418,7 @@ jobs:
           name: junit-report
           path: "junit-result.html"
 
-      - name: Set output ⚙
+      - name: Set output ⚙️
         id: junit-output
         if: steps.check-junit-xml.outputs.files_exists == 'true'
         run: |

@@ -220,7 +220,7 @@ jobs:
             ${{ github.event.repository.name }}/lib/
         continue-on-error: true
 
-      - name: Set output ⚙
+      - name: Set output ⚙️
         id: coverage-output
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
         run: |
