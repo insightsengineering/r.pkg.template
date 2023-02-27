@@ -122,6 +122,12 @@ on:
         required: false
         type: string
         default: upstream
+      unit-test-report-brand:
+        # TODO update the description.
+        description: Image URL to use for unit test report. If empty, default xunit-viewer image will be used.
+        required: false
+        type: string
+        default: ""
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
@@ -196,7 +202,6 @@ jobs:
         if: steps.npm-cache.outputs.cache-hit != 'true'
         run: |
           npm i -g xunit-viewer
-          xunit-viewer --help
         shell: bash
 
       - name: Checkout repo (PR) 🛎
@@ -393,7 +398,18 @@ jobs:
 
       - name: Convert JUnit XML to HTML
         run: |
-          xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" -o junit-result.html
+          if [ "${{ inputs.unit-test-report-brand }}" != "" ]; then
+            xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" \
+              -o junit-result.html \
+              -f "https://www.clipboardmaster.com/favicon.ico" \
+              -t "${{ github.event.repository.name }} Unit Test Results" \
+              --brand "${{ inputs.unit-test-report-brand }}"
+          else
+            xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" \
+            -o junit-result.html \
+            -f "https://www.clipboardmaster.com/favicon.ico" \
+            -t "${{ github.event.repository.name }} Unit Test Results"
+          fi
         shell: bash
 
       - name: Publish JUnit XML as artifact
