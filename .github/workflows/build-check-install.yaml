@@ -123,7 +123,7 @@ on:
         type: string
         default: upstream
       unit-test-report-brand:
-        description: Image URL to use in unit test report. If empty, default xunit-viewer image will be used.
+        description: Image URL to use in unit test report for branding. If empty, the default xunit-viewer brand will be used.
         required: false
         type: string
         default: ""
@@ -397,18 +397,15 @@ jobs:
 
       - name: Convert JUnit XML to HTML 📝
         run: |
+          brand_option=""
           if [ "${{ inputs.unit-test-report-brand }}" != "" ]; then
-            xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" \
-              -o junit-result.html \
-              -f "https://www.clipboardmaster.com/favicon.ico" \
-              -t "${{ github.event.repository.name }} Unit Test Results" \
-              --brand "${{ inputs.unit-test-report-brand }}"
-          else
-            xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" \
+            brand_option='--brand "${{ inputs.unit-test-report-brand }}"'
+          fi
+          xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" \
             -o junit-result.html \
             -f "https://www.clipboardmaster.com/favicon.ico" \
-            -t "${{ github.event.repository.name }} Unit Test Results"
-          fi
+            -t "${{ github.event.repository.name }} Unit Test Results" \
+            $brand_option
         shell: bash
 
       - name: Publish JUnit XML as artifact 📰
@@ -611,8 +608,8 @@ jobs:
           path: ${{ github.event.repository.name }}/${{ env.PKGBUILD }}
           name: ${{ env.PKGBUILD }}
 
-  publish-coverage-report:
-    name: Publish JUnit report 📰
+  publish-junit-html-report:
+    name: Publish JUnit HTML report 📰
     runs-on: ubuntu-latest
     needs: build-install-check
     # TODO Is it enough to filter out pull requests?
@@ -624,12 +621,12 @@ jobs:
     concurrency:
       group: ghpages
     steps:
-      - name: Download JUnit report as artifact ⤵️
+      - name: Download JUnit HTML report as artifact ⤵️
         uses: actions/download-artifact@v3
         with:
           name: junit-report
           path: junit-report
-      - name: Upload JUnit report to GitHub pages 🗞️
+      - name: Upload JUnit HTML report to GitHub pages 🗞️
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
