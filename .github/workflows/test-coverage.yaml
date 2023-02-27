@@ -223,8 +223,7 @@ jobs:
       - name: Set output ⚙️
         id: coverage-output
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
-        run: |
-          echo "coverage-upload=true" >> $GITHUB_OUTPUT
+        run: echo "coverage-upload=true" >> $GITHUB_OUTPUT
 
   covtracer:
     name: Covtracer 🐄

@@ -199,8 +199,7 @@ jobs:
 
       - name: Install xunit-viewer ⚙️
         if: steps.npm-cache.outputs.cache-hit != 'true'
-        run: |
-          npm i -g xunit-viewer
+        run: npm i -g xunit-viewer
         shell: bash
 
       - name: Checkout repo (PR) 🛎
@@ -402,7 +401,7 @@ jobs:
             brand_option='--brand "${{ inputs.unit-test-report-brand }}"'
           fi
           xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" \
-            -o junit-result.html \
+            -o junit-report.html \
             -f "https://www.clipboardmaster.com/favicon.ico" \
             -t "${{ github.event.repository.name }} Unit Test Results" \
             $brand_option
@@ -413,13 +412,12 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: junit-report
-          path: "junit-result.html"
+          path: "junit-report.html"
 
       - name: Set output ⚙️
         id: junit-output
         if: steps.check-junit-xml.outputs.files_exists == 'true'
-        run: |
-          echo "junit-upload=true" >> $GITHUB_OUTPUT
+        run: echo "junit-upload=true" >> $GITHUB_OUTPUT
 
       - name: Publish Unit Test Summary 📑
         uses: EnricoMi/publish-unit-test-result-action@v2
