@@ -274,7 +274,11 @@ jobs:
     name: Publish coverage report
     runs-on: ubuntu-latest
     needs: coverage
-    if: needs.coverage.outputs.publish-report == 'true'
+    # TODO Is it enough to filter out pull requests?
+    # Then the workflow will run on main and tags.
+    if: >
+      needs.coverage.outputs.publish-report == 'true'
+        && github.event_name != 'pull_request'
     # Only one job can publish to gh-pages branch concurrently.
     concurrency:
       group: ghpages
