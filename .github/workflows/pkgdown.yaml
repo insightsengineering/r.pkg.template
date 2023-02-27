@@ -198,7 +198,7 @@ jobs:
           pkgdown::deploy_to_branch(
             new_process = FALSE,
             subdir = "${BRANCH_OR_TAG}",
-            clean = TRUE
+            clean = FALSE
           )
           EOF
         shell: bash
