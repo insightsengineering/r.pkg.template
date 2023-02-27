@@ -148,7 +148,7 @@ jobs:
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
     outputs:
-      publish-report: ${{ steps.junit-output.outputs.junit-upload }}
+      publish-unit-test-html-report: ${{ steps.junit-output.outputs.junit-upload }}
       current-branch-or-tag: ${{ steps.current-branch-or-tag.outputs.ref-name }}
 
     steps:
@@ -615,7 +615,7 @@ jobs:
     # TODO Is it enough to filter out pull requests?
     # Then the workflow will run on main and tags.
     if: >
-      needs.build-install-check.outputs.publish-report == 'true'
+      needs.build-install-check.outputs.publish-unit-test-html-report == 'true'
         && github.event_name != 'pull_request'
     # Only one job can publish to gh-pages branch concurrently.
     concurrency:

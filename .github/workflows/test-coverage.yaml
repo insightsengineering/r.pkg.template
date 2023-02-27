@@ -79,7 +79,7 @@ jobs:
     container:
       image: ghcr.io/insightsengineering/rstudio_4.2.2_bioc_3.16:latest
     outputs:
-      publish-report: ${{ steps.coverage-output.outputs.coverage-upload }}
+      publish-coverage-html-report: ${{ steps.coverage-output.outputs.coverage-upload }}
       current-branch-or-tag: ${{ steps.current-branch-or-tag.outputs.ref-name }}
     steps:
       - name: Get branch names 🌿
@@ -277,7 +277,7 @@ jobs:
     # TODO Is it enough to filter out pull requests?
     # Then the workflow will run on main and tags.
     if: >
-      needs.coverage.outputs.publish-report == 'true'
+      needs.coverage.outputs.publish-coverage-html-report == 'true'
         && github.event_name != 'pull_request'
     # Only one job can publish to gh-pages branch concurrently.
     concurrency:
