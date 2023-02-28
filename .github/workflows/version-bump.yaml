@@ -64,14 +64,24 @@ jobs:
           echo "NEW_PKG_VERSION=${DESC_VERSION}" >> $GITHUB_ENV
         shell: bash
 
+      - name: Check if a pre-commit config exists
+        id: precommit-config-exists
+        uses: andstor/file-existence-action@v2
+        with:
+          files: ".pre-commit-config.yaml"
+
       - name: Setup Python 🐍
-        if: inputs.disable-precommit-autoupdate != 'true'
+        if: |
+          inputs.disable-precommit-autoupdate != 'true' &&
+            steps.precommit-config-exists.outputs.files_exists == 'true'
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
       - name: Precommit autoupdate 🅿️
-        if: inputs.disable-precommit-autoupdate != 'true'
+        if: |
+          inputs.disable-precommit-autoupdate != 'true' &&
+            steps.precommit-config-exists.outputs.files_exists == 'true'
         run: |
           python -m pip -q install pre-commit
           pre-commit autoupdate
