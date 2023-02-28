@@ -289,8 +289,6 @@ jobs:
     name: Publish coverage report 📰
     runs-on: ubuntu-latest
     needs: coverage
-    # TODO Is it enough to filter out pull requests?
-    # Then the workflow will run on main and tags.
     if: >
       needs.coverage.outputs.publish-coverage-html-report == 'true'
         && github.event_name != 'pull_request'

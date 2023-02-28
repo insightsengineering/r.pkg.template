@@ -626,8 +626,6 @@ jobs:
     name: Publish JUnit HTML report 📰
     runs-on: ubuntu-latest
     needs: build-install-check
-    # TODO Is it enough to filter out pull requests?
-    # Then the workflow will run on main and tags.
     if: >
       needs.build-install-check.outputs.publish-unit-test-html-report == 'true'
         && github.event_name != 'pull_request'
