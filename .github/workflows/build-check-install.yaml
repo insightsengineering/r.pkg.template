@@ -151,11 +151,19 @@ jobs:
       publish-unit-test-html-report: ${{ steps.junit-output.outputs.junit-upload }}
       current-branch-or-tag: ${{ steps.current-branch-or-tag.outputs.ref-name }}
       unit-test-html-report-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-tag }}
+      multiversion-docs: ${{ steps.current-branch-or-tag.outputs.multiversion-docs }}
 
     steps:
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v6
+
+      - name: Checkout gh-pages 🛎
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+          path: gh-pages
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Get current branch or tag 🏷️
         id: current-branch-or-tag
@@ -167,6 +175,12 @@ jobs:
           else
             echo "Current branch: ${{ steps.branch-name.outputs.current_branch }}"
             echo "ref-name=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
+          fi
+          # Check if pkgdown multiversion docs are used at all.
+          if [ $(grep -rl '<!-- start dropdown for versions -->' gh-pages | wc -l) -gt 0 ]; then
+            echo "multiversion-docs=true" >> $GITHUB_OUTPUT
+          else
+            echo "multiversion-docs=false" >> $GITHUB_OUTPUT
           fi
         shell: bash
 
@@ -403,7 +417,7 @@ jobs:
             brand_option='--brand ${{ inputs.unit-test-report-brand }}'
           fi
           xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" \
-            -o junit-report.html \
+            -o index.html \
             -f "https://www.clipboardmaster.com/favicon.ico" \
             -t "${{ github.event.repository.name }} Unit Test Results" \
             $brand_option
@@ -413,8 +427,8 @@ jobs:
         if: steps.check-junit-xml.outputs.files_exists == 'true'
         uses: actions/upload-artifact@v3
         with:
-          name: junit-report
-          path: "junit-report.html"
+          name: unit-test-report
+          path: "index.html"
 
       - name: Set output ⚙️
         id: junit-output
@@ -624,23 +638,34 @@ jobs:
       - name: Download JUnit HTML report as artifact ⤵️
         uses: actions/download-artifact@v3
         with:
-          name: junit-report
-          path: junit-report
+          name: unit-test-report
+          path: unit-test-report
 
       - name: Upload JUnit HTML report to GitHub pages 🗞️
+        if: needs.build-install-check.outputs.multiversion-docs == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
-          publish_dir: ./junit-report
-          destination_dir: ${{ needs.build-install-check.outputs.current-branch-or-tag }}/junit-report
+          publish_dir: ./unit-test-report
+          destination_dir: ${{ needs.build-install-check.outputs.current-branch-or-tag }}/unit-test-report
 
       - name: Upload JUnit HTML report to GitHub pages (latest-tag) 🏷️
-        if: needs.build-install-check.outputs.unit-test-html-report-latest-tag == 'true'
+        if: >
+          needs.build-install-check.outputs.unit-test-html-report-latest-tag == 'true'
+            && needs.build-install-check.outputs.multiversion-docs == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
-          publish_dir: ./junit-report
-          destination_dir: latest-tag/junit-report
+          publish_dir: ./unit-test-report
+          destination_dir: latest-tag/unit-test-report
+
+      - name: Upload JUnit HTML report to GitHub pages (non-multiversion) 🗞️
+        if: needs.build-install-check.outputs.multiversion-docs == 'false'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          publish_dir: ./unit-test-report
+          destination_dir: unit-test-report
 
   upload-release-assets:
     name: Upload build tar.gz
