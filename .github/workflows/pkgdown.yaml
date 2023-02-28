@@ -184,7 +184,6 @@ jobs:
       - name: Publish docs 📢
         if: github.event_name == 'push'
         run: |
-          sleep 200
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           BRANCH_OR_TAG="${GITHUB_REF##*/}"
@@ -199,7 +198,7 @@ jobs:
           pkgdown::deploy_to_branch(
             new_process = FALSE,
             subdir = "${BRANCH_OR_TAG}",
-            clean = FALSE
+            clean = TRUE
           )
           EOF
         shell: bash
