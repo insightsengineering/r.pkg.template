@@ -150,6 +150,7 @@ jobs:
     outputs:
       publish-unit-test-html-report: ${{ steps.junit-output.outputs.junit-upload }}
       current-branch-or-tag: ${{ steps.current-branch-or-tag.outputs.ref-name }}
+      coverage-html-report-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-tag }}
 
     steps:
       - name: Get branch names 🌿
@@ -162,6 +163,7 @@ jobs:
           if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
             echo "Current tag: ${{ steps.branch-name.outputs.tag }}"
             echo "ref-name=${{ steps.branch-name.outputs.tag }}" >> $GITHUB_OUTPUT
+            echo "is-tag=true" >> $GITHUB_OUTPUT
           else
             echo "Current branch: ${{ steps.branch-name.outputs.current_branch }}"
             echo "ref-name=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
@@ -624,12 +626,21 @@ jobs:
         with:
           name: junit-report
           path: junit-report
+
       - name: Upload JUnit HTML report to GitHub pages 🗞️
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
           publish_dir: ./junit-report
           destination_dir: ${{ needs.build-install-check.outputs.current-branch-or-tag }}/junit-report
+
+      - name: Upload JUnit HTML report to GitHub pages (latest-tag) 🏷️
+        if: needs.build-check-install.outputs.coverage-html-report-latest-tag == 'true'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          publish_dir: ./junit-report
+          destination_dir: latest-tag/junit-report
 
   upload-release-assets:
     name: Upload build tar.gz
