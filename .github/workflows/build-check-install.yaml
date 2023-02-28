@@ -150,7 +150,7 @@ jobs:
     outputs:
       publish-unit-test-html-report: ${{ steps.junit-output.outputs.junit-upload }}
       current-branch-or-tag: ${{ steps.current-branch-or-tag.outputs.ref-name }}
-      coverage-html-report-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-tag }}
+      unit-test-html-report-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-tag }}
 
     steps:
       - name: Get branch names 🌿
@@ -635,7 +635,7 @@ jobs:
           destination_dir: ${{ needs.build-install-check.outputs.current-branch-or-tag }}/junit-report
 
       - name: Upload JUnit HTML report to GitHub pages (latest-tag) 🏷️
-        if: needs.build-check-install.outputs.coverage-html-report-latest-tag == 'true'
+        if: needs.build-install-check.outputs.unit-test-html-report-latest-tag == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
