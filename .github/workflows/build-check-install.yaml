@@ -398,7 +398,7 @@ jobs:
         run: |
           brand_option=""
           if [ "${{ inputs.unit-test-report-brand }}" != "" ]; then
-            brand_option='--brand "${{ inputs.unit-test-report-brand }}"'
+            brand_option='--brand ${{ inputs.unit-test-report-brand }}'
           fi
           xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" \
             -o junit-report.html \

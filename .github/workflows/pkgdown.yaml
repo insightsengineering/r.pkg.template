@@ -222,7 +222,7 @@ jobs:
           ref: "gh-pages"
 
       - name: Create and publish docs ↗️
-        uses: insightsengineering/r-pkgdown-multiversion@publish-reports-to-gh-pages
+        uses: insightsengineering/r-pkgdown-multiversion@v2
         with:
           path: ${{ github.event.repository.name }}
           default-landing-page: ${{ inputs.default-landing-page }}
