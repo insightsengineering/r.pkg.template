@@ -94,18 +94,19 @@ jobs:
         uses: tj-actions/branch-names@v6
 
       - name: Checkout gh-pages 🛎
-        if: inputs.publish-coverage-report-gh-pages == true
+        if: >-
+          github.event_name != 'pull_request'
+            && inputs.publish-coverage-report-gh-pages == true
         id: checkout-gh-pages
         uses: actions/checkout@v3
         with:
           ref: gh-pages
           path: gh-pages
           repository: ${{ github.event.pull_request.head.repo.full_name }}
-        continue-on-error: true
 
       - name: Get current branch or tag 🏷️
         if: >-
-          steps.checkout-gh-pages.outcome == 'success'
+          github.event_name != 'pull_request'
             && inputs.publish-coverage-report-gh-pages == true
         id: current-branch-or-tag
         run: |
@@ -251,7 +252,7 @@ jobs:
         id: coverage-output
         if: >-
           steps.check_coverage_reports.outputs.files_exists == 'true'
-            && steps.checkout-gh-pages.outcome == 'success'
+            && github.event_name != 'pull_request'
             && inputs.publish-coverage-report-gh-pages == true
         run: echo "coverage-upload=true" >> $GITHUB_OUTPUT
 
