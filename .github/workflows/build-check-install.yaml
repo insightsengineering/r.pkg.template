@@ -159,13 +159,16 @@ jobs:
         uses: tj-actions/branch-names@v6
 
       - name: Checkout gh-pages 🛎
+        id: checkout-gh-pages
         uses: actions/checkout@v3
         with:
           ref: gh-pages
           path: gh-pages
           repository: ${{ github.event.pull_request.head.repo.full_name }}
+        continue-on-error: true
 
       - name: Get current branch or tag 🏷️
+        if: steps.checkout-gh-pages.outcome == 'success'
         id: current-branch-or-tag
         run: |
           if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
@@ -200,6 +203,7 @@ jobs:
 
       # Required for xunit-viewer
       - name: Restore npm cache 💰
+        if: steps.checkout-gh-pages.outcome == 'success'
         uses: actions/cache@v3
         with:
           key: npm-${{ runner.os }}-${{ github.job }}
@@ -208,13 +212,16 @@ jobs:
           path: node_modules
 
       - name: Setup NodeJS ☊
+        if: steps.checkout-gh-pages.outcome == 'success'
         uses: actions/setup-node@v3
         id: npm-cache
         with:
           node-version: 18
 
       - name: Install xunit-viewer ⚙️
-        if: steps.npm-cache.outputs.cache-hit != 'true'
+        if: >-
+          steps.npm-cache.outputs.cache-hit != 'true'
+            && steps.checkout-gh-pages.outcome == 'success'
         run: npm i -g xunit-viewer
         shell: bash
 
@@ -411,6 +418,9 @@ jobs:
           files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
 
       - name: Convert JUnit XML to HTML 📝
+        if: >-
+          steps.check-junit-xml.outputs.files_exists == 'true'
+            && steps.checkout-gh-pages.outcome == 'success'
         run: |
           brand_option=""
           if [ "${{ inputs.unit-test-report-brand }}" != "" ]; then
@@ -424,7 +434,9 @@ jobs:
         shell: bash
 
       - name: Publish JUnit XML as artifact 📰
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
+        if: >-
+          steps.check-junit-xml.outputs.files_exists == 'true'
+            && steps.checkout-gh-pages.outcome == 'success'
         uses: actions/upload-artifact@v3
         with:
           name: unit-test-report
@@ -432,7 +444,9 @@ jobs:
 
       - name: Set output ⚙️
         id: junit-output
-        if: steps.check-junit-xml.outputs.files_exists == 'true'
+        if: >-
+          steps.check-junit-xml.outputs.files_exists == 'true'
+            && steps.checkout-gh-pages.outcome == 'success'
         run: echo "junit-upload=true" >> $GITHUB_OUTPUT
 
       - name: Publish Unit Test Summary 📑
