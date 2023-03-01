@@ -94,7 +94,7 @@ jobs:
         uses: tj-actions/branch-names@v6
 
       - name: Checkout gh-pages 🛎
-        if: inputs.publish-coverage-report-gh-pages == 'true'
+        if: inputs.publish-coverage-report-gh-pages == true
         id: checkout-gh-pages
         uses: actions/checkout@v3
         with:
@@ -106,7 +106,7 @@ jobs:
       - name: Get current branch or tag 🏷️
         if: >-
           steps.checkout-gh-pages.outcome == 'success'
-            && inputs.publish-coverage-report-gh-pages == 'true'
+            && inputs.publish-coverage-report-gh-pages == true
         id: current-branch-or-tag
         run: |
           if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
@@ -252,7 +252,7 @@ jobs:
         if: >-
           steps.check_coverage_reports.outputs.files_exists == 'true'
             && steps.checkout-gh-pages.outcome == 'success'
-            && inputs.publish-coverage-report-gh-pages == 'true'
+            && inputs.publish-coverage-report-gh-pages == true
         run: echo "coverage-upload=true" >> $GITHUB_OUTPUT
 
   covtracer:

@@ -164,7 +164,7 @@ jobs:
         uses: tj-actions/branch-names@v6
 
       - name: Checkout gh-pages 🛎
-        if: inputs.publish-unit-test-report-gh-pages == 'true'
+        if: inputs.publish-unit-test-report-gh-pages == true
         id: checkout-gh-pages
         uses: actions/checkout@v3
         with:
@@ -176,7 +176,7 @@ jobs:
       - name: Get current branch or tag 🏷️
         if: >-
           steps.checkout-gh-pages.outcome == 'success'
-            && inputs.publish-unit-test-report-gh-pages == 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
         id: current-branch-or-tag
         run: |
           if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
@@ -213,7 +213,7 @@ jobs:
       - name: Restore npm cache 💰
         if: >-
           steps.checkout-gh-pages.outcome == 'success'
-            && inputs.publish-unit-test-report-gh-pages == 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
 
         uses: actions/cache@v3
         with:
@@ -225,7 +225,7 @@ jobs:
       - name: Setup NodeJS ☊
         if: >-
           steps.checkout-gh-pages.outcome == 'success'
-           && inputs.publish-unit-test-report-gh-pages == 'true'
+           && inputs.publish-unit-test-report-gh-pages == true
         uses: actions/setup-node@v3
         id: npm-cache
         with:
@@ -235,7 +235,7 @@ jobs:
         if: >-
           steps.npm-cache.outputs.cache-hit != 'true'
             && steps.checkout-gh-pages.outcome == 'success'
-            && inputs.publish-unit-test-report-gh-pages == 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
         run: npm i -g xunit-viewer
         shell: bash
 
@@ -435,7 +435,7 @@ jobs:
         if: >-
           steps.check-junit-xml.outputs.files_exists == 'true'
             && steps.checkout-gh-pages.outcome == 'success'
-            && inputs.publish-unit-test-report-gh-pages == 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
         run: |
           brand_option=""
           if [ "${{ inputs.unit-test-report-brand }}" != "" ]; then
@@ -452,7 +452,7 @@ jobs:
         if: >-
           steps.check-junit-xml.outputs.files_exists == 'true'
             && steps.checkout-gh-pages.outcome == 'success'
-            && inputs.publish-unit-test-report-gh-pages == 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
         uses: actions/upload-artifact@v3
         with:
           name: unit-test-report
@@ -463,7 +463,7 @@ jobs:
         if: >-
           steps.check-junit-xml.outputs.files_exists == 'true'
             && steps.checkout-gh-pages.outcome == 'success'
-            && inputs.publish-unit-test-report-gh-pages == 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
         run: echo "junit-upload=true" >> $GITHUB_OUTPUT
 
       - name: Publish Unit Test Summary 📑
