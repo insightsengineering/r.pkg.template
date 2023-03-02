@@ -128,7 +128,7 @@ on:
         type: string
         default: ""
       publish-unit-test-report-gh-pages:
-        description: Publish unit test report to pkgdown docs.
+        description: Publish HTML unit test report to GitHub Pages alongside pkgdown docs.
         required: false
         type: boolean
         default: true

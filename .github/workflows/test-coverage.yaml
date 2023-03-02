@@ -59,7 +59,7 @@ on:
         type: string
         default: upstream
       publish-coverage-report-gh-pages:
-        description: Publish coverage report to pkgdown docs.
+        description: Publish HTML coverage report to GitHub pages alongside pkgdown docs.
         required: false
         type: boolean
         default: true
