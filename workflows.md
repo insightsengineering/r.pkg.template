@@ -175,7 +175,7 @@ the following steps are needed.
           - text: Coverage report
             href: coverage-report/
           - text: Unit test report
-            href: junit-report/
+            href: unit-test-report/
         github:
           icon: fa-github
           href: <url-to-the-repository>

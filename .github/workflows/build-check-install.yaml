@@ -727,4 +727,3 @@ jobs:
           asset_name: ${{ env.PKGBUILD }}
           tag: ${{ github.ref }}
           overwrite: true
-
