@@ -216,6 +216,8 @@ jobs:
                 print(w)
             }
           )
+          covr_html <- "coverage-report.html"
+          if (!file.exists(covr_html)) writeLines(c("No coverage report."), covr_html)
         shell: Rscript {0}
 
       - name: Check whether coverage reports exists 💭
@@ -237,10 +239,6 @@ jobs:
           publish: ${{ inputs.publish-coverage-report }}
           diff: true
         continue-on-error: true
-
-      - name: Add empty coverage report ⚙️
-        if: steps.check_coverage_reports.outputs.files_exists == 'false'
-        run: echo "No coverage report." > ${{ github.event.repository.name }}/coverage-report.html
 
       - name: Upload report 🔼
         uses: actions/upload-artifact@v3
