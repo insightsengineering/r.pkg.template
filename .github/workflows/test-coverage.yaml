@@ -218,6 +218,9 @@ jobs:
           )
         shell: Rscript {0}
 
+      - name: Debug
+        run: rm ${{ github.event.repository.name }}/coverage-report.html
+
       - name: Check whether coverage reports exists 💭
         id: check_coverage_reports
         uses: andstor/file-existence-action@v2
@@ -238,8 +241,11 @@ jobs:
           diff: true
         continue-on-error: true
 
+      - name: Add empty coverage report ⚙️
+        if: steps.check_coverage_reports.outputs.files_exists == 'false'
+        run: echo "No coverage report." > ${{ github.event.repository.name }}/coverage-report.html
+
       - name: Upload report 🔼
-        if: steps.check_coverage_reports.outputs.files_exists == 'true'
         uses: actions/upload-artifact@v3
         with:
           name: coverage-report
@@ -251,8 +257,7 @@ jobs:
       - name: Set output ⚙️
         id: coverage-output
         if: >-
-          steps.check_coverage_reports.outputs.files_exists == 'true'
-            && github.event_name != 'pull_request'
+          github.event_name != 'pull_request'
             && inputs.publish-coverage-report-gh-pages == true
         run: echo "coverage-upload=true" >> $GITHUB_OUTPUT
 
