@@ -122,6 +122,16 @@ on:
         required: false
         type: string
         default: upstream
+      unit-test-report-brand:
+        description: Image URL to use in unit test report for branding. If empty, the default xunit-viewer brand will be used.
+        required: false
+        type: string
+        default: ""
+      publish-unit-test-report-gh-pages:
+        description: Publish HTML unit test report to GitHub Pages alongside pkgdown docs.
+        required: false
+        type: boolean
+        default: true
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
@@ -142,11 +152,50 @@ jobs:
         && github.event.pull_request.draft == false
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
+    outputs:
+      publish-unit-test-html-report: ${{ steps.junit-output.outputs.junit-upload }}
+      current-branch-or-tag: ${{ steps.current-branch-or-tag.outputs.ref-name }}
+      unit-test-html-report-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-tag }}
+      multiversion-docs: ${{ steps.current-branch-or-tag.outputs.multiversion-docs }}
 
     steps:
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v6
+
+      - name: Checkout gh-pages 🛎
+        if: >-
+          inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        id: checkout-gh-pages
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+          path: gh-pages
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+        continue-on-error: true
+
+      - name: Get current branch or tag 🏷️
+        if: >-
+          inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        id: current-branch-or-tag
+        run: |
+          if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
+            echo "Current tag: ${{ steps.branch-name.outputs.tag }}"
+            echo "ref-name=${{ steps.branch-name.outputs.tag }}" >> $GITHUB_OUTPUT
+            echo "is-tag=true" >> $GITHUB_OUTPUT
+          else
+            echo "Current branch: ${{ steps.branch-name.outputs.current_branch }}"
+            echo "ref-name=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
+          fi
+          # Check if pkgdown multiversion docs are used at all.
+          if [ $(grep -rl '<!-- start dropdown for versions -->' gh-pages | wc -l) -gt 0 ]; then
+            echo "multiversion-docs=true" >> $GITHUB_OUTPUT
+          else
+            echo "multiversion-docs=false" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
 
       - name: Normalize variables 📏
         run: |
@@ -160,6 +209,34 @@ jobs:
           echo "junit_xml_comparison=${junit_xml_comparison_input:-true}" >> $GITHUB_ENV
           echo "junit_xml_positive_threshold=${junit_xml_positive_threshold:-1.0}" >> $GITHUB_ENV
           echo "junit_xml_negative_threshold=${junit_xml_negative_threshold:-1.0}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Restore npm cache 💰
+        if: >-
+          inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        uses: actions/cache@v3
+        with:
+          key: npm-${{ runner.os }}-${{ github.job }}
+          restore-keys: |
+            npm-${{ runner.os }}-
+          path: node_modules
+
+      - name: Setup NodeJS ☊
+        if: >-
+          inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        uses: actions/setup-node@v3
+        id: npm-cache
+        with:
+          node-version: 18
+
+      - name: Install xunit-viewer ⚙️
+        if: >-
+          steps.npm-cache.outputs.cache-hit != 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        run: npm i -g xunit-viewer
         shell: bash
 
       - name: Checkout repo (PR) 🛎
@@ -354,6 +431,41 @@ jobs:
         with:
           files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
 
+      - name: Convert JUnit XML to HTML 📝
+        if: >-
+          steps.check-junit-xml.outputs.files_exists == 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        run: |
+          brand_option=""
+          if [ "${{ inputs.unit-test-report-brand }}" != "" ]; then
+            brand_option='--brand ${{ inputs.unit-test-report-brand }}'
+          fi
+          xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" \
+            -o index.html \
+            -f "https://www.clipboardmaster.com/favicon.ico" \
+            -t "${{ github.event.repository.name }} Unit Test Results" \
+            $brand_option
+        shell: bash
+
+      - name: Publish JUnit XML as artifact 📰
+        if: >-
+          steps.check-junit-xml.outputs.files_exists == 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v3
+        with:
+          name: unit-test-report
+          path: "index.html"
+
+      - name: Set output ⚙️
+        id: junit-output
+        if: >-
+          steps.check-junit-xml.outputs.files_exists == 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        run: echo "junit-upload=true" >> $GITHUB_OUTPUT
+
       - name: Publish Unit Test Summary 📑
         uses: EnricoMi/publish-unit-test-result-action@v2
         id: test-results
@@ -540,6 +652,49 @@ jobs:
         with:
           path: ${{ github.event.repository.name }}/${{ env.PKGBUILD }}
           name: ${{ env.PKGBUILD }}
+
+  publish-junit-html-report:
+    name: Publish JUnit HTML report 📰
+    runs-on: ubuntu-latest
+    needs: build-install-check
+    if: >
+      needs.build-install-check.outputs.publish-unit-test-html-report == 'true'
+        && github.event_name != 'pull_request'
+    # Only one job can publish to gh-pages branch concurrently.
+    concurrency:
+      group: ghpages
+    steps:
+      - name: Download JUnit HTML report as artifact ⤵️
+        uses: actions/download-artifact@v3
+        with:
+          name: unit-test-report
+          path: unit-test-report
+
+      - name: Upload JUnit HTML report to GitHub pages 🗞️
+        if: needs.build-install-check.outputs.multiversion-docs == 'true'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          publish_dir: ./unit-test-report
+          destination_dir: ${{ needs.build-install-check.outputs.current-branch-or-tag }}/unit-test-report
+
+      - name: Upload JUnit HTML report to GitHub pages (latest-tag) 🏷️
+        if: >
+          needs.build-install-check.outputs.unit-test-html-report-latest-tag == 'true'
+            && needs.build-install-check.outputs.multiversion-docs == 'true'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          publish_dir: ./unit-test-report
+          destination_dir: latest-tag/unit-test-report
+
+      - name: Upload JUnit HTML report to GitHub pages (non-multiversion) 🗞️
+        if: needs.build-install-check.outputs.multiversion-docs == 'false'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          publish_dir: ./unit-test-report
+          destination_dir: unit-test-report
 
   upload-release-assets:
     name: Upload build tar.gz

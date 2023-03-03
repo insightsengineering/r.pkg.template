@@ -208,6 +208,9 @@ jobs:
     name: Multi-version docs 📑
     needs: docs
     runs-on: ubuntu-latest
+    # Only one job can publish to gh-pages branch concurrently.
+    concurrency:
+      group: ghpages
     if: >
       github.event_name == 'push'
         && !contains(github.event.commits[0].message, '[skip docs]')
