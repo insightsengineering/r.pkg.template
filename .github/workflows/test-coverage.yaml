@@ -241,6 +241,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload report 🔼
+        if: steps.check_coverage_reports.outputs.files_exists == 'true'
         uses: actions/upload-artifact@v3
         with:
           name: coverage-report
@@ -252,7 +253,8 @@ jobs:
       - name: Set output ⚙️
         id: coverage-output
         if: >-
-          github.event_name != 'pull_request'
+          steps.check_coverage_reports.outputs.files_exists == 'true'
+            && github.event_name != 'pull_request'
             && inputs.publish-coverage-report-gh-pages == true
         run: echo "coverage-upload=true" >> $GITHUB_OUTPUT
 
