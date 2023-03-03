@@ -162,7 +162,7 @@ the following steps are needed.
     and `build-check-install.yaml` after `pkgdown.yaml` has finished running. See example below.
 1. `_pkgdown.yaml` should be updated with the following contents to ensure that
     links to coverage report and unit test report appear in the navbar.
-    
+
     ```yaml
     navbar:
       structure:
