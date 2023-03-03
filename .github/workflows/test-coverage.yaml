@@ -218,9 +218,6 @@ jobs:
           )
         shell: Rscript {0}
 
-      - name: Debug
-        run: rm ${{ github.event.repository.name }}/coverage-report.html
-
       - name: Check whether coverage reports exists 💭
         id: check_coverage_reports
         uses: andstor/file-existence-action@v2
