@@ -1,0 +1,735 @@
+---
+name: R CMD Check on MacOS 🧬
+
+on:
+  push:
+    tags:
+      - "v*"
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+    branches:
+      - main
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with read access to repositories, required for staged.dependencies installation
+        required: false
+    inputs:
+      enable-staged-dependencies-check:
+        description: Enable staged dependencies YAML check
+        required: false
+        default: false
+        type: boolean
+      R_CHECK_FORCE_SUGGESTS:
+        description: If true, give an error if suggested packages are not available
+        required: false
+        default: true
+        type: boolean
+      skip-r-cmd-check:
+        description: Skip the R CMD check step in this workflow
+        required: false
+        default: false
+        type: boolean
+      skip-r-cmd-install:
+        description: Skip the R CMD INSTALL step in this workflow
+        required: false
+        default: false
+        type: boolean
+      enforce-note-blocklist:
+        description: Whether to check for specific NOTEs via regexes that should cause the pipeline to fail
+        required: false
+        default: false
+        type: boolean
+      note-blocklist:
+        description: |
+          List of regular expressions appearing in NOTEs that should cause the pipeline to fail.
+          Example usage:
+          note-blocklist: |
+            checking package dependencies ... NOTE( )+Depends: includes the non-default packages
+            checking R code for possible problems ... NOTE( )+.*: no visible global function definition for
+            checking for unstated dependencies in vignettes ... NOTE( )+\'.*\' import not declared from
+            checking dependencies in R code ... NOTE( )+Namespace in Imports field not imported from
+            checking installed package size ... NOTE( )+installed size is
+        required: false
+        default: ""
+        type: string
+      additional-r-cmd-check-params:
+        description: Additional flags or parameters to add to R CMD check
+        required: false
+        default: ""
+        type: string
+      disable-unit-test-reports:
+        description: Do not produce unit test reports
+        required: false
+        default: false
+        type: boolean
+      additional-env-vars:
+        description: |
+          Extra environment variables, as a 'key=value' pair, with each pair on a new line.
+          Example usage:
+          additional-env-vars: |
+            ABC=123
+            XYZ=456
+        required: false
+        default: ""
+        type: string
+      junit-xml-storage:
+        description: Branch name to store JUnit XML reports
+        required: false
+        default: "_junit_xml_reports"
+        type: string
+      junit-xml-diff-branch:
+        description: Against which branch should the JUnit XML report from the current branch be compared?
+        required: false
+        default: main
+        type: string
+      junit-xml-comparison:
+        description: Turn on JUnit XML comparison
+        required: false
+        default: true
+        type: boolean
+      junit-xml-negative-threshold:
+        description: |
+          If time difference during JUnit XML comparison is between negative-threshold and 0: it's treated as 0.
+          This means that if test suite/case executes up to negative-threshold seconds faster,
+          this time difference is ignored as insignificant, and test suite/case is not shown in the table
+        required: false
+        default: 1.0
+        type: string
+      junit-xml-positive-threshold:
+        description: |
+          If time difference during JUnit XML comparison is between 0 and positive-threshold: it's treated as 0.
+          This means that if test suite/case executes up to positive-threshold seconds slower,
+          this time difference is ignored as insignificant, and test suite/case is not shown in the table
+        required: false
+        default: 1.0
+        type: string
+      sd-direction:
+        description: The direction to use to install staged dependencies. Choose between 'upstream', 'downstream' and 'all'
+        required: false
+        type: string
+        default: upstream
+      unit-test-report-brand:
+        description: Image URL to use in unit test report for branding. If empty, the default xunit-viewer brand will be used.
+        required: false
+        type: string
+        default: ""
+      publish-unit-test-report-gh-pages:
+        description: Publish HTML unit test report to GitHub Pages alongside pkgdown docs.
+        required: false
+        type: boolean
+        default: true
+
+concurrency:
+  group: r-cmd-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-install-check:
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - image: ghcr.io/insightsengineering/rstudio_4.2.2_bioc_3.16
+            tag: latest
+    name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
+    runs-on: macos-latest
+    if: >
+      !contains(github.event.commits[0].message, '[skip r-cmd]')
+        && github.event.pull_request.draft == false
+    outputs:
+      publish-unit-test-html-report: ${{ steps.junit-output.outputs.junit-upload }}
+      current-branch-or-tag: ${{ steps.current-branch-or-tag.outputs.ref-name }}
+      unit-test-html-report-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-tag }}
+      multiversion-docs: ${{ steps.current-branch-or-tag.outputs.multiversion-docs }}
+
+    steps:
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v6
+
+      - name: Checkout gh-pages 🛎
+        if: >-
+          inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        id: checkout-gh-pages
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+          path: gh-pages
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+        continue-on-error: true
+
+      - name: Get current branch or tag 🏷️
+        if: >-
+          inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        id: current-branch-or-tag
+        run: |
+          if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
+            echo "Current tag: ${{ steps.branch-name.outputs.tag }}"
+            echo "ref-name=${{ steps.branch-name.outputs.tag }}" >> $GITHUB_OUTPUT
+            echo "is-tag=true" >> $GITHUB_OUTPUT
+          else
+            echo "Current branch: ${{ steps.branch-name.outputs.current_branch }}"
+            echo "ref-name=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
+          fi
+          # Check if pkgdown multiversion docs are used at all.
+          if [ $(grep -rl '<!-- start dropdown for versions -->' gh-pages | wc -l) -gt 0 ]; then
+            echo "multiversion-docs=true" >> $GITHUB_OUTPUT
+          else
+            echo "multiversion-docs=false" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Normalize variables 📏
+        run: |
+          junit_xml_storage_input="${{ inputs.junit-xml-storage }}"
+          junit_xml_diff_branch_input="${{ inputs.junit-xml-diff-branch }}"
+          junit_xml_comparison_input="${{ inputs.junit-xml-comparison }}"
+          junit_xml_positive_threshold="${{ inputs.junit-xml-positive-threshold }}"
+          junit_xml_negative_threshold="${{ inputs.junit-xml-negative-threshold }}"
+          echo "junit_xml_storage=${junit_xml_storage_input:-_junit_xml_reports}" >> $GITHUB_ENV
+          echo "junit_xml_diff_branch=${junit_xml_diff_branch_input:-main}" >> $GITHUB_ENV
+          echo "junit_xml_comparison=${junit_xml_comparison_input:-true}" >> $GITHUB_ENV
+          echo "junit_xml_positive_threshold=${junit_xml_positive_threshold:-1.0}" >> $GITHUB_ENV
+          echo "junit_xml_negative_threshold=${junit_xml_negative_threshold:-1.0}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Restore npm cache 💰
+        if: >-
+          inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        uses: actions/cache@v3
+        with:
+          key: npm-${{ runner.os }}-${{ github.job }}
+          restore-keys: |
+            npm-${{ runner.os }}-
+          path: node_modules
+
+      - name: Setup NodeJS ☊
+        if: >-
+          inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        uses: actions/setup-node@v3
+        id: npm-cache
+        with:
+          node-version: 18
+
+      - name: Install xunit-viewer ⚙️
+        if: >-
+          steps.npm-cache.outputs.cache-hit != 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        run: npm i -g xunit-viewer
+        shell: bash
+
+      - name: Checkout repo (PR) 🛎
+        uses: actions/checkout@v3
+        if: github.event_name == 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v3
+        if: github.event_name != 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
+
+      - name: Restore SD cache 💰
+        uses: actions/cache@v3
+        with:
+          key: sd-${{ runner.os }}-${{ github.event.repository.name }}
+          path: ~/.staged.dependencies
+
+      - name: Install dep.libs
+        run: |
+        brew update
+          brew install basictex
+          export PATH="/Library/TeX/texbin/:$PATH"
+          echo "PATH=/Library/TeX/texbin/:$PATH" >> $GITHUB_ENV
+          brew install fribidi
+          brew install --cask phantomjs 
+          sudo tlmgr update --self
+          sudo tlmgr update --all
+          sudo tlmgr install titling framed inconsolata
+          sudo tlmgr install collection-fontsrecommended
+        
+      - name: Run Staged dependencies 🎦
+        uses: insightsengineering/staged-dependencies-action@509_macos
+        env:
+          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
+        with:
+          path: ${{ github.event.repository.name }}
+          enable-check: ${{ inputs.enable-staged-dependencies-check }}
+          run-system-dependencies: true
+          direction: ${{ inputs.sd-direction }}
+
+      - name: Show session info and installed packages ℹ
+        run: |
+          sessionInfo()
+          as.data.frame(installed.packages()[, c("LibPath", "Version")])
+          if (grepl("--as-cran", "${{ inputs.additional-r-cmd-check-params }}", fixed = TRUE)) {
+            x <- desc::desc_del("Remotes")
+          }
+          if ("${{ inputs.disable-unit-test-reports }}" != "true") {
+            x <- desc::desc_set_dep("xml2", "Suggests")
+          }
+        shell: Rscript {0}
+        working-directory: ${{ github.event.repository.name }}
+
+      - name: Replace testthat.R for test reporting 🎚
+        if: inputs.disable-unit-test-reports != 'true'
+        run: |
+          if [ -f "tests/testthat.R" ]; then {
+            # Overwrite testthat.R for JUnit XML reporting
+            cat > tests/testthat.R <<EOF
+            pkg_name <- "${{ github.event.repository.name }}"
+            if (requireNamespace("testthat", quietly = TRUE)) {
+              library(testthat)
+              reporter <- MultiReporter\$new(list(
+                CheckReporter\$new(),
+                JunitReporter\$new(file = "junit-result.xml")
+              ))
+              test_check(pkg_name, reporter = reporter)
+            }
+          EOF
+          }
+          cat tests/testthat.R
+          fi
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}
+
+      - name: Build R package 🏗
+        run: |
+          if [ "${{ inputs.additional-env-vars }}" != "" ]
+          then {
+            echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
+            export $(tr '\n' ' ' < /tmp/dotenv.env)
+          }
+          fi
+          R CMD build ${{ github.event.repository.name }}
+          echo "PKGBUILD=$(echo ${{ github.event.repository.name }}_*.tar.gz)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Set TESTING_DEPTH ⚙
+        env:
+          COMMIT_NEWEST_MESSAGE: ${{ github.event.head_commit.message }}
+          COMMIT_OLDEST_MESSAGE: ${{ github.event.commits[0].message }}
+        run: |
+          # set TESTING_DEPTH for PR
+          if [[ ! -z "${GITHUB_HEAD_REF}" ]]; then
+            TESTING_DEPTH=3
+            echo "TESTING_DEPTH=3" >> $GITHUB_ENV
+            COMMIT_NEWEST_MESSAGE=$(git log --format=%B -n 1 ${{ github.event.after }})
+          fi
+          if [[ $COMMIT_NEWEST_MESSAGE == *"[skip tests]"* ]]; then
+            echo "NO_TESTS=1" >> $GITHUB_ENV
+          fi
+          # default TESTING_DEPTH
+          if [[ -z "${TESTING_DEPTH}" ]]; then
+            echo "TESTING_DEPTH=1" >> $GITHUB_ENV
+          fi
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}
+
+      - name: Run R CMD check 🏁
+        run: |
+          if [ "${{ inputs.skip-r-cmd-check }}" == "true" ]
+          then {
+            echo "Skipping R CMD check as 'skip-r-cmd-check' was set to 'true'"
+            exit 0
+          }
+          fi
+          if [ "${{ inputs.R_CHECK_FORCE_SUGGESTS }}" == "" ]
+          then {
+            _R_CHECK_FORCE_SUGGESTS_="FALSE"
+          }
+          fi
+          ADDITIONAL_PARAMS=${{ inputs.additional-r-cmd-check-params }}
+          if [[ ! -z "${{ env.NO_TESTS }}" ]]
+          then {
+            ADDITIONAL_PARAMS="${ADDITIONAL_PARAMS} --no-tests"
+          }
+          fi
+          if [ "${{ inputs.additional-env-vars }}" != "" ]
+          then {
+            echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
+            export $(tr '\n' ' ' < /tmp/dotenv.env)
+          }
+          fi
+          Rscript - <<EOF
+          if ("${{ inputs.disable-unit-test-reports }}" != "true") {
+            if (!require("xml2")) {
+              install.packages("xml2", repos = "https://cloud.r-project.org", quiet = TRUE)
+            }
+          }
+          EOF
+          R CMD check ${ADDITIONAL_PARAMS} ${{ env.PKGBUILD }}
+        shell: bash
+        continue-on-error: true
+        env:
+          _R_CHECK_TESTS_NLINES_: 0
+          _R_CHECK_VIGNETTES_NLINES_: 0
+          _R_CHECK_FORCE_SUGGESTS_: ${{ inputs.R_CHECK_FORCE_SUGGESTS }}
+
+      - name: Fetch report from ${{ env.junit_xml_storage }} ⤵️
+        if: env.junit_xml_comparison == 'true'
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.junit_xml_storage }}
+          fetch-depth: 0
+
+      - name: Initialize storage branch ${{ env.junit_xml_storage }} 🗄️
+        if: env.junit_xml_comparison == 'true'
+        working-directory: ${{ env.junit_xml_storage }}
+        run: |
+          git config --global --add safe.directory ${PWD}
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          # Switch to the branch if it already exists
+          git switch ${{ env.junit_xml_storage }} || true
+          git pull origin ${{ env.junit_xml_storage }} || true
+          # Create the branch if it doesn't exist yet
+          git checkout --orphan ${{ env.junit_xml_storage }} || true
+          # Ensure that the bare minimum components exist in the branch
+          mkdir -p data
+          touch README.md data/.gitkeep
+          # Copy necessary files and folders to a temporary location
+          mkdir -p /tmp/${{ github.sha }}
+          echo "Copying data to /tmp/${{ github.sha }}"
+          cp -r .git README.md data /tmp/${{ github.sha }}
+          # Remove everything else
+          # Attribution: https://unix.stackexchange.com/a/77313
+          rm -rf ..?* .[!.]* *
+          # Restore files from the temporary location
+          echo "Copying data from /tmp/${{ github.sha }}"
+          cp -r /tmp/${{ github.sha }}/.git /tmp/${{ github.sha }}/README.md /tmp/${{ github.sha }}/data .
+          rm -rf /tmp/${{ github.sha }}
+          git add --all -f
+          git commit -m "Update storage branch: $(date)" || true
+        shell: bash
+
+      - name: Push storage branch ${{ env.junit_xml_storage }} 🗄️
+        if: env.junit_xml_comparison == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          branch: ${{ env.junit_xml_storage }}
+          directory: ${{ env.junit_xml_storage }}
+          force: true
+        continue-on-error: true
+
+      - name: Check whether JUnit XML report exists 🚦
+        id: check-junit-xml
+        uses: andstor/file-existence-action@v2
+        with:
+          files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
+
+      - name: Convert JUnit XML to HTML 📝
+        if: >-
+          steps.check-junit-xml.outputs.files_exists == 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        run: |
+          brand_option=""
+          if [ "${{ inputs.unit-test-report-brand }}" != "" ]; then
+            brand_option='--brand ${{ inputs.unit-test-report-brand }}'
+          fi
+          xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" \
+            -o index.html \
+            -f "https://www.clipboardmaster.com/favicon.ico" \
+            -t "${{ github.event.repository.name }} Unit Test Results" \
+            $brand_option
+        shell: bash
+
+      - name: Publish JUnit XML as artifact 📰
+        if: >-
+          steps.check-junit-xml.outputs.files_exists == 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v3
+        with:
+          name: unit-test-report
+          path: "index.html"
+
+      - name: Set output ⚙️
+        id: junit-output
+        if: >-
+          steps.check-junit-xml.outputs.files_exists == 'true'
+            && inputs.publish-unit-test-report-gh-pages == true
+            && github.event_name != 'pull_request'
+        run: echo "junit-upload=true" >> $GITHUB_OUTPUT
+
+      - name: Publish Unit Test Summary 📑
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        id: test-results
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
+        with:
+          check_name: Unit Tests Summary
+          junit_files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
+
+      - name: Fetch JUnit XML reports from ${{ env.junit_xml_storage }} ⤵️
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.junit_xml_storage }}
+          fetch-depth: 0
+
+      - name: Set up ${{ env.junit_xml_storage }} branch for reports 🗃️
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
+        run: |
+          BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+          echo "diff_storage_branch=$BRANCH" >> $GITHUB_ENV
+          mkdir -p ${{ env.junit_xml_storage }}/data/${BRANCH}
+        shell: bash
+
+      - name: Commit JUnit XML report 📄
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
+        working-directory: ${{ env.junit_xml_storage }}/data
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git switch ${{ env.junit_xml_storage }} || true
+          git config pull.rebase false
+          git pull origin ${{ env.junit_xml_storage }} || true
+          cp ../../${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml \
+            ./${{ env.diff_storage_branch }}/junit-result.xml
+          git add -f "${{ env.diff_storage_branch }}/junit-result.xml"
+          git commit -m "Add/Update JUnit report: ${{ github.sha }}" || true
+        shell: bash
+
+      - name: Push JUnit XML report to ${{ env.junit_xml_storage }} 📄
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          branch: ${{ env.junit_xml_storage }}
+          directory: ${{ env.junit_xml_storage }}/data
+        continue-on-error: true
+
+      - name: Run XML comparison 🔍
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
+        run: |
+          cp ${{ env.junit_xml_storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
+          if [ ! -f ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml ]; then
+            # If XML for the branch against which we're comparing doesn't exist, we're skipping the comparison.
+            echo "JUnit report for branch \`${{ env.junit_xml_diff_branch }}\` " \
+              "doesn't exist on \`${{ env.junit_xml_storage }}\` branch yet." > output.md
+            echo "Once this workflow runs on \`${{ env.junit_xml_diff_branch }}\` branch, " \
+              "you'll see comparison of tests performance between \`${{ env.junit_xml_diff_branch }}\` " \
+              "and \`${{ env.diff_storage_branch }}\` as a PR comment." >> output.md
+          else
+            cp ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml old.xml
+            wget https://github.com/insightsengineering/junit-xml-diff/releases/download/v0.4.0/junit-xml-diff_0.4.0_linux_amd64.tar.gz \
+             -O junit-xml-diff.tar.gz
+            tar xzf junit-xml-diff.tar.gz
+            ./junit-xml-diff old.xml new.xml output.md '${{ env.junit_xml_diff_branch }}' \
+              '${{ env.junit_xml_positive_threshold }}' '${{ env.junit_xml_negative_threshold }}'
+            if [ "$(du -b output.md | awk '{print $1}')" != "0" ]; then
+              # Non-empty output which means that there is at least one test suite/case in the table.
+              # Empty table won't be published since junit_xml_comparison_result_method won't be set.
+              echo "junit_xml_comparison_result_method=comment" >> $GITHUB_ENV
+              echo "" >> output.md
+              echo "Results for commit ${{ github.sha }}" >> output.md
+              echo "" >> output.md
+              echo "♻️ This comment has been updated with latest results." >> output.md
+              cp output.md output-artifact.md
+              echo "Size of markdown: $(du -b output.md | awk '{print $1}') bytes"
+              if [ "$(du -b output.md | awk '{print $1}')" -ge "60000" ]; then
+                echo "The result of JUnit XML file comparison exceeded maximum size. " \
+                  "The report has therefore been uploaded as an R CMD check workflow artifact." > output.md
+                echo "junit_xml_comparison_result_method=artifact" >> $GITHUB_ENV
+              fi
+              echo "Markdown output:"
+              cat output.md
+            else
+              echo "No test suites/cases in JUnit XML file difference."
+            fi
+          fi
+
+      - name: Post JUnit XML comparison as comment 💬
+        if: >
+          steps.check-junit-xml.outputs.files_exists == 'true' &&
+          env.junit_xml_comparison == 'true' &&
+          env.junit_xml_comparison_result_method == 'comment'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: markdown-table
+          path: output.md
+
+      - name: Upload JUnit XML comparison ⤴
+        if: >
+          steps.check-junit-xml.outputs.files_exists == 'true' &&
+          env.junit_xml_comparison == 'true' &&
+          env.junit_xml_comparison_result_method == 'artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          path: output-artifact.md
+          name: junit-xml-report-comparison
+
+      - name: Catch warnings in R CMD check output 🗳
+        id: catch-errors
+        run: |
+          check_log <- "${{ github.event.repository.name }}.Rcheck/00check.log"
+          if (file.exists(check_log)) {
+            x <- tail(readLines(check_log), 1)
+            if (grepl("ERROR", x)) {
+              writeLines(readLines(check_log))
+              stop("❌ R CMD check has errors")
+            }
+            if (grepl("WARNING", x)) {
+              writeLines(readLines(check_log))
+              stop("⚠ R CMD check has warnings")
+            }
+            if ("${{ inputs.enforce-note-blocklist }}" == "true") {
+              print("Checking notes...")
+              regexes <- "${{ inputs.note-blocklist }}"
+              regexes <- unlist(strsplit(regexes, split = "\n"))
+              lines <- paste(readLines(check_log), collapse = " ")
+              notes_result <- vapply(
+                regexes,
+                function(r){
+                  if (grepl(r, lines)) {
+                    print(r)
+                    return(TRUE)
+                  }
+                  return(FALSE)
+                },
+                logical(1)
+              )
+              if (any(notes_result)) {
+                stop("NOTEs on the blocklist were found (see above).")
+              }
+            }
+          }
+        shell: Rscript {0}
+
+      - name: Install R package 🚧
+        run: |
+          if [ "${{ inputs.skip-r-cmd-install }}" == "true" ]
+          then {
+            echo "Skipping R CMD INSTALL as 'skip-r-cmd-install' was set to 'true'"
+            exit 0
+          }
+          fi
+          if [ "${{ inputs.additional-env-vars }}" != "" ]
+          then {
+            echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
+            export $(tr '\n' ' ' < /tmp/dotenv.env)
+          }
+          fi
+          R CMD INSTALL ${{ env.PKGBUILD }}
+        shell: bash
+
+      - name: Rebuild R package 🏗
+        if: inputs.disable-unit-test-reports != 'true'
+        run: |
+          # Undo changes to DESCRIPTION and tests/testthat.R
+          git checkout DESCRIPTION
+          if [ -f "tests/testthat.R" ]; then
+            git checkout tests/testthat.R
+          fi
+          if [ "${{ inputs.additional-env-vars }}" != "" ]
+          then {
+            echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
+            export $(tr '\n' ' ' < /tmp/dotenv.env)
+          }
+          fi
+          R CMD build .
+          echo "PKGBUILD=$(echo ${{ github.event.repository.name }}_*.tar.gz)" >> $GITHUB_ENV
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}
+
+      - name: Upload package build ⤴
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v3
+        with:
+          path: ${{ github.event.repository.name }}/${{ env.PKGBUILD }}
+          name: ${{ env.PKGBUILD }}
+
+  publish-junit-html-report:
+    name: Publish JUnit HTML report 📰
+    runs-on: ubuntu-latest
+    needs: build-install-check
+    if: >
+      needs.build-install-check.outputs.publish-unit-test-html-report == 'true'
+        && github.event_name != 'pull_request'
+    # Only one job can publish to gh-pages branch concurrently.
+    concurrency:
+      group: ghpages
+    steps:
+      - name: Download JUnit HTML report as artifact ⤵️
+        uses: actions/download-artifact@v3
+        with:
+          name: unit-test-report
+          path: unit-test-report
+
+      - name: Upload JUnit HTML report to GitHub pages 🗞️
+        if: needs.build-install-check.outputs.multiversion-docs == 'true'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          publish_dir: ./unit-test-report
+          destination_dir: ${{ needs.build-install-check.outputs.current-branch-or-tag }}/unit-test-report
+
+      - name: Upload JUnit HTML report to GitHub pages (latest-tag) 🏷️
+        if: >
+          needs.build-install-check.outputs.unit-test-html-report-latest-tag == 'true'
+            && needs.build-install-check.outputs.multiversion-docs == 'true'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          publish_dir: ./unit-test-report
+          destination_dir: latest-tag/unit-test-report
+
+      - name: Upload JUnit HTML report to GitHub pages (non-multiversion) 🗞️
+        if: needs.build-install-check.outputs.multiversion-docs == 'false'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          publish_dir: ./unit-test-report
+          destination_dir: unit-test-report
+
+  upload-release-assets:
+    name: Upload build tar.gz
+    needs: build-install-check
+    runs-on: ubuntu-latest
+    if: >
+      startsWith(github.ref, 'refs/tags/v')
+        && (!contains(github.event.commits[0].message, '[skip r-cmd]'))
+        && github.event.pull_request.draft == false
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v3
+
+      - name: Set release version and package build filename 📐
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
+
+      - name: Get package build filename 📦
+        run: echo "PKGBUILD=${{ github.event.repository.name }}_${{ env.RELEASE_VERSION }}.tar.gz" >> $GITHUB_ENV
+
+      - name: Download artifact ⏬
+        uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.PKGBUILD }}
+
+      - name: Upload binaries to release 🔼
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.PKGBUILD }}
+          asset_name: ${{ env.PKGBUILD }}
+          tag: ${{ github.ref }}
+          overwrite: true
