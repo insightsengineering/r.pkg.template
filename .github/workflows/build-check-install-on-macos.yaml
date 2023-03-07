@@ -129,18 +129,12 @@ on:
         default: true
 
 concurrency:
-  group: r-cmd-${{ github.event.pull_request.number || github.ref }}
+  group: r-cmd-on-macos-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   build-install-check:
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - image: ghcr.io/insightsengineering/rstudio_4.2.2_bioc_3.16
-            tag: latest
-    name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
+    name: R cmd check on MacOs-latest
     runs-on: macos-latest
     if: >
       !contains(github.event.commits[0].message, '[skip r-cmd]')
@@ -255,7 +249,7 @@ jobs:
 
       - name: Install dep.libs
         run: |
-        brew update
+          brew update
           brew install basictex
           export PATH="/Library/TeX/texbin/:$PATH"
           echo "PATH=/Library/TeX/texbin/:$PATH" >> $GITHUB_ENV
@@ -705,7 +699,7 @@ jobs:
   upload-release-assets:
     name: Upload build tar.gz
     needs: build-install-check
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     if: >
       startsWith(github.ref, 'refs/tags/v')
         && (!contains(github.event.commits[0].message, '[skip r-cmd]'))
