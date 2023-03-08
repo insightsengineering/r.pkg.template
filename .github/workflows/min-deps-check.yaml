@@ -41,6 +41,10 @@ on:
         required: false
         default: ""
         type: string
+      runner-type:
+        required: false
+        default: "ubuntu-latest"
+        type: "string"
 
 concurrency:
   group: min-dep-check-${{ github.event.pull_request.number || github.ref }}
@@ -49,7 +53,7 @@ concurrency:
 jobs:
   min-dep-check:
     name: Minimum dependency check 🖇️
-    runs-on: ubuntu-latest
+    runs-on: {{ inputs.runner-type }}
     if: >
       !contains(github.event.commits[0].message, '[skip min-deps-check]')
         && github.event.pull_request.draft == false
