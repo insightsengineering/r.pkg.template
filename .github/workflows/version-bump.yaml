@@ -11,6 +11,12 @@ on:
       REPO_GITHUB_TOKEN:
         description: Github token with write access to the repo
         required: false
+    inputs:
+      disable-precommit-autoupdate:
+        description: Disable precommit autoupdate
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: vbump-${{ github.event.pull_request.number || github.ref }}
@@ -21,11 +27,11 @@ jobs:
     name: Bump version ⤴
     runs-on: ubuntu-latest
     if: |
-      !( contains(github.event.commits[0].message, '[skip vbump]') ||
-         contains(github.event.head_commit.message, '[skip vbump]')
-         )
+      !(contains(github.event.commits[0].message, '[skip vbump]') ||
+        contains(github.event.head_commit.message, '[skip vbump]')
+      )
     container:
-      image: docker.io/rocker/tidyverse:4.2.1
+      image: docker.io/rocker/tidyverse:4.2.2
 
     steps:
       - name: Checkout repo 🛎
@@ -58,12 +64,35 @@ jobs:
           echo "NEW_PKG_VERSION=${DESC_VERSION}" >> $GITHUB_ENV
         shell: bash
 
+      - name: Check if a pre-commit config exists
+        id: precommit-config-exists
+        uses: andstor/file-existence-action@v2
+        with:
+          files: ".pre-commit-config.yaml"
+
+      - name: Setup Python 🐍
+        if: |
+          inputs.disable-precommit-autoupdate != 'true' &&
+            steps.precommit-config-exists.outputs.files_exists == 'true'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Precommit autoupdate 🅿️
+        if: |
+          inputs.disable-precommit-autoupdate != 'true' &&
+            steps.precommit-config-exists.outputs.files_exists == 'true'
+        run: |
+          python -m pip -q install pre-commit
+          pre-commit autoupdate
+
       - name: Commit and push changes 📌
         if: ${{ env.NEW_PKG_VERSION }}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "[skip actions] Bump version to ${{ env.NEW_PKG_VERSION }}"
-          file_pattern: NEWS.md DESCRIPTION
+          file_pattern: NEWS.md DESCRIPTION .pre-commit-config.yaml
           commit_user_name: insights-engineering-bot
           commit_user_email: >-
             68416928+insights-engineering-bot@users.noreply.github.com
+        continue-on-error: true
