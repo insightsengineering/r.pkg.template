@@ -53,7 +53,7 @@ concurrency:
 jobs:
   min-dep-check:
     name: Minimum dependency check 🖇️
-    runs-on: {{ inputs.runner-type }}
+    runs-on: ${{ inputs.runner-type }}
     if: >
       !contains(github.event.commits[0].message, '[skip min-deps-check]')
         && github.event.pull_request.draft == false
