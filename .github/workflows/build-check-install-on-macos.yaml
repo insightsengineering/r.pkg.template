@@ -253,7 +253,7 @@ jobs:
           brew install basictex
           export PATH="/Library/TeX/texbin/:$PATH"
           echo "PATH=/Library/TeX/texbin/:$PATH" >> $GITHUB_ENV
-          brew install fribidi
+          brew install libgit2 fribidi
           brew install --cask phantomjs 
           sudo tlmgr update --self
           sudo tlmgr update --all
