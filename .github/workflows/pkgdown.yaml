@@ -212,7 +212,7 @@ jobs:
     concurrency:
       group: ghpages
     if: >
-      github.event_name == 'push'
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         && !contains(github.event.commits[0].message, '[skip docs]')
     steps:
       - name: Checkout repo 🛎
