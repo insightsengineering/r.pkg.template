@@ -64,7 +64,7 @@ jobs:
 
       - name: Run dependency check 🖇️
         # TODO change to proper branch
-        uses: insightsengineering/r-verdepcheck-action@fix_rcmdcheck
+        uses: insightsengineering/r-verdepcheck-action@main
         with:
           github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
           check-args: ${{ inputs.check-args }}
