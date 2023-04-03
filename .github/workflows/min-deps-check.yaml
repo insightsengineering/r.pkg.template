@@ -63,7 +63,8 @@ jobs:
           path: repository
 
       - name: Run dependency check 🖇️
-        uses: insightsengineering/r-mindepscheck-action@main
+        # TODO change to proper branch
+        uses: insightsengineering/r-mindepscheck-action@fix_rcmdcheck
         with:
           github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
           check-args: ${{ inputs.check-args }}
