@@ -80,5 +80,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: lock-file
-          path: pkg-${{ env.strategy }}.lock
+          name: lock-file-{{ env.strategy }}
+          path: pkg.lock
