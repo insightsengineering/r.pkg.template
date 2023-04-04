@@ -1,5 +1,5 @@
 ---
-name: Dependency Test 🖇️
+name: Dependency Test 🔢
 
 on:
   push:
@@ -49,7 +49,7 @@ on:
 
 jobs:
   dependency-test:
-    name: Dependency Test - ${{ inputs.strategy }} 🖇️
+    name: Dependency Test - ${{ inputs.strategy }} 🔢
     runs-on: ubuntu-latest
     if: >
       !contains(github.event.commits[0].message, '[skip dependency-test]')
@@ -63,7 +63,7 @@ jobs:
         with:
           path: repository
 
-      - name: Dependency Test - ${{ inputs.strategy }} 🖇️
+      - name: Dependency Test - ${{ inputs.strategy }} 🔢
         uses: insightsengineering/r-verdepcheck-action@add-strategy-input
         with:
           github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
