@@ -60,8 +60,6 @@ jobs:
     steps:
       - name: Checkout Code 🛎
         uses: actions/checkout@v3
-        with:
-          path: repository
 
       - name: Dependency Test - ${{ inputs.strategy }} 🔢
         uses: insightsengineering/r-verdepcheck-action@add-strategy-input
