@@ -47,10 +47,6 @@ on:
         default: ""
         type: string
 
-concurrency:
-  group: dependency-test-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
   dependency-test:
     name: Dependency Test - ${{ inputs.strategy }} 🖇️
