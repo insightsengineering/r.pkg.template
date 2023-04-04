@@ -49,7 +49,7 @@ on:
 
 jobs:
   dependency-test:
-    name: Dependency Test - ${{ inputs.strategy }} 🔢
+    name: Dependency Test 🔢
     runs-on: ubuntu-latest
     if: >
       !contains(github.event.commits[0].message, '[skip dependency-test]')
@@ -61,18 +61,24 @@ jobs:
       - name: Checkout Code 🛎
         uses: actions/checkout@v3
 
-      - name: Dependency Test - ${{ inputs.strategy }} 🔢
+      - name: Normalize variables 📏
+        run: |
+          strategy="${{ inputs.strategy }}"
+          echo "strategy=${strategy:-release}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Dependency Test - ${{ env.strategy }} 🔢
         uses: insightsengineering/r-verdepcheck-action@add-strategy-input
         with:
           github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
           check-args: ${{ inputs.check-args }}
           build-args: ${{ inputs.build-args }}
           additional-env-vars:  ${{ inputs.additional-env-vars }}
-          strategy: ${{ inputs.strategy }}
+          strategy: ${{ env.strategy }}
 
       - name: Upload lock file ⤴️
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: lock-file
-          path: pkg.lock
+          path: pkg-${{ env.strategy }}.lock
