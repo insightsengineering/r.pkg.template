@@ -1,5 +1,5 @@
 ---
-name: Minimum dependency check 🖇️
+name: Dependency Test 🖇️
 
 on:
   push:
@@ -31,6 +31,11 @@ on:
         required: false
         default: ""
         type: string
+      strategy:
+        description: |
+          Strategy to test package dependencies. One of: min, release, max.
+        required: true
+        type: string
       additional-env-vars:
         description: |
           Extra environment variables, as a 'key=value' pair, with each pair on a new line.
@@ -43,15 +48,15 @@ on:
         type: string
 
 concurrency:
-  group: min-dep-check-${{ github.event.pull_request.number || github.ref }}
+  group: dependency-test-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  min-dep-check:
-    name: Minimum dependency check 🖇️
+  dependency-test:
+    name: Dependency Test - ${{ inputs.strategy }} 🖇️
     runs-on: ubuntu-latest
     if: >
-      !contains(github.event.commits[0].message, '[skip min-deps-check]')
+      !contains(github.event.commits[0].message, '[skip dependency-test]')
         && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio_4.2.2_bioc_3.16:latest
@@ -62,14 +67,14 @@ jobs:
         with:
           path: repository
 
-      - name: Run dependency check 🖇️
-        # TODO change to proper branch
-        uses: insightsengineering/r-verdepcheck-action@main
+      - name: Dependency Test - ${{ inputs.strategy }} 🖇️
+        uses: insightsengineering/r-verdepcheck-action@add-strategy-input
         with:
           github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
           check-args: ${{ inputs.check-args }}
           build-args: ${{ inputs.build-args }}
           additional-env-vars:  ${{ inputs.additional-env-vars }}
+          strategy: ${{ inputs.strategy }}
 
       - name: Upload lock file ⤴️
         if: always()
