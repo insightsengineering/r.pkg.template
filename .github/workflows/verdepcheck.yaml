@@ -20,6 +20,9 @@ on:
         description: |
           Github token with read access to repositories, required for dependencies installation
         required: false
+      GCHAT_WEBHOOK:
+        description: |
+          Google Chat webhook to send failure notifications
     inputs:
       check-args:
         description: Additional check arguments.
@@ -65,9 +68,11 @@ jobs:
         run: |
           strategy="${{ inputs.strategy }}"
           echo "strategy=${strategy:-release}" >> $GITHUB_ENV
+          echo "gchat_webhook=${{ secrets.GCHAT_WEBHOOK }}" >> $GITHUB_ENV
         shell: bash
 
       - name: Dependency Test - ${{ env.strategy }} 🔢
+        id: verdepcheck
         uses: insightsengineering/r-verdepcheck-action@main
         with:
           github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
@@ -75,6 +80,14 @@ jobs:
           build-args: ${{ inputs.build-args }}
           additional-env-vars:  ${{ inputs.additional-env-vars }}
           strategy: ${{ env.strategy }}
+
+      - name: GChat notification 🔔
+        if: (failure() || cancelled()) && steps.verdepcheck.outcome != 'success' && env.gchat_webhook != ''
+        uses: insightsengineering/google-chat-notification@master
+        with:
+          name: ${{ github.event.repository.name }} - Dependency Test - ${{ env.strategy }}
+          url: ${{ secrets.GCHAT_WEBHOOK }}
+          status: ${{ job.status }}
 
       - name: Upload lock file ⤴️
         if: always()
