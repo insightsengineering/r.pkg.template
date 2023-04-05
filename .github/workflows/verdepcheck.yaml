@@ -81,10 +81,10 @@ jobs:
           strategy: ${{ env.strategy }}
 
       - name: GChat notification 🔔
-        if: failure() && steps.verdepcheck.outcome != 'success'
+        if: (failure() || cancelled()) && steps.verdepcheck.outcome != 'success'
         uses: Co-qn/google-chat-notification@releases/v1
         with:
-          name: ${{ github.event.repository.name }} - Dependency Test
+          name: ${{ github.event.repository.name }} - Dependency Test - ${{ env.strategy }}
           url: ${{ secrets.GCHAT_WEBHOOK }}
           status: ${{ job.status }}
 
