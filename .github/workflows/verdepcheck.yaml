@@ -68,6 +68,7 @@ jobs:
         shell: bash
 
       - name: Dependency Test - ${{ env.strategy }} 🔢
+        id: verdepcheck
         uses: insightsengineering/r-verdepcheck-action@main
         with:
           github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
@@ -75,6 +76,14 @@ jobs:
           build-args: ${{ inputs.build-args }}
           additional-env-vars:  ${{ inputs.additional-env-vars }}
           strategy: ${{ env.strategy }}
+
+      - name: GChat failure notification
+        if: steps.verdepcheck.outcome != 'success'
+        uses: Co-qn/google-chat-notification@releases/v1
+        with:
+          name: ${{ github.event.repository.name }} - Dependency Test
+          url: ${{ secrets.GCHAT_WEBHOOK }}
+          status: ${{ job.status }}
 
       - name: Upload lock file ⤴️
         if: always()
