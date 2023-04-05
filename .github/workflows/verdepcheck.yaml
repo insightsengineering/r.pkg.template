@@ -20,6 +20,9 @@ on:
         description: |
           Github token with read access to repositories, required for dependencies installation
         required: false
+      GCHAT_WEBHOOK:
+        description: |
+          Google Chat webhook to send failure notifications
     inputs:
       check-args:
         description: Additional check arguments.
