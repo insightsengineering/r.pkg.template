@@ -81,7 +81,7 @@ jobs:
           strategy: ${{ env.strategy }}
 
       - name: GChat notification 🔔
-        if: (failure() || cancelled()) && steps.verdepcheck.outcome != 'success'
+        if: (failure() || cancelled()) && steps.verdepcheck.outcome != 'success' && secrets.GCHAT_WEBHOOK != ""
         uses: insightsengineering/google-chat-notification@master
         with:
           name: ${{ github.event.repository.name }} - Dependency Test - ${{ env.strategy }}
