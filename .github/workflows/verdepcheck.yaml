@@ -1,0 +1,84 @@
+---
+name: Dependency Test 🔢
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+    branches:
+      - main
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with read access to repositories, required for dependencies installation
+        required: false
+    inputs:
+      check-args:
+        description: Additional check arguments.
+        required: false
+        default: ""
+        type: string
+      build-args:
+        description: Additional build arguments.
+        required: false
+        default: ""
+        type: string
+      strategy:
+        description: |
+          Strategy to test package dependencies. One of: min, release, max.
+        required: true
+        type: string
+      additional-env-vars:
+        description: |
+          Extra environment variables, as a 'key=value' pair, with each pair on a new line.
+          Example usage:
+          additional-env-vars: |
+            ABC=123
+            XYZ=456
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  dependency-test:
+    name: Dependency Test 🔢
+    runs-on: ubuntu-latest
+    if: >
+      !contains(github.event.commits[0].message, '[skip dependency-test]')
+        && github.event.pull_request.draft == false
+    container:
+      image: ghcr.io/insightsengineering/rstudio_4.2.2_bioc_3.16:latest
+
+    steps:
+      - name: Checkout Code 🛎
+        uses: actions/checkout@v3
+
+      - name: Normalize variables 📏
+        run: |
+          strategy="${{ inputs.strategy }}"
+          echo "strategy=${strategy:-release}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Dependency Test - ${{ env.strategy }} 🔢
+        uses: insightsengineering/r-verdepcheck-action@main
+        with:
+          github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          check-args: ${{ inputs.check-args }}
+          build-args: ${{ inputs.build-args }}
+          additional-env-vars:  ${{ inputs.additional-env-vars }}
+          strategy: ${{ env.strategy }}
+
+      - name: Upload lock file ⤴️
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: "lock-file-${{ env.strategy }}"
+          path: pkg.lock
