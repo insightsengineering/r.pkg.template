@@ -68,7 +68,7 @@ jobs:
         shell: bash
 
       - name: Dependency Test - ${{ env.strategy }} 🔢
-        uses: insightsengineering/r-verdepcheck-action@add-strategy-input
+        uses: insightsengineering/r-verdepcheck-action@main
         with:
           github-token: ${{ secrets.REPO_GITHUB_TOKEN }}
           check-args: ${{ inputs.check-args }}
