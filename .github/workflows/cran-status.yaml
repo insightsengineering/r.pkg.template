@@ -26,6 +26,8 @@ on:
 
 permissions:
   issues: write
+  actions: read
+  contents: read
 
 concurrency:
   group: cran-status-${{ github.event.pull_request.number || github.ref }}
