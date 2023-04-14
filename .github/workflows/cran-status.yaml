@@ -113,6 +113,8 @@ jobs:
               last_status_content=$(cat "./cran_status/$last_status_file")
             fi
             # check if the status is a new error:
+            echo "current_status_content = $current_status_content"
+            echo "last_status_content = $last_status_content"
             if [ "$current_status_content" != "$last_status_content" ]; then
               echo "New errors on the cran status found - package ${{ steps.current_package.outputs.package_name }}"
               new_errors=true
@@ -125,13 +127,13 @@ jobs:
           fi
           echo "new_errors=$new_errors" >> $GITHUB_OUTPUT
 
-      - name: Report Status
-        if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
-        uses: peter-evans/create-issue-from-file@v4
-        with:
-          title: "URGENT! Failed CRAN Checks: ${{ steps.today.outputs.date }}"
-          content-filepath: ./${{ inputs.path }}/cran-status.md
-          assignees: ${{ inputs.issue-assignees }}
+      # - name: Report Status
+      #   if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
+      #   uses: peter-evans/create-issue-from-file@v4
+      #   with:
+      #     title: "URGENT! Failed CRAN Checks: ${{ steps.today.outputs.date }}"
+      #     content-filepath: ./${{ inputs.path }}/cran-status.md
+      #     assignees: ${{ inputs.issue-assignees }}
 
       - name: Clean Repo and add changes
         if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
