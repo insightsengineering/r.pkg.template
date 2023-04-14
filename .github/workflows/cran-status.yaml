@@ -24,10 +24,8 @@ on:
         required: false
         type: string
 
-permissions:
+permissions: read-all
   issues: write
-  actions: read
-  contents: read
 
 concurrency:
   group: cran-status-${{ github.event.pull_request.number || github.ref }}
