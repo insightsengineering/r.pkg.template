@@ -129,6 +129,8 @@ jobs:
             echo "No errors found on the cran status - package ${{ steps.current_package.outputs.package_name }}"
           fi
           echo "new_errors=$new_errors" >> $GITHUB_OUTPUT
+          ls -la
+          ls -la cran_status
 
       # - name: Report Status
       #   if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
