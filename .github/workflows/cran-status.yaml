@@ -24,7 +24,8 @@ on:
         required: false
         type: string
 
-permissions: write-all
+permissions:
+  issues: write
 
 concurrency:
   group: cran-status-${{ github.event.pull_request.number || github.ref }}
