@@ -101,7 +101,6 @@ jobs:
       - name: Update cran_status branch
         id: cran_errors_status
         run: |
-          ls -la
           new_errors=false
           cran_status_path="${{ inputs.path }}/cran_errors.csv"
           cran_status_directory_path="${{ steps.create_orphan.outputs.repo_location }}/cran_status"
@@ -130,15 +129,14 @@ jobs:
             echo "No errors found on the cran status - package ${{ steps.current_package.outputs.package_name }}"
           fi
           echo "new_errors=$new_errors" >> $GITHUB_OUTPUT
-          ls -la $cran_status_directory_path
 
-      # - name: Report Status
-      #   if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
-      #   uses: peter-evans/create-issue-from-file@v4
-      #   with:
-      #     title: "URGENT! Failed CRAN Checks: ${{ steps.today.outputs.date }}"
-      #     content-filepath: ./${{ inputs.path }}/cran-status.md
-      #     assignees: ${{ inputs.issue-assignees }}
+      - name: Report Status
+        if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: "URGENT! Failed CRAN Checks: ${{ steps.today.outputs.date }}"
+          content-filepath: ./${{ inputs.path }}/cran-status.md
+          assignees: ${{ inputs.issue-assignees }}
 
       - name: Clean Repo and add changes
         if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
