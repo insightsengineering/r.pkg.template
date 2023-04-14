@@ -64,8 +64,8 @@ jobs:
         id: create_orphan
         run: |
           git config --global --add safe.directory ${PWD}
-          git config --global user.email "113703390+pharmaverse-bot@users.noreply.github.com"
-          git config --global user.name "pharmaverse-bot"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
           git fetch origin cran_status:cran_status || true
           cran_status_branch=$(git branch -a --list cran_status)
           # Try to create a new orphan branch if it does not already exist
@@ -125,13 +125,13 @@ jobs:
           fi
           echo "new_errors=$new_errors" >> $GITHUB_OUTPUT
 
-      - name: Report Status
-        if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
-        uses: peter-evans/create-issue-from-file@v4
-        with:
-          title: "URGENT! Failed CRAN Checks: ${{ steps.today.outputs.date }}"
-          content-filepath: ./${{ inputs.path }}/cran-status.md
-          assignees: ${{ inputs.issue-assignees }}
+      # - name: Report Status
+      #   if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
+      #   uses: peter-evans/create-issue-from-file@v4
+      #   with:
+      #     title: "URGENT! Failed CRAN Checks: ${{ steps.today.outputs.date }}"
+      #     content-filepath: ./${{ inputs.path }}/cran-status.md
+      #     assignees: ${{ inputs.issue-assignees }}
 
       - name: Clean Repo and add changes
         if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
@@ -140,7 +140,9 @@ jobs:
           rm ./cran-status.md 2> /dev/null
           git config --global --add safe.directory ${PWD}
           git add "./cran_status/${{ steps.today.outputs.date }}.csv"
-
+          git status
+          git diff
+          git diff --cached
 
       - name: Commit and push to orphan branch
         if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
