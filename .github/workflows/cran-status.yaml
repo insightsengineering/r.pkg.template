@@ -128,13 +128,13 @@ jobs:
           fi
           echo "new_errors=$new_errors" >> $GITHUB_OUTPUT
 
-      # - name: Report Status
-      #   if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
-      #   uses: peter-evans/create-issue-from-file@v4
-      #   with:
-      #     title: "URGENT! Failed CRAN Checks: ${{ steps.today.outputs.date }}"
-      #     content-filepath: ./${{ inputs.path }}/cran-status.md
-      #     assignees: ${{ inputs.issue-assignees }}
+      - name: Report Status
+        if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
+        uses: peter-evans/create-issue-from-file@v4
+        with:
+          title: "URGENT! Failed CRAN Checks: ${{ steps.today.outputs.date }}"
+          content-filepath: ./${{ inputs.path }}/cran-status.md
+          assignees: ${{ inputs.issue-assignees }}
 
       - name: Clean Repo and add changes
         if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
