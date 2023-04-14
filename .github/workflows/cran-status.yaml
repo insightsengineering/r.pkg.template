@@ -141,13 +141,10 @@ jobs:
           git config --global --add safe.directory ${PWD}
           git add "./cran_status/${{ steps.today.outputs.date }}.csv"
 
-
       - name: Commit and push to orphan branch
-        if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
+        if: steps.cran_errors_status.outputs.new_errors == 'true' && steps.create_orphan.outputs.orphan_exists == 'true'
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: update cran status "${{ steps.today.outputs.date }}"
           branch: cran_status
           create_branch: false
-          skip_checkout: true
-          skip_fetch: true
