@@ -31,7 +31,6 @@ permissions:
   deployments: read
   issues: write
   discussions: read
-  metadata: write
   packages: read
   pages: read
   pull-requests: read
