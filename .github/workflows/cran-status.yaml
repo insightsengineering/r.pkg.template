@@ -91,7 +91,7 @@ jobs:
           echo "orphan_exists=$orphan_exists" >> $GITHUB_OUTPUT
 
       - name: Compute Cran Status md5 codes
-        uses: pharmaverse/admiralci/.github/actions/cran-status-extract@main
+        uses: insightsengineering/cran-status-action@main
         with:
           statuses: "${{ inputs.statuses }}"
           package: "${{ steps.current_package.outputs.package_name }}"
