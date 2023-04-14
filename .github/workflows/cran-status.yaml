@@ -38,7 +38,7 @@ jobs:
       image: rocker/tidyverse:latest
     steps:
       - name: Run CRAN Status Action
-        uses: insightsengineering/cran-status-action@main
+        uses: insightsengineering/cran-status-action@refactor-action
         with:
           statuses: "${{ inputs.statuses }}"
           issue-assignees: "${{ inputs.issue-assignees }}"
