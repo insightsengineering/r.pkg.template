@@ -23,13 +23,6 @@ on:
         default: 'ERROR'
         required: false
         type: string
-      path:
-        description: |
-          Path to the R package root, if the package is not at the
-          top level of the repository.
-        default: '.'
-        required: false
-        type: string
 
 permissions: write-all
 
@@ -44,114 +37,8 @@ jobs:
     container:
       image: rocker/tidyverse:latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Get Date
-        id: today
-        run: |
-          echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-
-      - name: Get current package name
-        id: current_package
-        run: |
-          package_name=$(grep "Package:" DESCRIPTION | awk '{print $NF}')
-          echo "package_name=$package_name" >> $GITHUB_OUTPUT
-
-      - name: Create orphan branch
-        id: create_orphan
-        run: |
-          git config --global --add safe.directory ${PWD}
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
-          git fetch origin cran_status:cran_status || true
-          cran_status_branch=$(git branch -a --list cran_status)
-          # Try to create a new orphan branch if it does not already exist
-          if [ -z "${cran_status_branch}" ]
-          then {
-            echo "🟡 Create cran_status branch"
-            git checkout --orphan cran_status
-            mkdir -p /tmp/${{ github.sha }}
-            cp -r .git /tmp/${{ github.sha }}
-            cd /tmp/${{ github.sha }}
-            echo "# CRAN Status" > README.md
-            git reset
-            git add --all -f
-            git commit -m "Initialize orphan cran_status branch"
-            orphan_exists='false'
-            git push --set-upstream origin cran_status
-            echo "repo_location=/tmp/${{ github.sha }}" >> $GITHUB_OUTPUT
-          } else {
-            echo "🟢 cran_status branch exists!"
-            orphan_exists='true'
-            git checkout cran_status
-            echo "repo_location=${PWD}" >> $GITHUB_OUTPUT
-          }
-          fi
-          echo "orphan_exists=$orphan_exists" >> $GITHUB_OUTPUT
-
-      - name: Compute Cran Status md5 codes
+      - name: Run CRAN Status Action
         uses: insightsengineering/cran-status-action@main
         with:
           statuses: "${{ inputs.statuses }}"
-          package: "${{ steps.current_package.outputs.package_name }}"
-
-      - name: Update cran_status branch
-        id: cran_errors_status
-        run: |
-          new_errors=false
-          cran_status_path="${{ inputs.path }}/cran_errors.csv"
-          cran_status_directory_path="${{ steps.create_orphan.outputs.repo_location }}/cran_status"
-          if [  -e ./cran_errors.csv ]; then
-            current_status_content=$(cat "./cran_errors.csv")
-            mkdir -p $cran_status_directory_path
-            # read previous cran status from this branch (ls sort files by alphabetic number)
-            if [ -z "$(ls -A $cran_status_directory_path)" ]; then
-              # case first writing on the orphan branch (cran_status dir is empty)
-              last_status_content="FIRST WRITING"
-            else
-              last_status_file=$(ls $cran_status_directory_path | tail -n 1)
-              last_status_content=$(cat "$cran_status_directory_path/$last_status_file")
-            fi
-            # check if the status is a new error:
-            echo "current_status_content = $current_status_content"
-            echo "last_status_content = $last_status_content"
-            if [ "$current_status_content" != "$last_status_content" ]; then
-              echo "New errors on the cran status found - package ${{ steps.current_package.outputs.package_name }}"
-              new_errors=true
-              cp ./cran_errors.csv "$cran_status_directory_path/${{ steps.today.outputs.date }}.csv"
-            else
-              echo "New errors on the cran status found, but identical to previous ones - package ${{ steps.current_package.outputs.package_name }}"
-            fi
-          else
-            echo "No errors found on the cran status - package ${{ steps.current_package.outputs.package_name }}"
-          fi
-          echo "new_errors=$new_errors" >> $GITHUB_OUTPUT
-
-      - name: Report Status
-        if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
-        uses: peter-evans/create-issue-from-file@v4
-        with:
-          title: "URGENT! Failed CRAN Checks: ${{ steps.today.outputs.date }}"
-          content-filepath: ./${{ inputs.path }}/cran-status.md
-          assignees: ${{ inputs.issue-assignees }}
-
-      - name: Clean Repo and add changes
-        if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
-        run: |
-          rm ./cran_errors.csv 2> /dev/null
-          rm ./cran-status.md 2> /dev/null
-          cd ${{ steps.create_orphan.outputs.repo_location }}
-          git config --global --add safe.directory ${PWD}
-          git add "./cran_status/${{ steps.today.outputs.date }}.csv"
-
-      - name: Commit and push to orphan branch
-        if: steps.cran_errors_status.outputs.new_errors == 'true'
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: update cran status "${{ steps.today.outputs.date }}"
-          branch: cran_status
-          create_branch: false
-          repository: ${{ steps.create_orphan.outputs.repo_location }}
+          issue-assignees: "${{ inputs.issue-assignees }}"
