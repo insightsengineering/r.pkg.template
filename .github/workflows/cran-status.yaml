@@ -99,6 +99,7 @@ jobs:
       - name: Update cran_status branch
         id: cran_errors_status
         run: |
+          ls -la
           new_errors=false
           cran_status_path="${{ inputs.path }}/cran_errors.csv"
           if [  -e ./cran_errors.csv ]; then
