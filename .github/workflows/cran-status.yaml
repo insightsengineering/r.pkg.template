@@ -136,6 +136,7 @@ jobs:
       - name: Clean Repo and add changes
         if: ${{ steps.cran_errors_status.outputs.new_errors == 'true' }}
         run: |
+          git pull origin cran_status || true
           rm ./cran_errors.csv 2> /dev/null
           rm ./cran-status.md 2> /dev/null
           git config --global --add safe.directory ${PWD}
