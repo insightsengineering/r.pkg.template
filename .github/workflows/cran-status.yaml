@@ -85,7 +85,7 @@ jobs:
           } else {
             echo "🟢 cran_status branch exists!"
             orphan_exists='true'
-            git checkout
+            git checkout cran_status
           }
           fi
           echo "orphan_exists=$orphan_exists" >> $GITHUB_OUTPUT
