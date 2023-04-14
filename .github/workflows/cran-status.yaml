@@ -144,8 +144,9 @@ jobs:
         run: |
           rm ./cran_errors.csv 2> /dev/null
           rm ./cran-status.md 2> /dev/null
+          cd ${{ steps.create_orphan.outputs.repo_location }}
           git config --global --add safe.directory ${PWD}
-          git add "${{ steps.create_orphan.outputs.repo_location }}/cran_status/${{ steps.today.outputs.date }}.csv"
+          git add "./cran_status/${{ steps.today.outputs.date }}.csv"
 
       - name: Commit and push to orphan branch
         if: steps.cran_errors_status.outputs.new_errors == 'true'
