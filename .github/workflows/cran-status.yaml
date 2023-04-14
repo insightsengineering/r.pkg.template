@@ -152,3 +152,5 @@ jobs:
           commit_message: update cran status "${{ steps.today.outputs.date }}"
           branch: cran_status
           create_branch: false
+          skip_checkout: true
+          skip_fetch: true
