@@ -82,9 +82,6 @@ jobs:
             git commit -m "Initialize orphan cran_status branch"
             orphan_exists='false'
             git push --set-upstream origin cran_status
-            git checkout cran_status || true
-            git pull origin cran_status || true
-            git status
           } else {
             echo "🟢 cran_status branch exists!"
             orphan_exists='true'
