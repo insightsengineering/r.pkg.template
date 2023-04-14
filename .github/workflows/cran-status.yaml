@@ -106,7 +106,7 @@ jobs:
           cran_status_path="${{ inputs.path }}/cran_errors.csv"
           if [  -e ./cran_errors.csv ]; then
             current_status_content=$(cat "./cran_errors.csv")
-            mkdir -p cran_status
+            mkdir -p ${{ steps.create_orphan.outputs.repo_location }}/cran_status
             # read previous cran status from this branch (ls sort files by alphabetic number)
             if [ -z "$(ls -A ./cran_status)" ]; then
               # case first writing on the orphan branch (cran_status dir is empty)
@@ -129,7 +129,6 @@ jobs:
             echo "No errors found on the cran status - package ${{ steps.current_package.outputs.package_name }}"
           fi
           echo "new_errors=$new_errors" >> $GITHUB_OUTPUT
-          ls -la
           ls -la ${{ steps.create_orphan.outputs.repo_location }}/cran_status
 
       # - name: Report Status
