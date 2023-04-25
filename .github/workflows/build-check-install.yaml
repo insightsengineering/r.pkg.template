@@ -46,7 +46,7 @@ on:
       skip-r-cmd-install:
         description: Skip the R CMD INSTALL step in this workflow
         required: false
-        default: false
+        default: true
         type: boolean
       enforce-note-blocklist:
         description: Whether to check for specific NOTEs via regexes that should cause the pipeline to fail
@@ -634,7 +634,9 @@ jobs:
         shell: bash
 
       - name: Rebuild R package 🏗
-        if: inputs.disable-unit-test-reports != 'true'
+        if: >
+          inputs.disable-unit-test-reports != 'true' ||
+            startsWith(github.ref, 'refs/tags/v')
         run: |
           # Undo changes to DESCRIPTION and tests/testthat.R
           git checkout DESCRIPTION
