@@ -16,11 +16,16 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
-      additional_args:
+      additional-args:
         description: Additional arguments to pass to 'gitleaks detect'
         required: false
         type: string
         default: ""
+      check-for-pii:
+        description: Check for any instances of PII data in the repository
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: gitleaks-${{ github.event.pull_request.number || github.ref }}
@@ -50,10 +55,10 @@ jobs:
             (echo "Error moving gitleaks for /usr/bin" && exit 1)
         shell: bash
         env:
-          GITLEAKS_VERSION: "8.3.0"
+          GITLEAKS_VERSION: "8.16.3"
 
       - name: Run gitleaks ☔
-        run: gitleaks -v detect --no-git ${{ inputs.additional_args }} --source .
+        run: gitleaks -v detect --no-git ${{ inputs.additional-args }} --source .
         shell: bash
 
   pii-check:
@@ -62,13 +67,14 @@ jobs:
     if: >
       !contains(github.event.commits[0].message, '[skip pii-check]')
         && github.event.pull_request.draft == false
+        && inputs.check-for-pii == true
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Run Presidio ☔
+      - name: Run Presidio to check for PII ☔
         uses: insightsengineering/presidio-action@v1
         with:
           configuration-data: |
