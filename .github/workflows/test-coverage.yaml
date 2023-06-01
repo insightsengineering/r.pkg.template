@@ -89,6 +89,22 @@ jobs:
       coverage-html-report-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-tag }}
       multiversion-docs: ${{ steps.current-branch-or-tag.outputs.multiversion-docs }}
     steps:
+      - name: Setup github token
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN"
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Verify token accessibility
+        run: |
+          echo "GITHUB_TOKEN length is $(echo ${{ steps.github-token.outputs.token }} | wc -c)"
+        shell: bash
+
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v6
@@ -285,7 +301,7 @@ jobs:
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
         env:
-          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           path: ${{ github.event.repository.name }}
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
@@ -295,7 +311,7 @@ jobs:
       - name: Run Covtracer 🐄
         uses: insightsengineering/covtracer-action@v1
         env:
-          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           path: ${{ github.event.repository.name }}
           allow-failure: ${{ inputs.allow-failure }}
@@ -324,7 +340,7 @@ jobs:
         if: needs.coverage.outputs.multiversion-docs == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./coverage-report
           destination_dir: ${{ needs.coverage.outputs.current-branch-or-tag }}/coverage-report
 
@@ -334,7 +350,7 @@ jobs:
             && needs.coverage.outputs.multiversion-docs == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./coverage-report
           destination_dir: latest-tag/coverage-report
 
@@ -342,6 +358,6 @@ jobs:
         if: needs.coverage.outputs.multiversion-docs == 'false'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./coverage-report
           destination_dir: coverage-report
