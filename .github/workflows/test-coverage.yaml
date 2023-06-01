@@ -89,20 +89,16 @@ jobs:
       coverage-html-report-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-tag }}
       multiversion-docs: ${{ steps.current-branch-or-tag.outputs.multiversion-docs }}
     steps:
-      - name: Setup github token
+      - name: Setup token 🔑
         id: github-token
         run: |
           if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
-            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN"
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
             echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
           else
+            echo "Using REPO_GITHUB_TOKEN."
             echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
           fi
-        shell: bash
-
-      - name: Verify token accessibility
-        run: |
-          echo "GITHUB_TOKEN length is $(echo ${{ steps.github-token.outputs.token }} | wc -c)"
         shell: bash
 
       - name: Get branch names 🌿
@@ -327,6 +323,18 @@ jobs:
     concurrency:
       group: ghpages
     steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Download coverage report as artifact ⤵️
         uses: actions/download-artifact@v3
         with:
