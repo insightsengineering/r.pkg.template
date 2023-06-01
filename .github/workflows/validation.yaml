@@ -89,6 +89,8 @@ jobs:
 
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v1
+        env:
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           report_output_prefix: validation_report
 
