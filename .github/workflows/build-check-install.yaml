@@ -481,7 +481,7 @@ jobs:
       - name: Publish Unit Test Summary 📑
         uses: EnricoMi/publish-unit-test-result-action@v2
         id: test-results
-        # Second condition checks if this is a fork.
+        # Second line of the condition skips the step if workflow is running in a fork.
         if: |
           steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request' &&
           github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
