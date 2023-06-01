@@ -158,6 +158,13 @@ jobs:
       unit-test-html-report-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-tag }}
       multiversion-docs: ${{ steps.current-branch-or-tag.outputs.multiversion-docs }}
 
+    # Required by EnricoMi/publish-unit-test-result-action.
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
+
     steps:
       - name: Setup token 🔑
         id: github-token
