@@ -52,7 +52,8 @@ jobs:
           token: ${{ steps.github-token.outputs.token }}
 
       - name: Bump version in DESCRIPTION 📜
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        # TODO uncomment
+        # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         run: desc::desc_bump_version("dev", normalize = TRUE)
         shell: Rscript {0}
 
