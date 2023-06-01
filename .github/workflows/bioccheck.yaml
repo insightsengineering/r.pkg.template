@@ -71,6 +71,18 @@ jobs:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
 
     steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v6
@@ -99,7 +111,7 @@ jobs:
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
         env:
-          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           path: ${{ github.event.repository.name }}
           enable-check: ${{ inputs.enable-staged-dependencies-check }}

@@ -34,10 +34,22 @@ jobs:
       image: docker.io/rocker/tidyverse:4.2.2
 
     steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          token: ${{ steps.github-token.outputs.token }}
 
       - name: Bump version in DESCRIPTION 📜
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}

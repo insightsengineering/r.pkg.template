@@ -159,6 +159,18 @@ jobs:
       multiversion-docs: ${{ steps.current-branch-or-tag.outputs.multiversion-docs }}
 
     steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v6
@@ -263,7 +275,7 @@ jobs:
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
         env:
-          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           path: ${{ github.event.repository.name }}
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
@@ -419,7 +431,7 @@ jobs:
         if: env.junit_xml_comparison == 'true'
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          github_token: ${{ steps.github-token.outputs.token }}
           branch: ${{ env.junit_xml_storage }}
           directory: ${{ env.junit_xml_storage }}
           force: true
@@ -469,7 +481,10 @@ jobs:
       - name: Publish Unit Test Summary 📑
         uses: EnricoMi/publish-unit-test-result-action@v2
         id: test-results
-        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
+        # Second line of the condition skips the step if workflow is running in a fork.
+        if: |
+          steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
         with:
           check_name: Unit Tests Summary
           junit_files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
@@ -508,7 +523,7 @@ jobs:
         if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          github_token: ${{ steps.github-token.outputs.token }}
           branch: ${{ env.junit_xml_storage }}
           directory: ${{ env.junit_xml_storage }}/data
         continue-on-error: true
@@ -672,6 +687,18 @@ jobs:
     concurrency:
       group: ghpages
     steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Download JUnit HTML report as artifact ⤵️
         uses: actions/download-artifact@v3
         with:
@@ -682,7 +709,7 @@ jobs:
         if: needs.build-install-check.outputs.multiversion-docs == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
           destination_dir: ${{ needs.build-install-check.outputs.current-branch-or-tag }}/unit-test-report
 
@@ -692,7 +719,7 @@ jobs:
             && needs.build-install-check.outputs.multiversion-docs == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
           destination_dir: latest-tag/unit-test-report
 
@@ -700,7 +727,7 @@ jobs:
         if: needs.build-install-check.outputs.multiversion-docs == 'false'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
+          github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
           destination_dir: unit-test-report
 

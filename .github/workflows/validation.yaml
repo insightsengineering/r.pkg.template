@@ -52,13 +52,23 @@ jobs:
         && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio_4.2.2_bioc_3.16:latest
-    env:
-      GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
     permissions:
       contents: write
       packages: write
       deployments: write
     steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
 
@@ -70,6 +80,8 @@ jobs:
 
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
+        env:
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
@@ -77,6 +89,8 @@ jobs:
 
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v1
+        env:
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           report_output_prefix: validation_report
 
