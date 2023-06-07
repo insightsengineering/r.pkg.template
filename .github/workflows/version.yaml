@@ -46,5 +46,5 @@ jobs:
       shell: bash
 
     - name: Emoji in NEWS.md check 🏁
-      run: "if awk '/[\\x{1F300}-\\x{1F6FF}]/ { found=1; exit } END { exit !found }' \"$NEWS\"; then\n    echo \"Emojis found in NEWS.md files will cause user installation issues.\"\n    echo \"-------------------------------- \"\n    awk -F'[\\x20-\\x7E]' '{\n        for (i = 1; i <= NF; i++) \n            if ($i ~ /[\\x{1F300}-\\x{1F6FF}]/ && $i ~ /[^[:alpha:][:digit:][:space:][:punct:]]/) \n                print \"Emoji on line \" NR \": \" $i \n    }' \"$NEWS\"\n    echo \"-------------------------------- \"\n    echo \"Please fix this.\"\n    exit 1\nelse\n    echo \"No emojis found in the file. Good to go.\"\n    exit 0\nfi\n"
+      run: "if awk '/[\\x{1F300}-\\x{1F6FF}]/ { found=1; exit } END { exit !found }' \"$NEWS\"; then\n    echo \"Emojis found in NEWS.md files will cause user installation issues.\"\n    echo \"-------------------------------- \"\n    awk -F'[\\x20-\\x7E]' '{\n        for (i = 1; i <= NF; i++) \n            if ($i ~ /[\\x{1F300}-\\x{1F6FF}]/ && $i ~ /[^[:alpha:][:digit:][:space:][:punct:]]/) \n                print \"Emoji on line \" NR \": \" $i \n    }' NEWS.md\n    echo \"-------------------------------- \"\n    echo \"Please fix this.\"\n    exit 1\nelse\n    echo \"No emojis found in the file. Good to go.\"\n    exit 0\nfi\n"
       shell: bash
