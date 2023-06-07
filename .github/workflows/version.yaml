@@ -45,3 +45,7 @@ jobs:
               exit 1
           fi
         shell: bash
+
+      - name: Detect emoji
+        run: echo "Uh-oh! Emoji detected in NEWS.md! Please fix this."
+        shell: bash
