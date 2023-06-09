@@ -69,6 +69,7 @@ jobs:
         run: |
           python - <<EOF
           import regex
+          import sys
 
           with open('NEWS.md', 'r') as file:
               text = file.read()
@@ -79,5 +80,11 @@ jobs:
               matches = [(match.group(), match.start(), match.end()) for match in emoji_pattern.finditer(line)]
               for emoji, start, end in matches:
                   print(f"Emoji: {emoji} | Line: {line_num} | Start: {start} | End: {end}")
+          if matches: 
+              print("Emojis in NEWS.md causes user installation issues, please fix them.")
+              sys.exit(1)
+          else:
+              print("No emoji found, good to go!")
+              sys.exit(0)
           EOF
         shell: bash
