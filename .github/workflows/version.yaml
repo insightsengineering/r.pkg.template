@@ -73,7 +73,7 @@ jobs:
           with open('NEWS.md', 'r') as file:
               text = file.read()
           lines = text.split('\n')
-          emoji_pattern = regex.compile(r"\p{Emoji}")
+          emoji_pattern = regex.compile(r"(?![\d\p{P}])\p{Emoji}")
 
           for line_num, line in enumerate(lines, start=1):
               matches = [(match.group(), match.start(), match.end()) for match in emoji_pattern.finditer(line)]
