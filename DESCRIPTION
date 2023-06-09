@@ -29,3 +29,12 @@ Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Config/Needs/verdepcheck:
+    rstudio/plumber,
+    rstudio/shiny,
+    tidyverse/stringr,
+    HenrikBengtsson/future,
+    r-lib/httr,
+    yihui/knitr,
+    rstudio/shinytest,
+    r-lib/testthat
