@@ -58,13 +58,13 @@ jobs:
       - name: Emoji in NEWS.md check 🏁
         run: |
           NEWS="NEWS.md"
-          EMOJI="[\x{1F300}-\x{1F6FF}]"
-          PUNCT="[\x20-\x7E]"
+          EMOJI="[\u{1F300}-\u{1F6FF}]"
+          PUNCT="[\u20-\u7E]"
           ONLY_EMOJI="[^[:alpha:][:digit:][:space:][:punct:]]"
-          if ggrep -q -P "$EMOJI" "$NEWS"; then
+          if grep -q -P "$EMOJI" "$NEWS"; then
               echo "Emojis found in NEWS.md will cause user installation issues."
               echo "-------------------------------- "
-              ggrep -b -P -o "$EMOJI" "$NEWS" | awk -F "$PUNCT" '{
+              grep -b -P -o "$EMOJI" "$NEWS" | awk -F "$PUNCT" '{
                   for (i = 1; i <= NF; i++) 
                       if ($i ~ /'$EMOJI'/ && $i ~ /'$ONLY_EMOJI'/) 
                           print "Emoji on line" NR ":" $i 
