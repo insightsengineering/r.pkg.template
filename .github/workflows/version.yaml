@@ -61,10 +61,10 @@ jobs:
           EMOJI="[\x{1F300}-\x{1F6FF}]"
           PUNCT="[\x20-\x7E]"
           ONLY_EMOJI="[^[:alpha:][:digit:][:space:][:punct:]]"
-          if grep -q -P "$EMOJI" "$NEWS"; then
+          if ggrep -q -P "$EMOJI" "$NEWS"; then
               echo "Emojis found in NEWS.md will cause user installation issues."
               echo "-------------------------------- "
-              grep -b -P -o "$EMOJI" "$NEWS" | awk -F "$PUNCT" '{
+              ggrep -b -P -o "$EMOJI" "$NEWS" | awk -F "$PUNCT" '{
                   for (i = 1; i <= NF; i++) 
                       if ($i ~ /'$EMOJI'/ && $i ~ /'$ONLY_EMOJI'/) 
                           print "Emoji on line" NR ":" $i 
