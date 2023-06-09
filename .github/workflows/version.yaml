@@ -54,26 +54,30 @@ jobs:
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install regex
         
       - name: Emoji in NEWS.md check 🏁
         run: |
-          NEWS="NEWS.md"
-          EMOJI="[\u{1F300}-\u{1F6FF}]"
-          PUNCT="[\u20-\u7E]"
-          ONLY_EMOJI="[^[:alpha:][:digit:][:space:][:punct:]]"
-          if grep -q -P "$EMOJI" "$NEWS"; then
-              echo "Emojis found in NEWS.md will cause user installation issues."
-              echo "-------------------------------- "
-              grep -b -P -o "$EMOJI" "$NEWS" | awk -F "$PUNCT" '{
-                  for (i = 1; i <= NF; i++) 
-                      if ($i ~ /'$EMOJI'/ && $i ~ /'$ONLY_EMOJI'/) 
-                          print "Emoji on line" NR ":" $i 
-              }' "$NEWS"
-              echo "-------------------------------- "
-              echo "Please fix this."
-              exit 1
-          else
-              echo "No emojis found in the file. Good to go."
-              exit 0
-          fi
+          python - <<EOF
+          import regex
+
+          with open('NEWS.md', 'r') as file:
+              text = file.read()
+          lines = text.split('\n')
+          emoji_pattern = regex.compile(r"\p{Emoji}")
+
+          for line_num, line in enumerate(lines, start=1):
+              matches = [(match.group(), match.start(), match.end()) for match in emoji_pattern.finditer(line)]
+              for emoji, start, end in matches:
+                  print(f"Emoji: {emoji} | Line: {line_num} | Start: {start} | End: {end}")
+          EOF
         shell: bash
