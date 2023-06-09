@@ -11,3 +11,13 @@
 ### Bug fixes
 
 * None.
+
+### test emoji 
+Hello. 😃 
+How are you? 🌍🔥
+I am awesome! 😄
+this line has no emoji
+asdfghjkl🚀
+qwertyuiop🏁
+!!!! ? . , ;';' only puncs and spaces
+zxcvbnm✅
