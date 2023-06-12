@@ -63,6 +63,20 @@ on:
         required: false
         type: boolean
         default: true
+      latest-tag-alt-name:
+        description: |
+          The name of directory to store coverage report when running for latest tag.
+          The variable is named this way to keep it consistent with r-pkgdown-multiversion input name.
+        required: false
+        type: string
+        default: "latest-tag"
+      release-candidate-alt-name:
+        description: |
+          The name of directory to store coverage report when running for rc tag.
+          The variable is named this way to keep it consistent with r-pkgdown-multiversion input name.
+        required: false
+        type: string
+        default: "release-candidate"
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -86,7 +100,8 @@ jobs:
     outputs:
       publish-coverage-html-report: ${{ steps.coverage-output.outputs.coverage-upload }}
       current-branch-or-tag: ${{ steps.current-branch-or-tag.outputs.ref-name }}
-      coverage-html-report-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-tag }}
+      is-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-latest-tag }}
+      is-rc-tag: ${{ steps.current-branch-or-tag.outputs.is-rc-tag }}
       multiversion-docs: ${{ steps.current-branch-or-tag.outputs.multiversion-docs }}
     steps:
       - name: Setup token 🔑
@@ -125,7 +140,14 @@ jobs:
           if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
             echo "Current tag: ${{ steps.branch-name.outputs.tag }}"
             echo "ref-name=${{ steps.branch-name.outputs.tag }}" >> $GITHUB_OUTPUT
-            echo "is-tag=true" >> $GITHUB_OUTPUT
+            current_tag="${{ steps.branch-name.outputs.tag }}"
+            if [ "$(echo "$current_tag" | grep -E "^v([0-9]+\.)?([0-9]+\.)?([0-9]+)$")" != "" ]; then
+              echo "Running for latest-tag."
+              echo "is-latest-tag=true" >> $GITHUB_OUTPUT
+            elif [ "$(echo "$current_tag" | grep -E "^v([0-9]+\.)?([0-9]+\.)?([0-9]+)(-rc[0-9]+)$")" != "" ]; then
+              echo "Running for rc-tag."
+              echo "is-rc-tag=true" >> $GITHUB_OUTPUT
+            fi
           else
             echo "Current branch: ${{ steps.branch-name.outputs.current_branch }}"
             echo "ref-name=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
@@ -354,13 +376,23 @@ jobs:
 
       - name: Upload coverage report to GitHub pages (latest-tag) 🏷️
         if: >
-          needs.coverage.outputs.coverage-html-report-latest-tag == 'true'
+          needs.coverage.outputs.is-latest-tag == 'true'
             && needs.coverage.outputs.multiversion-docs == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./coverage-report
-          destination_dir: latest-tag/coverage-report
+          destination_dir: ${{ inputs.latest-tag-alt-name }}/coverage-report
+
+      - name: Upload coverage report to GitHub pages (release-candidate) 🏷️
+        if: >
+          needs.coverage.outputs.is-rc-tag == 'true'
+            && needs.coverage.outputs.multiversion-docs == 'true'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ steps.github-token.outputs.token }}
+          publish_dir: ./coverage-report
+          destination_dir: ${{ inputs.release-candidate-alt-name }}/coverage-report
 
       - name: Upload coverage report to GitHub pages (non-multiversion) 🗞️
         if: needs.coverage.outputs.multiversion-docs == 'false'
