@@ -81,6 +81,31 @@ on:
         required: false
         type: string
         default: upstream
+      # If you provide latest-tag-alt-name and/or release-candidate-alt-name inputs
+      # to this workflow in some repo, you should also provide these inputs in
+      # R CMD check and Coverage workflows in order to make the unit test report
+      # and coverage report available in pkgdown documentation for the alt-names.
+      # Additionally, branches-or-tags-to-list input should be overridden with
+      # the additional alt-name inputs.
+      latest-tag-alt-name:
+        description: An alternate name for the 'latest-tag' documentation item
+        required: false
+        type: string
+        default: ''
+      release-candidate-alt-name:
+        description: An alternate name for the 'release-candidate' documentation item
+        required: false
+        type: string
+        default: ''
+      branches-or-tags-to-list:
+        description:
+          Which branches or tags should be listed under the
+          'Versions' dropdown menu on the landing page?
+          This input should be a regular expression in R.
+        required: false
+        type: string
+        default: >-
+          ^main$|^devel$|^pre-release$|^latest-tag$|^release-candidate$|^develop$|^v([0-9]+\\.)?([0-9]+\\.)?([0-9]+)|^v([0-9]+\\.)?([0-9]+\\.)?([0-9]+)(-rc[0-9]+)$
 
 concurrency:
   group: docs-${{ github.event.pull_request.number || github.ref }}
@@ -239,6 +264,9 @@ jobs:
           path: ${{ github.event.repository.name }}
           default-landing-page: ${{ inputs.default-landing-page }}
           refs-order: ${{ inputs.refs-order }}
+          latest-tag-alt-name: ${{ inputs.latest-tag-alt-name }}
+          release-candidate-alt-name: ${{ inputs.release-candidate-alt-name }}
+          branches-or-tags-to-list: ${{ inputs.branches-or-tags-to-list }}
 
   upload-release-assets:
     name: Upload documentation assets 🔼
