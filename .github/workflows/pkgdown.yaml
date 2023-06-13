@@ -90,10 +90,12 @@ on:
       latest-tag-alt-name:
         description: An alternate name for the 'latest-tag' documentation item
         required: false
+        type: string
         default: ''
       release-candidate-alt-name:
         description: An alternate name for the 'release-candidate' documentation item
         required: false
+        type: string
         default: ''
       branches-or-tags-to-list:
         description:
@@ -101,6 +103,7 @@ on:
           'Versions' dropdown menu on the landing page?
           This input should be a regular expression in R.
         required: false
+        type: string
         default: >-
           ^main$|^devel$|^pre-release$|^latest-tag$|^release-candidate$|^develop$|^v([0-9]+\\.)?([0-9]+\\.)?([0-9]+)|^v([0-9]+\\.)?([0-9]+\\.)?([0-9]+)(-rc[0-9]+)$
 
