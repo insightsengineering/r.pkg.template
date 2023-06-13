@@ -107,3 +107,10 @@ jobs:
         with:
           name: "lock-file-${{ env.strategy }}"
           path: pkg.lock
+
+      - name: Upload output file ⤴️
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: "res-${{ env.strategy }}"
+          path: res.RDS

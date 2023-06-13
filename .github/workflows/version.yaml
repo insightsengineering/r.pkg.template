@@ -45,3 +45,46 @@ jobs:
               exit 1
           fi
         shell: bash
+  
+  emoji:
+    name: Emoji check 🏁
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
+    needs: version
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install regex
+        
+      - name: Emoji in NEWS.md check 🏁
+        run: |
+          python - <<EOF
+          import regex
+          import sys
+
+          with open('NEWS.md', 'r') as file:
+              text = file.read()
+          lines = text.split('\n')
+          emoji_pattern = regex.compile(r"(?![\d\p{P}])\p{Emoji}")
+
+          for line_num, line in enumerate(lines, start=1):
+              matches = [(match.group(), match.start(), match.end()) for match in emoji_pattern.finditer(line)]
+              for emoji, start, end in matches:
+                  print(f"Emoji: {emoji} | Line: {line_num} | Start: {start} | End: {end}")
+          if matches: 
+              print("Emojis in NEWS.md causes user installation issues, please fix them.")
+              sys.exit(1)
+          else:
+              print("No emoji found, good to go!")
+              sys.exit(0)
+          EOF
+        shell: bash
