@@ -2,18 +2,6 @@
 name: Dependency Test 🔢
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - ready_for_review
-    branches:
-      - main
-  workflow_dispatch:
   workflow_call:
     secrets:
       REPO_GITHUB_TOKEN:
