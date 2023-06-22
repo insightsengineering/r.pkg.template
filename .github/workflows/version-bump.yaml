@@ -65,18 +65,12 @@ jobs:
         run: if (desc::desc_has_fields("Date")) desc::desc_set("Date", Sys.Date())
         shell: Rscript {0}
 
-      - name: Create new NEWS.md section
-        if: ${{ inputs.vbump-after-release == true }}
-        run: |
-          FIRST_NEWS_LINE=$(head -1 NEWS.md)
-          printf "$FIRST_NEWS_LINE\n\n" | cat - NEWS.md > temp-news.md
-          mv temp-news.md NEWS.md
-
       - name: Bump version in NEWS.md 📰
         run: |
           git config --global --add safe.directory $(pwd)
           DESC_VERSION=$(R --slave -e 'cat(paste(desc::desc_get_version()))')
           NEWS_VERSION=$(awk '/^#+ /{print $3; exit}' NEWS.md)
+          FIRST_NEWS_LINE=$(head -1 NEWS.md)
           sed -i "s/$NEWS_VERSION/$DESC_VERSION/" NEWS.md
           NEWS_VERSION=$(awk '/^#+ /{print $3; exit}' NEWS.md)
           echo "Updated NEWS.md version: $NEWS_VERSION"
@@ -84,6 +78,10 @@ jobs:
             echo "🙈 Updated NEWS.md and DESCRIPTION have different versions!"
             echo "Please ensure that the versions in the NEWS.md and DESCRIPTION are the same 🙏"
             exit 1
+          fi
+          if [ "${{ inputs.vbump-after-release }}" == "true" ]; then
+            printf "$FIRST_NEWS_LINE\n\n" | cat - NEWS.md > temp-news.md
+            mv temp-news.md NEWS.md
           fi
           echo "NEW_PKG_VERSION=${DESC_VERSION}" >> $GITHUB_ENV
         shell: bash
