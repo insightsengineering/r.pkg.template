@@ -106,7 +106,9 @@ jobs:
       - name: Checkout to main
         if: ${{ inputs.vbump-after-release == true }}
         run: |
+          git fetch origin main
           git checkout main
+          git pull origin main
 
       - name: Commit and push changes 📌
         if: ${{ env.NEW_PKG_VERSION }}
