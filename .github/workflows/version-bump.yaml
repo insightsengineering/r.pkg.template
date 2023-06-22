@@ -103,6 +103,11 @@ jobs:
           python -m pip -q install pre-commit
           pre-commit autoupdate
 
+      - name: Checkout to main
+        if: ${{ inputs.vbump-after-release == true }}
+        run: |
+          git checkout main
+
       - name: Commit and push changes 📌
         if: ${{ env.NEW_PKG_VERSION }}
         uses: stefanzweifel/git-auto-commit-action@v4
