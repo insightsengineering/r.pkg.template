@@ -17,6 +17,11 @@ on:
         required: false
         default: false
         type: boolean
+      vbump-after-release:
+        description: Whether the vbump workflow is running after a release has been published
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: vbump-${{ github.event.pull_request.number || github.ref }}
@@ -52,7 +57,7 @@ jobs:
           token: ${{ steps.github-token.outputs.token }}
 
       - name: Bump version in DESCRIPTION 📜
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || inputs.vbump-after-release == true }}
         run: desc::desc_bump_version("dev", normalize = TRUE)
         shell: Rscript {0}
 
