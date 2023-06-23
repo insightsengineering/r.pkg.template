@@ -37,7 +37,7 @@ jobs:
         id: delete-branches
         with:
           github_token: ${{ steps.github-token.outputs.token }}
-          last_commit_age_days: 0
+          last_commit_age_days: 30
           # Additional precaution against deleting main branch.
           ignore_branches: main
           dry_run: no
