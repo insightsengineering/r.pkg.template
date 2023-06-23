@@ -110,7 +110,7 @@ jobs:
           python -m pip -q install pre-commit
           pre-commit autoupdate
 
-      - name: Checkout to main
+      - name: Checkout to main 🛎
         if: ${{ inputs.vbump-after-release == true }}
         run: |
           git fetch origin main
