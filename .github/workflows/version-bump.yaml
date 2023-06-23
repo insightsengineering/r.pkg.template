@@ -17,6 +17,11 @@ on:
         required: false
         default: false
         type: boolean
+      vbump-after-release:
+        description: Whether the vbump workflow is running after a release has been published
+        required: false
+        default: false
+        type: boolean
 
 concurrency:
   group: vbump-${{ github.event.pull_request.number || github.ref }}
@@ -52,7 +57,7 @@ jobs:
           token: ${{ steps.github-token.outputs.token }}
 
       - name: Bump version in DESCRIPTION 📜
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || inputs.vbump-after-release == true }}
         run: desc::desc_bump_version("dev", normalize = TRUE)
         shell: Rscript {0}
 
@@ -65,7 +70,14 @@ jobs:
           git config --global --add safe.directory $(pwd)
           DESC_VERSION=$(R --slave -e 'cat(paste(desc::desc_get_version()))')
           NEWS_VERSION=$(awk '/^#+ /{print $3; exit}' NEWS.md)
-          sed -i "s/$NEWS_VERSION/$DESC_VERSION/" NEWS.md
+          FIRST_NEWS_LINE=$(head -1 NEWS.md)
+          if [ "${{ inputs.vbump-after-release }}" == "true" ]; then
+            # Add a new section with the released version that will be vbumped below.
+            printf "$FIRST_NEWS_LINE\n\n" | cat - NEWS.md > temp-news.md
+            mv temp-news.md NEWS.md
+          fi
+          # Replace only the first occurence of $NEWS_VERSION.
+          sed -i "0,/$NEWS_VERSION/s/$NEWS_VERSION/$DESC_VERSION/" NEWS.md
           NEWS_VERSION=$(awk '/^#+ /{print $3; exit}' NEWS.md)
           echo "Updated NEWS.md version: $NEWS_VERSION"
           if (test $DESC_VERSION != $NEWS_VERSION ); then
@@ -97,6 +109,13 @@ jobs:
         run: |
           python -m pip -q install pre-commit
           pre-commit autoupdate
+
+      - name: Checkout to main 🛎
+        if: ${{ inputs.vbump-after-release == true }}
+        run: |
+          git fetch origin main
+          git checkout main
+          git pull origin main
 
       - name: Commit and push changes 📌
         if: ${{ env.NEW_PKG_VERSION }}
