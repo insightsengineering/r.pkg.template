@@ -36,7 +36,7 @@ jobs:
         contains(github.event.head_commit.message, '[skip vbump]')
       )
     container:
-      image: docker.io/rocker/tidyverse:4.2.2
+      image: docker.io/rocker/tidyverse:4.3.1
 
     steps:
       - name: Setup token 🔑
