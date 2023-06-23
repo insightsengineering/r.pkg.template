@@ -8,6 +8,13 @@ on:
         description: |
           Github token with write access to repository
         required: false
+  inputs:
+    last-commit-age-days:
+      description: |
+        The branch will be removed if the last commit was added to it at least this many days ago.
+      default: 30
+      required: false
+      type: number
 
 jobs:
   branch-cleanup:
@@ -37,7 +44,7 @@ jobs:
         id: delete-branches
         with:
           github_token: ${{ steps.github-token.outputs.token }}
-          last_commit_age_days: 30
+          last_commit_age_days: ${{ inputs.last-commit-age-days }}
           # Additional precaution against deleting main branch.
           ignore_branches: main
           dry_run: no
