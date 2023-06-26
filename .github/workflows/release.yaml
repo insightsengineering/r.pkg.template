@@ -11,6 +11,12 @@ on:
         description: |
           Github token with write access to the repository
         required: false
+    inputs:
+      create-rc-releases:
+        description: Whether releases for RC tags (e.g. v0.0.1-rc1) should be created?
+        required: false
+        default: false
+        type: boolean
   workflow_dispatch:
 
 concurrency:
@@ -40,6 +46,23 @@ jobs:
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
 
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v6
+
+      - name: Check if running for rc tag 🏷️
+        id: rc-tag
+        run: |
+          echo "Current tag: ${{ steps.branch-name.outputs.tag }}"
+          current_tag="${{ steps.branch-name.outputs.tag }}"
+          if [ "$(echo "$current_tag" | grep -E "^v([0-9]+\.)?([0-9]+\.)?([0-9]+)(-rc[0-9]+)$")" != "" ]; then
+            echo "Running for rc-tag."
+            echo "is-rc-tag=true" >> $GITHUB_OUTPUT
+          else
+            echo "is-rc-tag=false" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Generate Changelog 📜
         run: |
           RELEASE_VERSION=$(awk -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION)
@@ -47,6 +70,9 @@ jobs:
           (awk "/^#+.*${REPOSITORY_NAME//./\.}.*${RELEASE_VERSION//./\.}$/{flag=1;next}/^#+.*${REPOSITORY_NAME//./\.}.*/{flag=0}flag" NEWS.md | grep -v "^$" || echo "* ${RELEASE_VERSION}") > RELEASE_BODY.txt
 
       - name: Create release 🌟
+        if: >
+          steps.rc-tag.outputs.is-rc-tag == "false" ||
+          (steps.rc-tag.outputs.is-rc-tag == "true" && inputs.create-rc-releases == "true")
         uses: softprops/action-gh-release@v1
         with:
           body_path: RELEASE_BODY.txt
