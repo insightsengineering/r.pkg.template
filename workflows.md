@@ -20,7 +20,7 @@ This workflow implements Bioconductor-specific R package checks with
 This workflow checks if any (non-default) branches had the last commit added to them
 more than a configurable number of days ago. If yes, such branches are deleted.
 
-<img src="images/branch-cleanup.png"  width="40%">
+<img src="images/branch-cleanup.png"  width="50%">
 
 ## [`build-check-install.yaml`](./.github/workflows/build-check-install.yaml)
 
