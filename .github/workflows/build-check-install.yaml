@@ -634,11 +634,11 @@ jobs:
               print("Checking notes...")
               regexes <- "${{ inputs.note-blocklist }}"
               regexes <- unlist(strsplit(regexes, split = "\n"))
-              lines <- paste(readLines(check_log), collapse = " ")
+              lines <- paste(readLines(check_log), collapse = "\n")
               notes_result <- vapply(
                 regexes,
                 function(r){
-                  if (grepl(r, lines)) {
+                  if (grepl(paste0(r, "\n"), lines, perl=T)) {
                     print(r)
                     return(TRUE)
                   }
