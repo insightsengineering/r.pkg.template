@@ -78,20 +78,3 @@ jobs:
           body_path: RELEASE_BODY.txt
           token: ${{ steps.github-token.outputs.token }}
           generate_release_notes: true
-
-      - name: Get branch names 🌿
-        id: branch-names
-        uses: tj-actions/branch-names@v6
-
-      - name: Get latest release
-        id: get-latest-release
-        uses: pozetroninc/github-action-get-latest-release@v0.7.0
-        with:
-          repository: ${{ github.repository }}
-          excludes: prerelease, draft
-          token: ${{ steps.github-token.outputs.token }}
-
-      - name: Show latest release
-        run: |
-          echo "Latest release = ${{ steps.get-latest-release.outputs.release }}"
-          echo "Current tag = ${{ steps.branch-names.outputs.tag }}"
