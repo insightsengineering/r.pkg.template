@@ -71,8 +71,8 @@ jobs:
 
       - name: Create release 🌟
         if: >
-          steps.rc-tag.outputs.is-rc-tag == 'false' ||
-          (steps.rc-tag.outputs.is-rc-tag == 'true' && inputs.create-rc-releases == 'true')
+          steps.rc-tag.outputs.is-rc-tag == false ||
+          (steps.rc-tag.outputs.is-rc-tag == true && inputs.create-rc-releases == true)
         uses: softprops/action-gh-release@v1
         with:
           body_path: RELEASE_BODY.txt
