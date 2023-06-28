@@ -786,7 +786,33 @@ jobs:
         with:
           name: ${{ env.PKGBUILD }}
 
+      - name: Get branch names 🌿
+        id: branch-names
+        uses: tj-actions/branch-names@v6
+
+      - name: Get latest release 🚀
+        id: get-latest-release
+        uses: pozetroninc/github-action-get-latest-release@v0.7.0
+        with:
+          repository: ${{ github.repository }}
+          excludes: prerelease, draft
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Show latest release 🚀
+        id: show-latest-release
+        run: |
+          echo "Latest release = ${{ steps.get-latest-release.outputs.release }}"
+          echo "Current tag = ${{ steps.branch-names.outputs.tag }}"
+          if [[ "${{ steps.branch-names.outputs.tag }}" == "${{ steps.get-latest-release.outputs.release }}" ]]; then
+            echo "Uploading assets to latest release."
+            echo "latest-release-created=true" >> $GITHUB_OUTPUT
+          else
+            echo "Release has not been created for the tag, therefore the assets will not be uplaoded."
+          fi
+
       - name: Upload binaries to release 🔼
+        if: >-
+          steps.show-latest-release.outputs.latest-release-created == 'true'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
