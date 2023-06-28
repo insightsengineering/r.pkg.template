@@ -12,7 +12,7 @@ on:
       last-commit-age-days:
         description: |
           The branch will be removed if the last commit was added to it at least this many days ago.
-        default: 30
+        default: 90
         required: false
         type: number
 
