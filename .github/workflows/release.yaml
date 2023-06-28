@@ -70,9 +70,9 @@ jobs:
           (awk "/^#+.*${REPOSITORY_NAME//./\.}.*${RELEASE_VERSION//./\.}$/{flag=1;next}/^#+.*${REPOSITORY_NAME//./\.}.*/{flag=0}flag" NEWS.md | grep -v "^$" || echo "* ${RELEASE_VERSION}") > RELEASE_BODY.txt
 
       - name: Create release 🌟
-        if: >
+        if: >-
           steps.rc-tag.outputs.is-rc-tag == false ||
-          (steps.rc-tag.outputs.is-rc-tag == true && inputs.create-rc-releases == true)
+            inputs.create-rc-releases == true
         uses: softprops/action-gh-release@v1
         with:
           body_path: RELEASE_BODY.txt
