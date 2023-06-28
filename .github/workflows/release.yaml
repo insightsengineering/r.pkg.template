@@ -87,10 +87,10 @@ jobs:
           token: ${{ steps.github-token.outputs.token }}
 
       - name: Get branch names 🌿
-        id: branch-name
+        id: branch-names
         uses: tj-actions/branch-names@v6
 
       - name: Show latest release
         run: |
           echo "Latest release = ${{ steps.get-latest-release.outputs.release }}"
-          echo "Current tag = ${{ steps.branch-name.outputs.tag }}"
+          echo "Current tag = ${{ steps.branch-names.outputs.tag }}"
