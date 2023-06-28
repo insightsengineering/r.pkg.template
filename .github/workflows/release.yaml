@@ -79,6 +79,10 @@ jobs:
           token: ${{ steps.github-token.outputs.token }}
           generate_release_notes: true
 
+      - name: Get branch names 🌿
+        id: branch-names
+        uses: tj-actions/branch-names@v6
+
       - name: Get latest release
         id: get-latest-release
         uses: pozetroninc/github-action-get-latest-release@v0.7.0
@@ -86,10 +90,6 @@ jobs:
           repository: ${{ github.repository }}
           excludes: prerelease, draft
           token: ${{ steps.github-token.outputs.token }}
-
-      - name: Get branch names 🌿
-        id: branch-names
-        uses: tj-actions/branch-names@v6
 
       - name: Show latest release
         run: |
