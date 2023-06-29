@@ -70,6 +70,8 @@ jobs:
           (awk "/^#+.*${REPOSITORY_NAME//./\.}.*${RELEASE_VERSION//./\.}$/{flag=1;next}/^#+.*${REPOSITORY_NAME//./\.}.*/{flag=0}flag" NEWS.md | grep -v "^$" || echo "* ${RELEASE_VERSION}") > RELEASE_BODY.txt
 
       - name: Debug
+        env:
+          GH_TOKEN: ${{ steps.github-token.outputs.token }}
         run: |
           echo "is rc tag: ${{ steps.rc-tag.outputs.is-rc-tag }}"
           echo "create rc releases: ${{ inputs.create-rc-releases }}"
