@@ -288,10 +288,6 @@ jobs:
         id: branch-names
         uses: tj-actions/branch-names@v6
 
-      - name: Get branch names 🌿
-        id: branch-names
-        uses: tj-actions/branch-names@v6
-
       - name: Show latest release 🚀
         id: show-latest-release
         run: |
