@@ -74,6 +74,8 @@ jobs:
           echo "is rc tag: ${{ steps.rc-tag.outputs.is-rc-tag }}"
           echo "create rc releases: ${{ inputs.create-rc-releases }}"
           echo "logical condition: ${{ steps.rc-tag.outputs.is-rc-tag == 'false' || inputs.create-rc-releases == 'true' }}"
+          echo "logical condition: ${{ steps.rc-tag.outputs.is-rc-tag == 'false' || inputs.create-rc-releases == true }}"
+          echo "logical condition: ${{ steps.rc-tag.outputs.is-rc-tag == 'false' || inputs.create-rc-releases == "true" }}"
 
       - name: Create release 🌟
         if: >-
