@@ -75,6 +75,8 @@ jobs:
           echo "create rc releases: ${{ inputs.create-rc-releases }}"
           echo "logical condition: ${{ steps.rc-tag.outputs.is-rc-tag == 'false' || inputs.create-rc-releases == 'true' }}"
           echo "logical condition: ${{ steps.rc-tag.outputs.is-rc-tag == 'false' || inputs.create-rc-releases == true }}"
+          gh release view ${{ steps.branch-name.outputs.tag }}
+          gh release view v0.8.21
 
       - name: Create release 🌟
         if: >-
