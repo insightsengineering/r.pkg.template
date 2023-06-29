@@ -288,8 +288,10 @@ jobs:
         id: branch-names
         uses: tj-actions/branch-names@v6
 
-      - name: Show latest release 🚀
-        id: show-latest-release
+      - name: Get latest release 🚀
+        id: get-latest-release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Current tag = ${{ steps.branch-names.outputs.tag }}"
           if [[ $(gh release view ${{ steps.branch-names.outputs.tag }} || true) == "release not found" ]]; then
@@ -301,7 +303,7 @@ jobs:
 
       - name: Upload binaries to release ⤴
         if: >-
-          steps.show-latest-release.outputs.latest-release-created == 'true'
+          steps.get-latest-release.outputs.latest-release-created == 'true'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
