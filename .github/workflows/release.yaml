@@ -78,7 +78,8 @@ jobs:
           echo "logical condition: ${{ steps.rc-tag.outputs.is-rc-tag == 'false' || inputs.create-rc-releases == 'true' }}"
           echo "logical condition: ${{ steps.rc-tag.outputs.is-rc-tag == 'false' || inputs.create-rc-releases == true }}"
           echo "Current tag = ${{ steps.branch-name.outputs.tag }}"
-          release_found="$(gh release view ${{ steps.branch-name.outputs.tag }} || true)"
+          set -e
+          release_found="$(gh release view ${{ steps.branch-name.outputs.tag }})"
           echo "release_found = $release_found"
           release_found_2="$(echo $release_found | tr -d '\n')"
           echo "release_found_2 = $release_found_2"
@@ -88,6 +89,7 @@ jobs:
             echo "Release found."
             echo "latest-release-created=true" >> $GITHUB_OUTPUT
           fi
+          set +e
 
       - name: Create release 🌟
         if: >-
