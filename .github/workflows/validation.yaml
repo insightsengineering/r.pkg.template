@@ -133,7 +133,7 @@ jobs:
             echo "Uploading assets to latest release."
             echo "latest-release-created=true" >> $GITHUB_OUTPUT
           else
-            echo "Release has not been created for the tag, therefore the assets will not be uplaoded."
+            echo "Release has not been created for the tag, therefore the assets will not be uploaded."
           fi
 
       - name: Upload report to release 🔼
