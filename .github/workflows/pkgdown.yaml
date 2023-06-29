@@ -294,7 +294,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Current tag = ${{ steps.branch-names.outputs.tag }}"
-          if [[ $(gh release view ${{ steps.branch-names.outputs.tag }} || true) == "release not found" ]]; then
+          if [[ "$(gh release view ${{ steps.branch-names.outputs.tag }} || true)" == "release not found" ]]; then
             echo "Release not found."
           else
             echo "Release found."
