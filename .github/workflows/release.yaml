@@ -69,26 +69,6 @@ jobs:
           REPOSITORY_NAME="${{ github.event.repository.name }}"
           (awk "/^#+.*${REPOSITORY_NAME//./\.}.*${RELEASE_VERSION//./\.}$/{flag=1;next}/^#+.*${REPOSITORY_NAME//./\.}.*/{flag=0}flag" NEWS.md | grep -v "^$" || echo "* ${RELEASE_VERSION}") > RELEASE_BODY.txt
 
-      - name: Debug
-        env:
-          GH_TOKEN: ${{ steps.github-token.outputs.token }}
-        run: |
-          echo "is rc tag: ${{ steps.rc-tag.outputs.is-rc-tag }}"
-          echo "create rc releases: ${{ inputs.create-rc-releases }}"
-          echo "logical condition: ${{ steps.rc-tag.outputs.is-rc-tag == 'false' || inputs.create-rc-releases == 'true' }}"
-          echo "logical condition: ${{ steps.rc-tag.outputs.is-rc-tag == 'false' || inputs.create-rc-releases == true }}"
-          echo "Current tag = ${{ steps.branch-name.outputs.tag }}"
-          set +e
-          release_found="$(gh release view ${{ steps.branch-name.outputs.tag }} 2>&1)"
-          echo "release_found = $release_found"
-          if [[ "$release_found" == "release not found" ]]; then
-            echo "Release not found."
-          else
-            echo "Release found."
-            echo "latest-release-created=true" >> $GITHUB_OUTPUT
-          fi
-          set -e
-
       - name: Create release 🌟
         if: >-
           steps.rc-tag.outputs.is-rc-tag == 'false' ||
