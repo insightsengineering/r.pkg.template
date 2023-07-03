@@ -87,7 +87,7 @@ jobs:
               if (fs.lstatSync(file).isFile() && 
                   !path.dirname(file).startsWith("node_modules")) {
                 const contents = fs.readFileSync(file, 'utf8');
-                const suggestions = writeGood(contents, { passive : ${{ inputs.passive-voice }} });
+                const suggestions = writeGood(contents, { passive : ${inputs.passive-voice} });
                 const annotations = writeGood.annotate(contents, suggestions, true);
                 if (annotations.length) {
                   for (var i=0; i < annotations.length; i++) {
