@@ -83,8 +83,9 @@ jobs:
             }
             let files = changedFiles.split(",");
             let allSuggestions = [];
-            var passiveVoice=${inputs.passive-voice};
-            if (passiveVoice == "") {
+            var inputs = ${{ toJSON(inputs) }};
+            var passiveVoice = inputs['passive-voice'];
+            if (typeof passiveVoice === 'undefined') {
               passiveVoice = false;
             }
             files.forEach((file) => {
