@@ -15,7 +15,12 @@ on:
       - main
   workflow_dispatch:
   workflow_call:
-
+    inputs:
+      passive-voice:
+        description: Enable checks for passive voice
+        required: false
+        default: false
+        type: boolean
 concurrency:
   group: grammar-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
@@ -78,11 +83,16 @@ jobs:
             }
             let files = changedFiles.split(",");
             let allSuggestions = [];
+            var inputs = ${{ toJSON(inputs) }};
+            var passiveVoice = inputs['passive-voice'];
+            if (typeof passiveVoice === 'undefined') {
+              passiveVoice = false;
+            }
             files.forEach((file) => {
               if (fs.lstatSync(file).isFile() && 
                   !path.dirname(file).startsWith("node_modules")) {
                 const contents = fs.readFileSync(file, 'utf8');
-                const suggestions = writeGood(contents);
+                const suggestions = writeGood(contents, { passive : passiveVoice });
                 const annotations = writeGood.annotate(contents, suggestions, true);
                 if (annotations.length) {
                   for (var i=0; i < annotations.length; i++) {
