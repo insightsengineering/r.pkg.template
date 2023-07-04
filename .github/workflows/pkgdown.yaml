@@ -290,7 +290,7 @@ jobs:
 
       - name: Upload binaries to release ⤴
         if: >-
-          steps.check-if-release-exists.outputs.release-created == 'true'
+          steps.check-if-release-exists.outputs.release-exists == 'true'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
