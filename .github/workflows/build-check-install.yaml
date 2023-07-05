@@ -352,10 +352,9 @@ jobs:
             export $(tr '\n' ' ' < /tmp/dotenv.env)
           }
           fi
-          R CMD build ${{ github.event.repository.name }}
+          R CMD build ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           echo "PKGBUILD=$(echo ${{ github.event.repository.name }}_*.tar.gz)" >> $GITHUB_ENV
         shell: bash
-        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Set TESTING_DEPTH ⚙
         env:
