@@ -119,6 +119,8 @@ jobs:
           inputs.disable-precommit-autoupdate != 'true' &&
             steps.precommit-config-exists.outputs.files_exists == 'true'
         run: |
+          pwd
+          ls -la
           python -m pip -q install pre-commit
           pre-commit autoupdate
 
