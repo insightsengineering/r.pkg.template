@@ -284,7 +284,13 @@ jobs:
         with:
           name: pkgdown.zip
 
+      - name: Check if release exists
+        id: check-if-release-exists
+        uses: insightsengineering/release-existence-action@v1
+
       - name: Upload binaries to release ⤴
+        if: >-
+          steps.check-if-release-exists.outputs.release-exists == 'true'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}

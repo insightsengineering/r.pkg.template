@@ -107,12 +107,21 @@ jobs:
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v3
+
       - name: Download artifact ⏬
         uses: actions/download-artifact@v3
         with:
           name: validation_report.pdf
 
+      - name: Check if release exists
+        id: check-if-release-exists
+        uses: insightsengineering/release-existence-action@v1
+
       - name: Upload report to release 🔼
+        if: >-
+          steps.check-if-release-exists.outputs.release-exists == 'true'
         uses: svenstaro/upload-release-action@v2
         with:
           file: ./validation_report.pdf
