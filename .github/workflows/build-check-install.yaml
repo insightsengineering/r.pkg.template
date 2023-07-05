@@ -146,6 +146,11 @@ on:
         required: false
         type: string
         default: "release-candidate"
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
@@ -299,7 +304,7 @@ jobs:
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          path: ${{ github.event.repository.name }}
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
@@ -315,7 +320,7 @@ jobs:
             x <- desc::desc_set_dep("xml2", "Suggests")
           }
         shell: Rscript {0}
-        working-directory: ${{ github.event.repository.name }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Replace testthat.R for test reporting 🎚
         if: inputs.disable-unit-test-reports != 'true'
@@ -337,7 +342,7 @@ jobs:
           cat tests/testthat.R
           fi
         shell: bash
-        working-directory: ${{ github.event.repository.name }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Build R package 🏗
         run: |
@@ -350,6 +355,7 @@ jobs:
           R CMD build ${{ github.event.repository.name }}
           echo "PKGBUILD=$(echo ${{ github.event.repository.name }}_*.tar.gz)" >> $GITHUB_ENV
         shell: bash
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Set TESTING_DEPTH ⚙
         env:
@@ -370,7 +376,7 @@ jobs:
             echo "TESTING_DEPTH=1" >> $GITHUB_ENV
           fi
         shell: bash
-        working-directory: ${{ github.event.repository.name }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Run R CMD check 🏁
         run: |
@@ -405,12 +411,16 @@ jobs:
           }
           EOF
           R CMD check ${ADDITIONAL_PARAMS} ${{ env.PKGBUILD }}
+          # TODO debug
+          pwd
+          ls -la
         shell: bash
         continue-on-error: true
         env:
           _R_CHECK_TESTS_NLINES_: 0
           _R_CHECK_VIGNETTES_NLINES_: 0
           _R_CHECK_FORCE_SUGGESTS_: ${{ inputs.R_CHECK_FORCE_SUGGESTS }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Fetch report from ${{ env.junit_xml_storage }} ⤵️
         if: env.junit_xml_comparison == 'true'
