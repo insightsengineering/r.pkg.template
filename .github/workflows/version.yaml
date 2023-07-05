@@ -45,6 +45,7 @@ jobs:
               exit 1
           fi
         shell: bash
+        working-directory: ${{ inputs.package-subdirectory }}
 
   emoji:
     name: Emoji in NEWS.md 📰
@@ -84,3 +85,4 @@ jobs:
               sys.exit(1)
           print("🥰 No emojis found in the NEWS.md, good to go!")
         shell: python
+        working-directory: ${{ inputs.package-subdirectory }}
