@@ -286,7 +286,7 @@ jobs:
 
       - name: Check if release exists
         id: check-if-release-exists
-        uses: insightsengineering/release-existence-action@initialize-action
+        uses: insightsengineering/release-existence-action@v1
 
       - name: Upload binaries to release ⤴
         if: >-
