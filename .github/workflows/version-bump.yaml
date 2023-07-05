@@ -22,6 +22,11 @@ on:
         required: false
         default: false
         type: boolean
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
 
 concurrency:
   group: vbump-${{ github.event.pull_request.number || github.ref }}

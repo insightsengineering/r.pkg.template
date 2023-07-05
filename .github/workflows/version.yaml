@@ -15,6 +15,12 @@ on:
       - main
   workflow_dispatch:
   workflow_call:
+    inputs:
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
 
 concurrency:
   group: version-${{ github.event.pull_request.number || github.ref }}
