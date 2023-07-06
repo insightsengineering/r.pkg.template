@@ -21,6 +21,11 @@ on:
         required: false
         default: false
         type: boolean
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
 
 concurrency:
   group: style-${{ github.event.pull_request.number || github.ref }}
@@ -90,7 +95,7 @@ jobs:
             )
           }
         shell: Rscript {0}
-        working-directory: ${{ github.event.repository.name }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Check file existence 🤔
         id: check_files
@@ -120,7 +125,7 @@ jobs:
           git push -v origin HEAD:${{ steps.branch-name.outputs.head_ref_branch }} || \
             echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)"
         shell: bash
-        working-directory: ${{ github.event.repository.name }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
         continue-on-error: true
 
       - name: Styler check summary 🅾

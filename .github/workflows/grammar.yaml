@@ -89,7 +89,7 @@ jobs:
               passiveVoice = false;
             }
             files.forEach((file) => {
-              if (fs.lstatSync(file).isFile() && 
+              if (fs.lstatSync(file).isFile() &&
                   !path.dirname(file).startsWith("node_modules")) {
                 const contents = fs.readFileSync(file, 'utf8');
                 const suggestions = writeGood(contents, { passive : passiveVoice });
