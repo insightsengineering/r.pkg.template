@@ -266,7 +266,7 @@ jobs:
       - name: Create and publish docs ↗️
         uses: insightsengineering/r-pkgdown-multiversion@v2
         with:
-          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          path: ${{ github.event.repository.name }}
           default-landing-page: ${{ inputs.default-landing-page }}
           refs-order: ${{ inputs.refs-order }}
           latest-tag-alt-name: ${{ inputs.latest-tag-alt-name }}
