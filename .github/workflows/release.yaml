@@ -17,6 +17,11 @@ on:
         required: false
         default: false
         type: boolean
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
   workflow_dispatch:
 
 concurrency:
@@ -68,6 +73,7 @@ jobs:
           RELEASE_VERSION=$(awk -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION)
           REPOSITORY_NAME="${{ github.event.repository.name }}"
           (awk "/^#+.*${REPOSITORY_NAME//./\.}.*${RELEASE_VERSION//./\.}$/{flag=1;next}/^#+.*${REPOSITORY_NAME//./\.}.*/{flag=0}flag" NEWS.md | grep -v "^$" || echo "* ${RELEASE_VERSION}") > RELEASE_BODY.txt
+        working-directory: ${{ inputs.package-subdirectory }}
 
       - name: Create release 🌟
         if: >-
@@ -75,6 +81,6 @@ jobs:
             inputs.create-rc-releases == true
         uses: softprops/action-gh-release@v1
         with:
-          body_path: RELEASE_BODY.txt
+          body_path: ${{ inputs.package-subdirectory }}/RELEASE_BODY.txt
           token: ${{ steps.github-token.outputs.token }}
           generate_release_notes: true

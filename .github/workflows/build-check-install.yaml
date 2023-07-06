@@ -410,9 +410,6 @@ jobs:
           }
           EOF
           R CMD check ${ADDITIONAL_PARAMS} ${{ env.PKGBUILD }}
-          # TODO debug
-          pwd
-          ls -la
         shell: bash
         continue-on-error: true
         env:

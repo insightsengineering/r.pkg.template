@@ -106,6 +106,11 @@ on:
         type: string
         default: >-
           ^main$|^devel$|^pre-release$|^latest-tag$|^release-candidate$|^develop$|^v([0-9]+\\.)?([0-9]+\\.)?([0-9]+)|^v([0-9]+\\.)?([0-9]+\\.)?([0-9]+)(-rc[0-9]+)$
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
 
 concurrency:
   group: docs-${{ github.event.pull_request.number || github.ref }}
@@ -163,7 +168,7 @@ jobs:
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          path: ${{ github.event.repository.name }}
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
@@ -173,7 +178,7 @@ jobs:
           if (file.exists("renv.lock")) renv::restore()
           install.packages(".", repos=NULL, type="source")
         shell: Rscript {0}
-        working-directory: ${{ github.event.repository.name }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Build docs 🏗
         if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
@@ -201,12 +206,12 @@ jobs:
           }
           fi
         shell: bash
-        working-directory: ${{ github.event.repository.name }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Create documentation artifact 📂
         if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
         run: |
-          pushd ${{ github.event.repository.name }}/docs/
+          pushd ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/docs/
           zip -r9 $OLDPWD/pkgdown.zip *
           popd
         shell: bash
@@ -239,7 +244,7 @@ jobs:
           )
           EOF
         shell: bash
-        working-directory: ${{ github.event.repository.name }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
   multi-version-docs:
     name: Multi-version docs 📑
@@ -261,7 +266,7 @@ jobs:
       - name: Create and publish docs ↗️
         uses: insightsengineering/r-pkgdown-multiversion@v2
         with:
-          path: ${{ github.event.repository.name }}
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           default-landing-page: ${{ inputs.default-landing-page }}
           refs-order: ${{ inputs.refs-order }}
           latest-tag-alt-name: ${{ inputs.latest-tag-alt-name }}
