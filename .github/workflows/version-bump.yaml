@@ -119,8 +119,7 @@ jobs:
           inputs.disable-precommit-autoupdate != 'true' &&
             steps.precommit-config-exists.outputs.files_exists == 'true'
         run: |
-          pwd
-          ls -la
+          git config --global --add safe.directory $(pwd)
           python -m pip -q install pre-commit
           pre-commit autoupdate || true
           cat /github/home/.cache/pre-commit/pre-commit.log
