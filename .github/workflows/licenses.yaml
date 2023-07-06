@@ -40,4 +40,4 @@ jobs:
         uses: insightsengineering/r-license-report@v1
         with:
           regex: "^AGPL.*"
-        working-directory: ${{ inputs.package-subdirectory }}
+          path: ${{ inputs.package-subdirectory }}
