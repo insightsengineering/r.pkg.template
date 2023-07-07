@@ -130,7 +130,7 @@ jobs:
           git checkout main
           git pull origin main
 
-      - name: Set file pattern to commit
+      - name: Set file pattern to commit ⚙️
         id: file-pattern
         run: |
           if [[ "${{ inputs.package-subdirectory }}" == "." ]]; then
