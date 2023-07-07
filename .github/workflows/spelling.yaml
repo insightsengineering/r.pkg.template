@@ -40,8 +40,14 @@ jobs:
       - name: Checkout Code 🛎
         uses: actions/checkout@v3
 
+      - name: Normalize variables 📏
+        run: |
+          package_subdirectory_input="${{ inputs.package-subdirectory }}"
+          echo "package_subdirectory=${package_subdirectory_input:-.}" >> $GITHUB_ENV
+        shell: bash
+
       - name: Run Spellcheck 👟
         uses: insightsengineering/r-spellcheck-action@v2
         with:
           exclude: inst/extdata/*
-          path: ${{ inputs.package-subdirectory }}
+          path: ${{ env.package-subdirectory }}
