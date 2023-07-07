@@ -50,4 +50,4 @@ jobs:
         uses: insightsengineering/r-spellcheck-action@v2
         with:
           exclude: inst/extdata/*
-          path: ${{ env.package-subdirectory }}
+          path: ${{ env.package_subdirectory }}
