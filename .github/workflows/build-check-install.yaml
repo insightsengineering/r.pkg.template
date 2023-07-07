@@ -150,7 +150,7 @@ on:
         description: Subdirectory in the repository, where the R package is located.
         required: false
         type: string
-        default: "."
+        default: ""
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
