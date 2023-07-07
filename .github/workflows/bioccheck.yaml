@@ -48,6 +48,11 @@ on:
         required: false
         type: string
         default: upstream
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
 
 concurrency:
   group: bioccheck-${{ github.event.pull_request.number || github.ref }}
@@ -121,6 +126,6 @@ jobs:
       - name: Run BiocCheck ☣️
         uses: insightsengineering/bioc-check-action@v1
         with:
-          path: ${{ github.event.repository.name }}
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           no-check-version-num: true
           allow-failure: ${{ inputs.allow-failure }}

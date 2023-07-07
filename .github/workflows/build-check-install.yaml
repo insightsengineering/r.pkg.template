@@ -700,7 +700,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v3
         with:
-          path: ${{ github.event.repository.name }}/${{ env.PKGBUILD }}
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/${{ env.PKGBUILD }}
           name: ${{ env.PKGBUILD }}
 
   publish-junit-html-report:
