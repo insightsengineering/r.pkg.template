@@ -130,12 +130,22 @@ jobs:
           git checkout main
           git pull origin main
 
+      - name: Set file pattern to commit
+        id: file-pattern
+        run: |
+          if [[ "${{ inputs.package-subdirectory }}" == "." ]]; then
+            FILE_PATTERN="NEWS.md DESCRIPTION"
+          else
+            FILE_PATTERN="${{ inputs.package-subdirectory }}/NEWS.md ${{ inputs.package-subdirectory }}/DESCRIPTION"
+          fi
+          echo "file-pattern=$FILE_PATTERN" >> $GITHUB_OUTPUT
+
       - name: Commit and push changes 📌
         if: ${{ env.NEW_PKG_VERSION }}
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "[skip actions] Bump version to ${{ env.NEW_PKG_VERSION }}"
-          file_pattern: NEWS.md DESCRIPTION .pre-commit-config.yaml
+          file_pattern: "${{ steps.file-pattern.outputs.file-pattern }} .pre-commit-config.yaml"
           commit_user_name: insights-engineering-bot
           commit_user_email: >-
             68416928+insights-engineering-bot@users.noreply.github.com
