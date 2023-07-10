@@ -25,7 +25,7 @@ on:
         type: string
       strategy:
         description: |
-          Strategy to test package dependencies. One of: min, release, max.
+          Strategy to test package dependencies. One of: min_isolate, min_cohort, release, max.
         required: true
         type: string
       additional-env-vars:
@@ -74,7 +74,7 @@ jobs:
 
       - name: Dependency Test - ${{ env.strategy }} 🔢
         id: verdepcheck
-        uses: insightsengineering/r-verdepcheck-action@main
+        uses: insightsengineering/r-verdepcheck-action@new-strategies
         with:
           github-token: ${{ steps.github-token.outputs.token }}
           check-args: ${{ inputs.check-args }}
