@@ -77,6 +77,11 @@ on:
         required: false
         type: string
         default: "release-candidate"
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: ""
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -186,7 +191,7 @@ jobs:
         env:
           GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
         with:
-          path: ${{ github.event.repository.name }}
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
@@ -196,7 +201,7 @@ jobs:
           if (file.exists("renv.lock")) renv::restore()
           install.packages(".", repos=NULL, type="source")
         shell: Rscript {0}
-        working-directory: ${{ github.event.repository.name }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Install covr 🎪
         run: |
@@ -209,7 +214,7 @@ jobs:
 
       - name: Run coverage 👟
         run: |
-          setwd("${{ github.event.repository.name }}")
+          setwd("${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}")
           if (file.exists("renv.lock")) {
             renv::restore()
           }
@@ -259,15 +264,15 @@ jobs:
         uses: andstor/file-existence-action@v2
         with:
           files: >-
-            ${{ github.event.repository.name }}/coverage.xml,
-            ${{ github.event.repository.name }}/coverage.txt,
-            ${{ github.event.repository.name }}/coverage-report.html
+            ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/coverage.xml,
+            ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/coverage.txt,
+            ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/coverage-report.html
 
       - name: Post coverage report 🗞
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
         uses: insightsengineering/coverage-action@v2
         with:
-          path: ${{ github.event.repository.name }}/coverage.xml
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/coverage.xml
           threshold: 80
           fail: false
           publish: ${{ inputs.publish-coverage-report }}
@@ -279,8 +284,8 @@ jobs:
         with:
           name: coverage-report
           path: |
-            ${{ github.event.repository.name }}/coverage-report.html
-            ${{ github.event.repository.name }}/lib/
+            ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/coverage-report.html
+            ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/lib/
         continue-on-error: true
 
       - name: Set output ⚙️
@@ -321,7 +326,7 @@ jobs:
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          path: ${{ github.event.repository.name }}
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
@@ -331,7 +336,7 @@ jobs:
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          path: ${{ github.event.repository.name }}
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           allow-failure: ${{ inputs.allow-failure }}
 
   publish-coverage-report:

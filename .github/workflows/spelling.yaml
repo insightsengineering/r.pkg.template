@@ -15,6 +15,12 @@ on:
       - main
   workflow_dispatch:
   workflow_call:
+    inputs:
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
 
 concurrency:
   group: spelling-${{ github.event.pull_request.number || github.ref }}
@@ -34,7 +40,14 @@ jobs:
       - name: Checkout Code 🛎
         uses: actions/checkout@v3
 
+      - name: Normalize variables 📏
+        run: |
+          package_subdirectory_input="${{ inputs.package-subdirectory }}"
+          echo "package_subdirectory=${package_subdirectory_input:-.}" >> $GITHUB_ENV
+        shell: bash
+
       - name: Run Spellcheck 👟
         uses: insightsengineering/r-spellcheck-action@v2
         with:
           exclude: inst/extdata/*
+          path: ${{ env.package_subdirectory }}

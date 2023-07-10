@@ -15,6 +15,12 @@ on:
       - main
   workflow_dispatch:
   workflow_call:
+    inputs:
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
 
 concurrency:
   group: version-${{ github.event.pull_request.number || github.ref }}
@@ -45,6 +51,7 @@ jobs:
               exit 1
           fi
         shell: bash
+        working-directory: ${{ inputs.package-subdirectory }}
 
   emoji:
     name: Emoji in NEWS.md 📰
@@ -84,3 +91,4 @@ jobs:
               sys.exit(1)
           print("🥰 No emojis found in the NEWS.md, good to go!")
         shell: python
+        working-directory: ${{ inputs.package-subdirectory }}
