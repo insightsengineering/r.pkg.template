@@ -53,8 +53,8 @@ jobs:
               ))
               deps_with_vulnerabilities = subset(dependencies_scan, no_of_vulnerabilities > 0)
               if(nrow(deps_with_vulnerabilities) > 0) {
-                print("Vulnerabilities found in the following dependencies:")
-                print(deps_with_vulnerabilities["package"])
+                message("Vulnerabilities found in the following dependencies:")
+                message(deps_with_vulnerabilities["package"])
                 quit(status=1)
               }
             },
@@ -82,8 +82,8 @@ jobs:
                 ))
                 deps_with_vulnerabilities = subset(renv_lock_scan, no_of_vulnerabilities > 0)
                 if(nrow(deps_with_vulnerabilities) > 0) {
-                  print("Vulnerabilities found in the following dependencies:")
-                  print(deps_with_vulnerabilities["package"])
+                  message("Vulnerabilities found in the following dependencies:")
+                  message(deps_with_vulnerabilities["package"])
                   quit(status=1)
                 }
               } else {
