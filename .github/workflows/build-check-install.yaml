@@ -322,13 +322,21 @@ jobs:
         shell: Rscript {0}
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
+      - name: Get package name
+        run: |
+          echo "PKGBUILD=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION)_\
+            $(awk -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION).tar.gz)" >> $GITHUB_ENV
+          echo "PKGNAME=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION))" >> $GITHUB_ENV
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+
       - name: Replace testthat.R for test reporting 🎚
         if: inputs.disable-unit-test-reports != 'true'
         run: |
           if [ -f "tests/testthat.R" ]; then {
             # Overwrite testthat.R for JUnit XML reporting
             cat > tests/testthat.R <<EOF
-            pkg_name <- "${{ github.event.repository.name }}"
+            pkg_name <- "${{ env.PKGNAME }}"
             if (requireNamespace("testthat", quietly = TRUE)) {
               library(testthat)
               reporter <- MultiReporter\$new(list(
@@ -353,7 +361,6 @@ jobs:
           }
           fi
           R CMD build ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
-          echo "PKGBUILD=$(echo ${{ github.event.repository.name }}_*.tar.gz)" >> $GITHUB_ENV
         shell: bash
 
       - name: Set TESTING_DEPTH ⚙
@@ -468,7 +475,7 @@ jobs:
         id: check-junit-xml
         uses: andstor/file-existence-action@v2
         with:
-          files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
+          files: "${{ env.PKGNAME }}.Rcheck/tests/testthat/junit-result.xml"
 
       - name: Convert JUnit XML to HTML 📝
         if: >-
@@ -480,10 +487,10 @@ jobs:
           if [ "${{ inputs.unit-test-report-brand }}" != "" ]; then
             brand_option='--brand ${{ inputs.unit-test-report-brand }}'
           fi
-          xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" \
+          xunit-viewer -r "${{ env.PKGNAME }}.Rcheck/tests/testthat/junit-result.xml" \
             -o index.html \
             -f "https://www.clipboardmaster.com/favicon.ico" \
-            -t "${{ github.event.repository.name }} Unit Test Results" \
+            -t "${{ env.PKGNAME }} Unit Test Results" \
             $brand_option
         shell: bash
 
@@ -514,7 +521,7 @@ jobs:
           github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
         with:
           check_name: Unit Tests Summary
-          junit_files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
+          junit_files: "${{ env.PKGNAME }}.Rcheck/tests/testthat/junit-result.xml"
 
       - name: Fetch JUnit XML reports from ${{ env.junit_xml_storage }} ⤵️
         if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
@@ -540,7 +547,7 @@ jobs:
           git switch ${{ env.junit_xml_storage }} || true
           git config pull.rebase false
           git pull origin ${{ env.junit_xml_storage }} || true
-          cp ../../${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml \
+          cp ../../${{ env.PKGNAME }}.Rcheck/tests/testthat/junit-result.xml \
             ./${{ env.diff_storage_branch }}/junit-result.xml
           git add -f "${{ env.diff_storage_branch }}/junit-result.xml"
           git commit -m "Add/Update JUnit report: ${{ github.sha }}" || true
@@ -624,7 +631,7 @@ jobs:
       - name: Catch warnings in R CMD check output 🗳
         id: catch-errors
         run: |
-          check_log <- "${{ github.event.repository.name }}.Rcheck/00check.log"
+          check_log <- "${{ env.PKGNAME }}.Rcheck/00check.log"
           if (file.exists(check_log)) {
             x <- tail(readLines(check_log), 1)
             if (grepl("ERROR", x)) {
@@ -692,7 +699,6 @@ jobs:
           }
           fi
           R CMD build .
-          echo "PKGBUILD=$(echo ${{ github.event.repository.name }}_*.tar.gz)" >> $GITHUB_ENV
         shell: bash
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
@@ -784,7 +790,11 @@ jobs:
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
 
       - name: Get package build filename 📦
-        run: echo "PKGBUILD=${{ github.event.repository.name }}_${{ env.RELEASE_VERSION }}.tar.gz" >> $GITHUB_ENV
+        run: |
+          echo "PKGBUILD=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION))_\
+            ${{ env.RELEASE_VERSION }}.tar.gz" >> $GITHUB_ENV
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Download artifact ⏬
         uses: actions/download-artifact@v3
