@@ -73,7 +73,7 @@ jobs:
               if(nrow(deps_with_vulnerabilities) > 0) {
                 message("❗ Vulnerabilities found in the following dependencies:")
                 message(deps_with_vulnerabilities["package"])
-                quit(status=1)
+                if ("${{ env.allow-failure }}" == "true") quit(status=1)
               }
             },
             error =  function(e) {
@@ -83,7 +83,6 @@ jobs:
           )
         shell: Rscript {0}
         working-directory: ${{ inputs.package-subdirectory }}
-        continue-on-error: ${{ env.allow-failure }}
 
       - name: Run oysteR scan on renv.lock 🔒
         run: |
@@ -104,7 +103,7 @@ jobs:
                 if(nrow(deps_with_vulnerabilities) > 0) {
                   message("❗ Vulnerabilities found in the following dependencies:")
                   message(deps_with_vulnerabilities["package"])
-                  quit(status=1)
+                  if ("${{ env.allow-failure }}" == "true") quit(status=1)
                 }
               } else {
                 print("No renv.lock file, not scanning.")
@@ -116,4 +115,3 @@ jobs:
             }
           )
         shell: Rscript {0}
-        continue-on-error: ${{ env.allow-failure }}
