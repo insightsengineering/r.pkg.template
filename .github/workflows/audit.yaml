@@ -20,6 +20,11 @@ on:
         required: false
         type: string
         default: "."
+      allow-failure:
+        description: Allow workflow to fail if one or more vulnerabilities are found.
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   audit:
@@ -33,6 +38,18 @@ jobs:
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
+
+      - name: Normalize inputs 🛠️
+        id: normalizer
+        run: |
+          ALLOW_FAILURE="${{ inputs.allow-failure }}"
+          if [ "$ALLOW_FAILURE" == "" ]
+          then {
+            ALLOW_FAILURE=false
+          }
+          fi
+          echo "allow-failure=$ALLOW_FAILURE" >> "$GITHUB_ENV"
+        shell: bash
 
       - name: Run oysteR scan on dependencies 🔍
         run: |
@@ -56,7 +73,7 @@ jobs:
               if(nrow(deps_with_vulnerabilities) > 0) {
                 message("❗ Vulnerabilities found in the following dependencies:")
                 message(deps_with_vulnerabilities["package"])
-                quit(status=1)
+                if ("${{ env.allow-failure }}" == "true") quit(status=1)
               }
             },
             error =  function(e) {
@@ -86,7 +103,7 @@ jobs:
                 if(nrow(deps_with_vulnerabilities) > 0) {
                   message("❗ Vulnerabilities found in the following dependencies:")
                   message(deps_with_vulnerabilities["package"])
-                  quit(status=1)
+                  if ("${{ env.allow-failure }}" == "true") quit(status=1)
                 }
               } else {
                 print("No renv.lock file, not scanning.")
