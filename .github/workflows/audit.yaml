@@ -20,6 +20,11 @@ on:
         required: false
         type: string
         default: "."
+      allow-failure:
+        description: Allow workflow to fail if one or more vulnerabilities are found.
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   audit:
@@ -66,6 +71,7 @@ jobs:
           )
         shell: Rscript {0}
         working-directory: ${{ inputs.package-subdirectory }}
+        continue-on-error: ${{ inputs.allow-failure }}
 
       - name: Run oysteR scan on renv.lock 🔒
         run: |
@@ -98,3 +104,4 @@ jobs:
             }
           )
         shell: Rscript {0}
+        continue-on-error: ${{ inputs.allow-failure }}
