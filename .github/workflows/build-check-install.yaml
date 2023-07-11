@@ -322,18 +322,11 @@ jobs:
         shell: Rscript {0}
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
-      - name: Get package name
+      - name: Get package name 📦
         run: |
           echo "PKGBUILD=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION)_"\
           "$(awk -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION).tar.gz)" >> $GITHUB_ENV
           echo "PKGNAME=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION))" >> $GITHUB_ENV
-        shell: bash
-        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
-
-      - name: Debug package name
-        run: |
-          echo "PKGBUILD = ${{ env.PKGBUILD }}"
-          echo "PKGNAME = ${{ env.PKGNAME }}"
         shell: bash
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
