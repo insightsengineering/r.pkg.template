@@ -801,7 +801,6 @@ jobs:
           echo "PKGBUILD=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION))_\
           ${{ env.RELEASE_VERSION }}.tar.gz" >> $GITHUB_ENV
         shell: bash
-        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Download artifact ⏬
         uses: actions/download-artifact@v3
