@@ -21,6 +21,11 @@ on:
         required: false
         default: false
         type: boolean
+      enable-annotations:
+        description: Enable creation of GitHub annotations
+        required: false
+        default: false
+        type: boolean
 concurrency:
   group: grammar-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
@@ -116,12 +121,15 @@ jobs:
 
       - name: Check whether annotations exist 💭
         id: check-annotations
+        if: inputs.enable-annotations
         uses: andstor/file-existence-action@v2
         with:
           files: "annotations.json"
 
       - name: Annotate files for grammar suggestions ✍️
-        if: steps.check-annotations.outputs.files_exists == 'true'
+        if: >
+          steps.check-annotations.outputs.files_exists == 'true'
+            && inputs.enable-annotations
         uses: kibalabs/github-action-create-annotations@v0.2.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
