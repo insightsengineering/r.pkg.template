@@ -52,7 +52,7 @@ jobs:
           exclude: inst/extdata/*
           path: ${{ env.package_subdirectory }}
 
-      - name: Clean up WORDLIST 🫧
+      - name: Clean up WORDLIST 🧼
         run: |
           x <- readLines('inst/WORDLIST')
           file.remove('inst/WORDLIST')
