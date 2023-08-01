@@ -64,6 +64,10 @@ jobs:
           }
         shell: Rscript {0}
 
+      - name: git safe directory
+        run: |
+          git config --global --add safe.directory $(pwd)
+
       - name: Commit and push changes 📌
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
