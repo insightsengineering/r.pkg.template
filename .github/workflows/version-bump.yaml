@@ -124,7 +124,6 @@ jobs:
           pre-commit autoupdate
 
       - name: Checkout to main 🛎
-        if: ${{ inputs.vbump-after-release == true }}
         run: |
           git fetch origin main
           git checkout main
@@ -134,9 +133,9 @@ jobs:
         id: file-pattern
         run: |
           if [[ "${{ inputs.package-subdirectory }}" == "." ]]; then
-            FILE_PATTERN="NEWS.md DESCRIPTION inst/WORDLIST"
+            FILE_PATTERN="NEWS.md DESCRIPTION"
           else
-            FILE_PATTERN="${{ inputs.package-subdirectory }}/NEWS.md ${{ inputs.package-subdirectory }}/DESCRIPTION ${{ inputs.package-subdirectory }}/inst/WORDLIST"
+            FILE_PATTERN="${{ inputs.package-subdirectory }}/NEWS.md ${{ inputs.package-subdirectory }}/DESCRIPTION"
           fi
           echo "file-pattern=$FILE_PATTERN" >> $GITHUB_OUTPUT
         shell: bash
