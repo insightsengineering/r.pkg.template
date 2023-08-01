@@ -60,7 +60,7 @@ jobs:
           y <- readLines('inst/WORDLIST')
           if (length(setdiff(y, x)) == 0 && length(setdiff(x, y)) > 0) {
             message("Unnecessary entries on WORDLIST:")
-            message(setdiff(x, y))
+            message(cat(setdiff(x, y), sep='\n'))
           }
         shell: Rscript {0}
 
