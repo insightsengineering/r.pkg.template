@@ -52,11 +52,6 @@ jobs:
           exclude: inst/extdata/*
           path: ${{ env.package_subdirectory }}
 
-      - name: git safe directory 🦺
-        if: github.event_name == 'push'
-        run: |
-          git config --global --add safe.directory $(pwd)
-
       - name: Clean up WORDLIST 🧼
         if: github.event_name == 'push'
         run: |
@@ -74,6 +69,7 @@ jobs:
       - name: Checkout to main 🛎
         if: github.event_name == 'push'
         run: |
+          git config --global --add safe.directory $(pwd)
           git fetch origin main
           git checkout main
           git pull origin main
