@@ -125,6 +125,7 @@ jobs:
 
       - name: Clean up WORDLIST 🧼
         run: |
+          install.packages("spelling")
           x <- readLines('inst/WORDLIST')
           file.copy("inst/WORDLIST", "inst/WORDLIST.copy")
           file.remove('inst/WORDLIST')
