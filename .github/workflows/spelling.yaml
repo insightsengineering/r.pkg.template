@@ -54,6 +54,7 @@ jobs:
           git config --global --add safe.directory $(pwd)
 
       - name: Clean up WORDLIST 🧼
+        if: github.event_name == 'push'
         run: |
           x <- readLines('inst/WORDLIST')
           file.remove('inst/WORDLIST')
@@ -66,7 +67,15 @@ jobs:
           }
         shell: Rscript {0}
 
+      - name: Checkout to main 🛎
+        if: github.event_name == 'push'
+        run: |
+          git fetch origin main
+          git checkout main
+          git pull origin main
+
       - name: Set file pattern to commit ⚙️
+        if: github.event_name == 'push'
         id: file-pattern
         run: |
           if [[ "${{ inputs.package-subdirectory }}" == "." ]]; then

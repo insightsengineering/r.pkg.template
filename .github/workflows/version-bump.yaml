@@ -124,6 +124,7 @@ jobs:
           pre-commit autoupdate
 
       - name: Checkout to main 🛎
+        if: ${{ inputs.vbump-after-release == true }}
         run: |
           git fetch origin main
           git checkout main
