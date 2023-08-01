@@ -51,3 +51,25 @@ jobs:
         with:
           exclude: inst/extdata/*
           path: ${{ env.package_subdirectory }}
+
+      - name: Clean up WORDLIST
+        run: |
+          x <- readLines('inst/WORDLIST')
+          file.remove('inst/WORDLIST')
+          spelling::update_wordlist(confirm = FALSE)
+          y <- readLines('inst/WORDLIST')
+          if (length(setdiff(y, x)) == 0 && length(setdiff(x, y)) > 0) {
+            message("Unnecessary entries on WORDLIST:")
+            message(setdiff(x, y))
+          }
+        shell: Rscript {0}
+
+      - name: Commit and push changes 📌
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "[skip actions] Update WORDLIST"
+          file_pattern: "inst/WORDLIST"
+          commit_user_name: insights-engineering-bot
+          commit_user_email: >-
+            68416928+insights-engineering-bot@users.noreply.github.com
+        continue-on-error: true
