@@ -60,7 +60,6 @@ jobs:
           spelling::update_wordlist(confirm = FALSE)
           y <- readLines('inst/WORDLIST')
           if (length(setdiff(y, x)) == 0 && length(setdiff(x, y)) > 0) {
-            Sys.sleep(1)
             message("Unnecessary entries on WORDLIST:")
             message(cat(setdiff(x, y), sep='\n'))
           }
