@@ -69,6 +69,7 @@ jobs:
           git config --global --add safe.directory $(pwd)
 
       - name: Commit and push changes 📌
+        if: github.event_name != 'workflow_run'
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "[skip actions] Update WORDLIST"
