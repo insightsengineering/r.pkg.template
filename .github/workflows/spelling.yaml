@@ -53,6 +53,19 @@ jobs:
         run: |
           git config --global --add safe.directory $(pwd)
 
+      - name: Clean up WORDLIST 🧼
+        run: |
+          x <- readLines('inst/WORDLIST')
+          file.remove('inst/WORDLIST')
+          spelling::update_wordlist(confirm = FALSE)
+          y <- readLines('inst/WORDLIST')
+          if (length(setdiff(y, x)) == 0 && length(setdiff(x, y)) > 0) {
+            Sys.sleep(1)
+            message("Unnecessary entries on WORDLIST:")
+            message(cat(setdiff(x, y), sep='\n'))
+          }
+        shell: Rscript {0}
+
       - name: Commit and push changes 📌
         if: github.event_name == 'push'
         uses: stefanzweifel/git-auto-commit-action@v4

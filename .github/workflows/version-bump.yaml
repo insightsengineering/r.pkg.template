@@ -123,21 +123,6 @@ jobs:
           python -m pip -q install pre-commit
           pre-commit autoupdate
 
-      - name: Clean up WORDLIST 🧼
-        run: |
-          install.packages("spelling")
-          x <- readLines('inst/WORDLIST')
-          file.copy("inst/WORDLIST", "inst/WORDLIST.copy")
-          file.remove('inst/WORDLIST')
-          spelling::update_wordlist(confirm = FALSE)
-          y <- readLines('inst/WORDLIST')
-          if (length(setdiff(y, x)) == 0 && length(setdiff(x, y)) > 0) {
-            Sys.sleep(1)
-            message("Unnecessary entries on WORDLIST:")
-            message(cat(setdiff(x, y), sep='\n'))
-          }
-        shell: Rscript {0}
-
       - name: Checkout to main 🛎
         if: ${{ inputs.vbump-after-release == true }}
         run: |
