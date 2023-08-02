@@ -628,6 +628,13 @@ jobs:
           name: junit-xml-report-comparison
         continue-on-error: true
 
+      - name: Show R CMD check logs
+        run: |
+          find ${{ env.PKGNAME }}.Rcheck -type f -print0 | while IFS= read -r -d $'\0' file; do
+            printf "========================\n$file\n========================\n"
+            cat $file
+          done
+
       - name: Catch warnings in R CMD check output 🗳
         id: catch-errors
         run: |
