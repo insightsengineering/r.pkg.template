@@ -645,11 +645,11 @@ jobs:
             x <- tail(readLines(check_log), 1)
             if (grepl("ERROR", x)) {
               writeLines(readLines(check_log))
-              stop("❌ R CMD check has errors")
+              stop("❌ R CMD check has errors. Please refer to the 'Show R CMD check logs 🔎' step above.")
             }
             if (grepl("WARNING", x)) {
               writeLines(readLines(check_log))
-              stop("⚠ R CMD check has warnings")
+              stop("⚠ R CMD check has warnings. Please refer to the 'Show R CMD check logs 🔎' step above.")
             }
             if ("${{ inputs.enforce-note-blocklist }}" == "true") {
               print("Checking notes...")
@@ -668,7 +668,7 @@ jobs:
                 logical(1)
               )
               if (any(notes_result)) {
-                stop("NOTEs on the blocklist were found Please refer to the 'Run R CMD check 🏁' step above.")
+                stop("NOTEs on the blocklist were found. Please refer to the 'Run R CMD check 🏁' step above.")
               }
             }
           }
