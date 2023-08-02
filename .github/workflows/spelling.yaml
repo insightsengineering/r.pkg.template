@@ -51,3 +51,47 @@ jobs:
         with:
           exclude: inst/extdata/*
           path: ${{ env.package_subdirectory }}
+
+      - name: Clean up WORDLIST 🧼
+        if: github.event_name == 'push'
+        run: |
+          x <- readLines('inst/WORDLIST')
+          file.remove('inst/WORDLIST')
+          spelling::update_wordlist(confirm = FALSE)
+          y <- readLines('inst/WORDLIST')
+          if (length(setdiff(y, x)) == 0 && length(setdiff(x, y)) > 0) {
+            message("Unnecessary entries on WORDLIST:")
+            message(cat(setdiff(x, y), sep='\n'))
+          }
+        shell: Rscript {0}
+
+      - name: Checkout to main 🛎
+        if: github.event_name == 'push'
+        run: |
+          git config --global --add safe.directory $(pwd)
+          git fetch origin main
+          git checkout main
+          git pull origin main
+
+      - name: Set file pattern to commit ⚙️
+        if: github.event_name == 'push'
+        id: file-pattern
+        run: |
+          if [[ "${{ inputs.package-subdirectory }}" == "." ]]; then
+            FILE_PATTERN="inst/WORDLIST"
+          else
+            FILE_PATTERN="${{ inputs.package-subdirectory }}/inst/WORDLIST"
+          fi
+          echo "file-pattern=$FILE_PATTERN" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Commit and push changes 📌
+        if: github.event_name == 'push'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "[skip actions] Update WORDLIST"
+          file_pattern: "${{ steps.file-pattern.outputs.file-pattern }}"
+          commit_user_name: insights-engineering-bot
+          commit_user_email: >-
+            68416928+insights-engineering-bot@users.noreply.github.com
+        continue-on-error: true
