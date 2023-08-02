@@ -634,6 +634,7 @@ jobs:
             printf "========================\n$file\n========================\n"
             cat $file
           done
+        shell: bash
 
       - name: Catch warnings in R CMD check output 🗳
         id: catch-errors
