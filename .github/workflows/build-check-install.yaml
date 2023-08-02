@@ -628,12 +628,11 @@ jobs:
           name: junit-xml-report-comparison
         continue-on-error: true
 
-      - name: Show R CMD check logs
+      - name: Show R CMD check logs 🔎
         run: |
-          ls -l ${{ env.PKGNAME }}.Rcheck
           find ${{ env.PKGNAME }}.Rcheck -type f -regextype posix-egrep \
             -regex '.*00install.out|.*00check.log' -print0 | while IFS= read -r -d $'\0' file; do
-            printf "========================\n$file\n========================\n"
+            printf "==================================\n$file\n==================================\n"
             cat $file
           done
         shell: bash
