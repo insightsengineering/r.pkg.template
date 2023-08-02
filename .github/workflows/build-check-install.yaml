@@ -631,7 +631,7 @@ jobs:
       - name: Show R CMD check logs 🔎
         run: |
           find ${{ env.PKGNAME }}.Rcheck -type f -regextype posix-egrep \
-            -regex '.*00install.out|.*00check.log' -print0 | while IFS= read -r -d $'\0' file; do
+            -regex '.*00install.out|.*00check.log|.*00build.out' -print0 | while IFS= read -r -d $'\0' file; do
             printf "==================================\n$file\n==================================\n"
             cat $file
           done
