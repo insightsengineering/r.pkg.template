@@ -629,6 +629,7 @@ jobs:
         continue-on-error: true
 
       - name: Show R CMD check logs 🔎
+        if: inputs.skip-r-cmd-check != 'true'
         run: |
           find ${{ env.PKGNAME }}.Rcheck -type f -regextype posix-egrep \
             -regex '.*00install.out|.*00check.log|.*00build.out' -print0 | while IFS= read -r -d $'\0' file; do
