@@ -236,16 +236,16 @@ jobs:
       - name: Upload docs to gh-pages 📙
         if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'push'
         run: |
-          mkdir -p gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
-          ls -l gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
+          GH_PAGES_DIR="gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}"
+          mkdir -p $GH_PAGES_DIR
+          ls -l $GH_PAGES_DIR
           # Remove contents except coverage-report and unit-test-report directories.
-          find gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }} -mindepth 1 -maxdepth 1 \
+          find $GH_PAGES_DIR -mindepth 1 -maxdepth 1 \
             ! -name coverage-report ! -name unit-test-report -exec rm -rf {} +
-          ls -l gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
+          ls -l $GH_PAGES_DIR
           # Copy generated pkgdown documentation to gh-pages branch.
-          cp -a ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/docs/. \
-            gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
-          ls -l gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
+          cp -a ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/docs/. $GH_PAGES_DIR
+          ls -l $GH_PAGES_DIR
           cd gh-pages
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
