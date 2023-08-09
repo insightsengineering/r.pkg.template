@@ -125,6 +125,9 @@ jobs:
         && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+    # Only one job can publish to gh-pages branch concurrently.
+    concurrency:
+      group: ghpages
     steps:
       - name: Setup token 🔑
         id: github-token
@@ -219,16 +222,11 @@ jobs:
             fi
           }
           fi
-          echo "Listing docs directory"
-          pwd
-          ls -la docs
         shell: bash
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Checkout gh-pages branch
-        if: >
-          github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
-            || github.event_name == 'push'
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'push'
         uses: actions/checkout@v3
         with:
           path: "gh-pages"
@@ -236,15 +234,14 @@ jobs:
           ref: "gh-pages"
 
       - name: Upload docs to gh-pages
-        if: >
-          github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
-            || github.event_name == 'push'
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'push'
         run: |
           mkdir -p gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
-          # Remove contents except coverage-report and unit-test-report directories.
           ls -l gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
+          # Remove contents except coverage-report and unit-test-report directories.
           find gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }} -mindepth 1 -maxdepth 1 ! -name coverage-report ! -name unit-test-report -exec rm -rf {} +
           ls -l gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
+          # Copy generated pkgdown documentation to gh-pages branch.
           cp -a ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/docs/. gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
           ls -l gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
           cd gh-pages
@@ -272,29 +269,6 @@ jobs:
         with:
           name: pkgdown.zip
           path: pkgdown.zip
-
-      # - name: Publish docs 📢
-      #   if: github.event_name == 'push'
-      #   run: |
-      #     git config --local user.email "actions@github.com"
-      #     git config --local user.name "GitHub Actions"
-      #     BRANCH_OR_TAG="${GITHUB_REF##*/}"
-      #     if [ "${{ inputs.additional-env-vars }}" != "" ]
-      #     then {
-      #       echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
-      #       export $(tr '\n' ' ' < /tmp/dotenv.env)
-      #     }
-      #     fi
-      #     Rscript - <<EOF
-      #     if (file.exists("renv.lock")) renv::restore()
-      #     pkgdown::deploy_to_branch(
-      #       new_process = FALSE,
-      #       subdir = "${BRANCH_OR_TAG}",
-      #       clean = TRUE
-      #     )
-      #     EOF
-      #   shell: bash
-      #   working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
   multi-version-docs:
     name: Multi-version docs 📑
