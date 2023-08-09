@@ -205,6 +205,8 @@ jobs:
             fi
           }
           fi
+          echo "Listing docs directory"
+          ls -la docs
         shell: bash
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
@@ -223,28 +225,28 @@ jobs:
           name: pkgdown.zip
           path: pkgdown.zip
 
-      - name: Publish docs 📢
-        if: github.event_name == 'push'
-        run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-          BRANCH_OR_TAG="${GITHUB_REF##*/}"
-          if [ "${{ inputs.additional-env-vars }}" != "" ]
-          then {
-            echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
-            export $(tr '\n' ' ' < /tmp/dotenv.env)
-          }
-          fi
-          Rscript - <<EOF
-          if (file.exists("renv.lock")) renv::restore()
-          pkgdown::deploy_to_branch(
-            new_process = FALSE,
-            subdir = "${BRANCH_OR_TAG}",
-            clean = TRUE
-          )
-          EOF
-        shell: bash
-        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+      # - name: Publish docs 📢
+      #   if: github.event_name == 'push'
+      #   run: |
+      #     git config --local user.email "actions@github.com"
+      #     git config --local user.name "GitHub Actions"
+      #     BRANCH_OR_TAG="${GITHUB_REF##*/}"
+      #     if [ "${{ inputs.additional-env-vars }}" != "" ]
+      #     then {
+      #       echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
+      #       export $(tr '\n' ' ' < /tmp/dotenv.env)
+      #     }
+      #     fi
+      #     Rscript - <<EOF
+      #     if (file.exists("renv.lock")) renv::restore()
+      #     pkgdown::deploy_to_branch(
+      #       new_process = FALSE,
+      #       subdir = "${BRANCH_OR_TAG}",
+      #       clean = TRUE
+      #     )
+      #     EOF
+      #   shell: bash
+      #   working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
   multi-version-docs:
     name: Multi-version docs 📑
