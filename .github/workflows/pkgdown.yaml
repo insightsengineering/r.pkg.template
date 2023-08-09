@@ -181,7 +181,9 @@ jobs:
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Build docs 🏗
-        if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
+        if: >
+          github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
+            || github.event_name == 'push'
         run: |
           repo="${{ github.event.repository.name }}"
           if [ "${{ inputs.additional-env-vars }}" != "" ]
