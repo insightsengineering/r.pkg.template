@@ -220,6 +220,7 @@ jobs:
           }
           fi
           echo "Listing docs directory"
+          pwd
           ls -la docs
         shell: bash
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
@@ -228,7 +229,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ steps.github-token.outputs.token }}
-          publish_dir: ./docs
+          publish_dir: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/docs
           destination_dir: ${{ steps.current-branch-or-tag.outputs.ref-name }}
 
       - name: Create documentation artifact 📂
