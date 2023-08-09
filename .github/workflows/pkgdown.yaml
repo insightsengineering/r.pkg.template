@@ -221,6 +221,8 @@ jobs:
           fi
           echo "Listing docs directory"
           ls -la docs
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Upload JUnit HTML report to GitHub pages 🗞️
         uses: peaceiris/actions-gh-pages@v3
@@ -228,9 +230,6 @@ jobs:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./docs
           destination_dir: ${{ steps.current-branch-or-tag.outputs.ref-name }}
-
-        shell: bash
-        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Create documentation artifact 📂
         if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
