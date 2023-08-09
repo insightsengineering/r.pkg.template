@@ -142,6 +142,18 @@ jobs:
         id: branch-name
         uses: tj-actions/branch-names@v6
 
+      - name: Get current branch or tag 🏷️
+        id: current-branch-or-tag
+        run: |
+          if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
+            echo "Current tag: ${{ steps.branch-name.outputs.tag }}"
+            echo "ref-name=${{ steps.branch-name.outputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "Current branch: ${{ steps.branch-name.outputs.current_branch }}"
+            echo "ref-name=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v3
         if: github.event_name == 'pull_request'
@@ -209,6 +221,14 @@ jobs:
           fi
           echo "Listing docs directory"
           ls -la docs
+
+      - name: Upload JUnit HTML report to GitHub pages 🗞️
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ steps.github-token.outputs.token }}
+          publish_dir: ./docs
+          destination_dir: ${{ steps.current-branch-or-tag.outputs.ref-name }}
+
         shell: bash
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
