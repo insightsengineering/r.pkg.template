@@ -225,12 +225,34 @@ jobs:
         shell: bash
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
-      - name: Upload JUnit HTML report to GitHub pages 🗞️
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Checkout gh-pages branch
+        if: >
+          github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
+            || github.event_name == 'push'
+        uses: actions/checkout@v3
         with:
-          github_token: ${{ steps.github-token.outputs.token }}
-          publish_dir: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/docs
-          destination_dir: ${{ steps.current-branch-or-tag.outputs.ref-name }}
+          path: "gh-pages"
+          fetch-depth: 0
+
+      - name: Upload docs to gh-pages
+        if: >
+          github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
+            || github.event_name == 'push'
+        run: |
+          mkdir -p gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
+          # Remove contents except coverage-reports and unit-test-reports directories.
+          find gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }} -mindepth 1 -maxdepth 1 ! -name coverage-reports ! -name unit-test-reports -exec rm -rf {} +
+          ls -lR gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
+          cp -a ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/docs/. gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
+          ls -lR gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
+          cd gh-pages
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config pull.rebase false
+          git pull origin gh-pages || true
+          git add -f .
+          git commit -m "Update pkgdown documentation ${{ github.sha }}" || true
+        shell: bash
 
       - name: Create documentation artifact 📂
         if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
