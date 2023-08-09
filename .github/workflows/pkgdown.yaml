@@ -233,6 +233,7 @@ jobs:
         with:
           path: "gh-pages"
           fetch-depth: 0
+          ref: "gh-pages"
 
       - name: Upload docs to gh-pages
         if: >
@@ -240,18 +241,21 @@ jobs:
             || github.event_name == 'push'
         run: |
           mkdir -p gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
-          # Remove contents except coverage-reports and unit-test-reports directories.
-          find gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }} -mindepth 1 -maxdepth 1 ! -name coverage-reports ! -name unit-test-reports -exec rm -rf {} +
-          ls -lR gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
+          # Remove contents except coverage-report and unit-test-report directories.
+          ls -l gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
+          find gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }} -mindepth 1 -maxdepth 1 ! -name coverage-report ! -name unit-test-report -exec rm -rf {} +
+          ls -l gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
           cp -a ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/docs/. gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
-          ls -lR gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
+          ls -l gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}
           cd gh-pages
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git config pull.rebase false
+          git status
           git pull origin gh-pages || true
           git add -f .
           git commit -m "Update pkgdown documentation ${{ github.sha }}" || true
+          git push origin gh-pages
         shell: bash
 
       - name: Create documentation artifact 📂
