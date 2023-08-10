@@ -125,6 +125,9 @@ jobs:
         && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+    # Only one job can publish to gh-pages branch concurrently.
+    concurrency:
+      group: ghpages
     steps:
       - name: Setup token 🔑
         id: github-token
@@ -141,6 +144,18 @@ jobs:
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v6
+
+      - name: Get current branch or tag 🏷️
+        id: current-branch-or-tag
+        run: |
+          if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
+            echo "Current tag: ${{ steps.branch-name.outputs.tag }}"
+            echo "ref-name=${{ steps.branch-name.outputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "Current branch: ${{ steps.branch-name.outputs.current_branch }}"
+            echo "ref-name=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
 
       - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v3
@@ -181,7 +196,9 @@ jobs:
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Build docs 🏗
-        if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
+        if: >
+          github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
+            || github.event_name == 'push'
         run: |
           repo="${{ github.event.repository.name }}"
           if [ "${{ inputs.additional-env-vars }}" != "" ]
@@ -208,6 +225,38 @@ jobs:
         shell: bash
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
+      - name: Checkout gh-pages 🛎
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'push'
+        uses: actions/checkout@v3
+        with:
+          path: "gh-pages"
+          fetch-depth: 0
+          ref: "gh-pages"
+
+      - name: Upload docs to gh-pages 📙
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'push'
+        run: |
+          GH_PAGES_DIR="gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}"
+          mkdir -p $GH_PAGES_DIR
+          ls -l $GH_PAGES_DIR
+          # Remove contents except coverage-report and unit-test-report directories.
+          find $GH_PAGES_DIR -mindepth 1 -maxdepth 1 \
+            ! -name coverage-report ! -name unit-test-report -exec rm -rf {} +
+          ls -l $GH_PAGES_DIR
+          # Copy generated pkgdown documentation to gh-pages branch.
+          cp -a ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/docs/. $GH_PAGES_DIR
+          ls -l $GH_PAGES_DIR
+          cd gh-pages
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config pull.rebase false
+          git status
+          git pull origin gh-pages || true
+          git add -f .
+          git commit -m "Update pkgdown documentation ${{ github.sha }}" || true
+          git push origin gh-pages
+        shell: bash
+
       - name: Create documentation artifact 📂
         if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
         run: |
@@ -222,29 +271,6 @@ jobs:
         with:
           name: pkgdown.zip
           path: pkgdown.zip
-
-      - name: Publish docs 📢
-        if: github.event_name == 'push'
-        run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-          BRANCH_OR_TAG="${GITHUB_REF##*/}"
-          if [ "${{ inputs.additional-env-vars }}" != "" ]
-          then {
-            echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
-            export $(tr '\n' ' ' < /tmp/dotenv.env)
-          }
-          fi
-          Rscript - <<EOF
-          if (file.exists("renv.lock")) renv::restore()
-          pkgdown::deploy_to_branch(
-            new_process = FALSE,
-            subdir = "${BRANCH_OR_TAG}",
-            clean = TRUE
-          )
-          EOF
-        shell: bash
-        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
   multi-version-docs:
     name: Multi-version docs 📑
