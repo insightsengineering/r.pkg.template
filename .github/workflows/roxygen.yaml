@@ -115,7 +115,7 @@ jobs:
           con <- file(logfile)
           sink(con, append = TRUE, split = TRUE)
           sink(con, append = TRUE, type = "message")
-          roxygen2::roxygenize('.', roclets = c('rd', 'collate', 'namespace'))
+          roxygen2::roxygenize('.')
           sink()
           sink(type = "message")
           logs <- readLines(logfile)
