@@ -151,6 +151,16 @@ on:
         required: false
         type: string
         default: ""
+      additional-caches:
+        description: |
+          Additional cache directories. One cache path per new line.
+          Example usage:
+          additional-caches: |
+            ~/awesome-cache
+            /tmp/some-cache
+        required: false
+        type: string
+        default: ""
 
 concurrency:
   group: r-cmd-${{ github.event.pull_request.number || github.ref }}
@@ -351,6 +361,13 @@ jobs:
           fi
         shell: bash
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+
+      - name: Restore any additional caches 📥
+        if: inputs.additional-caches != ''
+        uses: actions/cache@v3
+        with:
+          path: "${{ inputs.additional-caches }}"
+          key: additional-caches-${{ runner.os }}
 
       - name: Build R package 🏗
         run: |
