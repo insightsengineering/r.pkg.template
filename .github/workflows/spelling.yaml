@@ -15,6 +15,10 @@ on:
       - main
   workflow_dispatch:
   workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: Github token with write access to the repo
+        required: false
     inputs:
       package-subdirectory:
         description: Subdirectory in the repository, where the R package is located.
@@ -37,8 +41,22 @@ jobs:
       image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
 
     steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Checkout Code 🛎
         uses: actions/checkout@v3
+        with:
+          token: ${{ steps.github-token.outputs.token }}
 
       - name: Normalize variables 📏
         run: |
