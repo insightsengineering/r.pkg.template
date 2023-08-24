@@ -23,6 +23,8 @@ jobs:
     uses: insightsengineering/r.pkg.template/.github/workflows/pkgdown.yaml@main
     secrets:
       REPO_GITHUB_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
+    with:
+      default-landing-page: latest-tag
   validation:
     name: R Package Validation report 📃
     needs: release
@@ -32,5 +34,21 @@ jobs:
   release:
     name: Create release 🎉
     uses: insightsengineering/r.pkg.template/.github/workflows/release.yaml@main
-    permissions:
-      contents: write
+    secrets:
+      REPO_GITHUB_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
+  r-cmd:
+    name: R CMD Check 🧬
+    needs: [release, docs]
+    uses: insightsengineering/r.pkg.template/.github/workflows/build-check-install.yaml@main
+    secrets:
+      REPO_GITHUB_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
+    with:
+      additional-env-vars: |
+        _R_CHECK_CRAN_INCOMING_REMOTE_=false
+      additional-r-cmd-check-params: --as-cran
+  coverage:
+    name: Coverage 📔
+    needs: [release, docs]
+    uses: insightsengineering/r.pkg.template/.github/workflows/test-coverage.yaml@main
+    secrets:
+      REPO_GITHUB_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}

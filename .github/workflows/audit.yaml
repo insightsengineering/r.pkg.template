@@ -14,12 +14,23 @@ on:
       - main
   workflow_dispatch:
   workflow_call:
+    inputs:
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
+      allow-failure:
+        description: Allow workflow to fail if one or more vulnerabilities are found.
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   audit:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.2.2_bioc_3.16:latest
+      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
     name: oysteR scan 🦪
     if: >
       !contains(github.event.commits[0].message, '[skip audit]')
@@ -27,6 +38,18 @@ jobs:
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
+
+      - name: Normalize inputs 🛠️
+        id: normalizer
+        run: |
+          ALLOW_FAILURE="${{ inputs.allow-failure }}"
+          if [ "$ALLOW_FAILURE" == "" ]
+          then {
+            ALLOW_FAILURE=false
+          }
+          fi
+          echo "allow-failure=$ALLOW_FAILURE" >> "$GITHUB_ENV"
+        shell: bash
 
       - name: Run oysteR scan on dependencies 🔍
         run: |
@@ -45,6 +68,13 @@ jobs:
                   "no_of_vulnerabilities"
                 )]
               ))
+              Sys.sleep(1)
+              deps_with_vulnerabilities = subset(dependencies_scan, no_of_vulnerabilities > 0)
+              if(nrow(deps_with_vulnerabilities) > 0) {
+                message("❗ Vulnerabilities found in the following dependencies:")
+                message(deps_with_vulnerabilities["package"])
+                if ("${{ env.allow-failure }}" == "true") quit(status=1)
+              }
             },
             error =  function(e) {
               message('🚨 Caught an error!')
@@ -52,6 +82,7 @@ jobs:
             }
           )
         shell: Rscript {0}
+        working-directory: ${{ inputs.package-subdirectory }}
 
       - name: Run oysteR scan on renv.lock 🔒
         run: |
@@ -67,6 +98,13 @@ jobs:
                     "no_of_vulnerabilities"
                   )]
                 ))
+                Sys.sleep(1)
+                deps_with_vulnerabilities = subset(renv_lock_scan, no_of_vulnerabilities > 0)
+                if(nrow(deps_with_vulnerabilities) > 0) {
+                  message("❗ Vulnerabilities found in the following dependencies:")
+                  message(deps_with_vulnerabilities["package"])
+                  if ("${{ env.allow-failure }}" == "true") quit(status=1)
+                }
               } else {
                 print("No renv.lock file, not scanning.")
               }

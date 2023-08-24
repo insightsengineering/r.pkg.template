@@ -1,0 +1,105 @@
+---
+name: Dependency Test 🔢
+
+on:
+  workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with read access to repositories, required for dependencies installation
+        required: false
+      GCHAT_WEBHOOK:
+        description: |
+          Google Chat webhook to send failure notifications
+        required: false
+    inputs:
+      check-args:
+        description: Additional check arguments.
+        required: false
+        default: ""
+        type: string
+      build-args:
+        description: Additional build arguments.
+        required: false
+        default: ""
+        type: string
+      strategy:
+        description: |
+          Strategy to test package dependencies. One of: min, release, max.
+        required: true
+        type: string
+      additional-env-vars:
+        description: |
+          Extra environment variables, as a 'key=value' pair, with each pair on a new line.
+          Example usage:
+          additional-env-vars: |
+            ABC=123
+            XYZ=456
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  dependency-test:
+    name: Dependency Test 🔢
+    runs-on: ubuntu-latest
+    if: >
+      !contains(github.event.commits[0].message, '[skip dependency-test]')
+        && github.event.pull_request.draft == false
+    container:
+      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+
+    steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Checkout Code 🛎
+        uses: actions/checkout@v3
+
+      - name: Normalize variables 📏
+        run: |
+          strategy="${{ inputs.strategy }}"
+          echo "strategy=${strategy:-release}" >> $GITHUB_ENV
+          echo "gchat_webhook=${{ secrets.GCHAT_WEBHOOK }}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Dependency Test - ${{ env.strategy }} 🔢
+        id: verdepcheck
+        uses: insightsengineering/r-verdepcheck-action@main
+        with:
+          github-token: ${{ steps.github-token.outputs.token }}
+          check-args: ${{ inputs.check-args }}
+          build-args: ${{ inputs.build-args }}
+          additional-env-vars:  ${{ inputs.additional-env-vars }}
+          strategy: ${{ env.strategy }}
+
+      - name: GChat notification 🔔
+        if: (failure() || cancelled()) && steps.verdepcheck.outcome != 'success' && env.gchat_webhook != ''
+        uses: insightsengineering/google-chat-notification@master
+        with:
+          name: ${{ github.event.repository.name }} - Dependency Test - ${{ env.strategy }}
+          url: ${{ secrets.GCHAT_WEBHOOK }}
+          status: ${{ job.status }}
+
+      - name: Upload lock file ⤴️
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: "lock-file-${{ env.strategy }}"
+          path: pkg.lock
+
+      - name: Upload output file ⤴️
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: "res-${{ env.strategy }}"
+          path: res.RDS

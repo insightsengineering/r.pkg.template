@@ -15,7 +15,17 @@ on:
       - main
   workflow_dispatch:
   workflow_call:
-
+    inputs:
+      passive-voice:
+        description: Enable checks for passive voice
+        required: false
+        default: false
+        type: boolean
+      enable-annotations:
+        description: Enable creation of GitHub annotations
+        required: false
+        default: false
+        type: boolean
 concurrency:
   group: grammar-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
@@ -53,7 +63,7 @@ jobs:
 
       - name: Get changed files 🗞
         id: changed-files
-        uses: tj-actions/changed-files@v35
+        uses: tj-actions/changed-files@v37
         with:
           separator: ","
           files: |
@@ -78,11 +88,16 @@ jobs:
             }
             let files = changedFiles.split(",");
             let allSuggestions = [];
+            var inputs = ${{ toJSON(inputs) }};
+            var passiveVoice = inputs['passive-voice'];
+            if (typeof passiveVoice === 'undefined') {
+              passiveVoice = false;
+            }
             files.forEach((file) => {
-              if (fs.lstatSync(file).isFile() && 
+              if (fs.lstatSync(file).isFile() &&
                   !path.dirname(file).startsWith("node_modules")) {
                 const contents = fs.readFileSync(file, 'utf8');
-                const suggestions = writeGood(contents);
+                const suggestions = writeGood(contents, { passive : passiveVoice });
                 const annotations = writeGood.annotate(contents, suggestions, true);
                 if (annotations.length) {
                   for (var i=0; i < annotations.length; i++) {
@@ -106,12 +121,15 @@ jobs:
 
       - name: Check whether annotations exist 💭
         id: check-annotations
+        if: inputs.enable-annotations
         uses: andstor/file-existence-action@v2
         with:
           files: "annotations.json"
 
       - name: Annotate files for grammar suggestions ✍️
-        if: steps.check-annotations.outputs.files_exists == 'true'
+        if: >
+          steps.check-annotations.outputs.files_exists == 'true'
+            && inputs.enable-annotations
         uses: kibalabs/github-action-create-annotations@v0.2.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

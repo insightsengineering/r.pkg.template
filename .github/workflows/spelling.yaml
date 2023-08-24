@@ -15,6 +15,16 @@ on:
       - main
   workflow_dispatch:
   workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: Github token with write access to the repo
+        required: false
+    inputs:
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
 
 concurrency:
   group: spelling-${{ github.event.pull_request.number || github.ref }}
@@ -28,13 +38,78 @@ jobs:
       !contains(github.event.commits[0].message, '[skip spelling]')
         && github.event.pull_request.draft == false
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.2.2_bioc_3.16:latest
+      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
 
     steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Checkout Code 🛎
         uses: actions/checkout@v3
+        with:
+          token: ${{ steps.github-token.outputs.token }}
+
+      - name: Normalize variables 📏
+        run: |
+          package_subdirectory_input="${{ inputs.package-subdirectory }}"
+          echo "package_subdirectory=${package_subdirectory_input:-.}" >> $GITHUB_ENV
+        shell: bash
 
       - name: Run Spellcheck 👟
         uses: insightsengineering/r-spellcheck-action@v2
         with:
           exclude: inst/extdata/*
+          path: ${{ env.package_subdirectory }}
+
+      - name: Clean up WORDLIST 🧼
+        if: github.event_name == 'push'
+        run: |
+          x <- readLines('inst/WORDLIST')
+          file.remove('inst/WORDLIST')
+          spelling::update_wordlist(confirm = FALSE)
+          y <- readLines('inst/WORDLIST')
+          if (length(setdiff(y, x)) == 0 && length(setdiff(x, y)) > 0) {
+            message("Unnecessary entries on WORDLIST:")
+            message(cat(setdiff(x, y), sep='\n'))
+          }
+        shell: Rscript {0}
+
+      - name: Checkout to main 🛎
+        if: github.event_name == 'push'
+        run: |
+          git config --global --add safe.directory $(pwd)
+          git fetch origin main
+          git checkout main
+          git pull origin main
+
+      - name: Set file pattern to commit ⚙️
+        if: github.event_name == 'push'
+        id: file-pattern
+        run: |
+          if [[ "${{ inputs.package-subdirectory }}" == "." ]]; then
+            FILE_PATTERN="inst/WORDLIST"
+          else
+            FILE_PATTERN="${{ inputs.package-subdirectory }}/inst/WORDLIST"
+          fi
+          echo "file-pattern=$FILE_PATTERN" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Commit and push changes 📌
+        if: github.event_name == 'push'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "[skip actions] Update WORDLIST"
+          file_pattern: "${{ steps.file-pattern.outputs.file-pattern }}"
+          commit_user_name: insights-engineering-bot
+          commit_user_email: >-
+            68416928+insights-engineering-bot@users.noreply.github.com
+        continue-on-error: true

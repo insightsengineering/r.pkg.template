@@ -1,0 +1,53 @@
+---
+name: Branch Cleanup 🍃
+
+on:
+  workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with write access to repository
+        required: false
+    inputs:
+      last-commit-age-days:
+        description: |
+          The branch will be removed if the last commit was added to it at least this many days ago.
+        default: 90
+        required: false
+        type: number
+
+jobs:
+  branch-cleanup:
+    name: Branch Cleanup 🍃
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+
+    steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Checkout Code 🛎
+        uses: actions/checkout@v3
+
+      - name: Cleanup branches 🌿
+        uses: phpdocker-io/github-actions-delete-abandoned-branches@v1
+        id: delete-branches
+        with:
+          github_token: ${{ steps.github-token.outputs.token }}
+          last_commit_age_days: ${{ inputs.last-commit-age-days }}
+          # Additional precaution against deleting main branch.
+          ignore_branches: main
+          dry_run: no
+
+      - name: Show deleted branches 🌿
+        run: "echo 'Deleted branches: ${{ steps.delete-branches.outputs.deleted_branches }}'"

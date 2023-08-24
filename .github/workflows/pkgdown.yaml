@@ -81,6 +81,36 @@ on:
         required: false
         type: string
         default: upstream
+      # If you provide latest-tag-alt-name and/or release-candidate-alt-name inputs
+      # to this workflow in some repo, you should also provide these inputs in
+      # R CMD check and Coverage workflows in order to make the unit test report
+      # and coverage report available in pkgdown documentation for the alt-names.
+      # Additionally, branches-or-tags-to-list input should be overridden with
+      # the additional alt-name inputs.
+      latest-tag-alt-name:
+        description: An alternate name for the 'latest-tag' documentation item
+        required: false
+        type: string
+        default: ''
+      release-candidate-alt-name:
+        description: An alternate name for the 'release-candidate' documentation item
+        required: false
+        type: string
+        default: ''
+      branches-or-tags-to-list:
+        description:
+          Which branches or tags should be listed under the
+          'Versions' dropdown menu on the landing page?
+          This input should be a regular expression in R.
+        required: false
+        type: string
+        default: >-
+          ^main$|^devel$|^pre-release$|^latest-tag$|^release-candidate$|^develop$|^v([0-9]+\\.)?([0-9]+\\.)?([0-9]+)|^v([0-9]+\\.)?([0-9]+\\.)?([0-9]+)(-rc[0-9]+)$
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
 
 concurrency:
   group: docs-${{ github.event.pull_request.number || github.ref }}
@@ -94,11 +124,38 @@ jobs:
       !contains(github.event.commits[0].message, '[skip docs]')
         && github.event.pull_request.draft == false
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.2.2_bioc_3.16:latest
+      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+    # Only one job can publish to gh-pages branch concurrently.
+    concurrency:
+      group: ghpages
     steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v6
+
+      - name: Get current branch or tag 🏷️
+        id: current-branch-or-tag
+        run: |
+          if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
+            echo "Current tag: ${{ steps.branch-name.outputs.tag }}"
+            echo "ref-name=${{ steps.branch-name.outputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "Current branch: ${{ steps.branch-name.outputs.current_branch }}"
+            echo "ref-name=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
 
       - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v3
@@ -124,9 +181,9 @@ jobs:
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@509_macos
         env:
-          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          path: ${{ github.event.repository.name }}
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
@@ -136,10 +193,12 @@ jobs:
           if (file.exists("renv.lock")) renv::restore()
           install.packages(".", repos=NULL, type="source")
         shell: Rscript {0}
-        working-directory: ${{ github.event.repository.name }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Build docs 🏗
-        if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
+        if: >
+          github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
+            || github.event_name == 'push'
         run: |
           repo="${{ github.event.repository.name }}"
           if [ "${{ inputs.additional-env-vars }}" != "" ]
@@ -164,12 +223,44 @@ jobs:
           }
           fi
         shell: bash
-        working-directory: ${{ github.event.repository.name }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+
+      - name: Checkout gh-pages 🛎
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'push'
+        uses: actions/checkout@v3
+        with:
+          path: "gh-pages"
+          fetch-depth: 0
+          ref: "gh-pages"
+
+      - name: Upload docs to gh-pages 📙
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'push'
+        run: |
+          GH_PAGES_DIR="gh-pages/${{ steps.current-branch-or-tag.outputs.ref-name }}"
+          mkdir -p $GH_PAGES_DIR
+          ls -l $GH_PAGES_DIR
+          # Remove contents except coverage-report and unit-test-report directories.
+          find $GH_PAGES_DIR -mindepth 1 -maxdepth 1 \
+            ! -name coverage-report ! -name unit-test-report -exec rm -rf {} +
+          ls -l $GH_PAGES_DIR
+          # Copy generated pkgdown documentation to gh-pages branch.
+          cp -a ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/docs/. $GH_PAGES_DIR
+          ls -l $GH_PAGES_DIR
+          cd gh-pages
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config pull.rebase false
+          git status
+          git pull origin gh-pages || true
+          git add -f .
+          git commit -m "Update pkgdown documentation ${{ github.sha }}" || true
+          git push origin gh-pages
+        shell: bash
 
       - name: Create documentation artifact 📂
         if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
         run: |
-          pushd ${{ github.event.repository.name }}/docs/
+          pushd ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/docs/
           zip -r9 $OLDPWD/pkgdown.zip *
           popd
         shell: bash
@@ -181,29 +272,6 @@ jobs:
           name: pkgdown.zip
           path: pkgdown.zip
 
-      - name: Publish docs 📢
-        if: github.event_name == 'push'
-        run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-          BRANCH_OR_TAG="${GITHUB_REF##*/}"
-          if [ "${{ inputs.additional-env-vars }}" != "" ]
-          then {
-            echo -e "${{ inputs.additional-env-vars }}" > /tmp/dotenv.env
-            export $(tr '\n' ' ' < /tmp/dotenv.env)
-          }
-          fi
-          Rscript - <<EOF
-          if (file.exists("renv.lock")) renv::restore()
-          pkgdown::deploy_to_branch(
-            new_process = FALSE,
-            subdir = "${BRANCH_OR_TAG}",
-            clean = TRUE
-          )
-          EOF
-        shell: bash
-        working-directory: ${{ github.event.repository.name }}
-
   multi-version-docs:
     name: Multi-version docs 📑
     needs: docs
@@ -212,7 +280,7 @@ jobs:
     concurrency:
       group: ghpages
     if: >
-      github.event_name == 'push'
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         && !contains(github.event.commits[0].message, '[skip docs]')
     steps:
       - name: Checkout repo 🛎
@@ -227,6 +295,9 @@ jobs:
           path: ${{ github.event.repository.name }}
           default-landing-page: ${{ inputs.default-landing-page }}
           refs-order: ${{ inputs.refs-order }}
+          latest-tag-alt-name: ${{ inputs.latest-tag-alt-name }}
+          release-candidate-alt-name: ${{ inputs.release-candidate-alt-name }}
+          branches-or-tags-to-list: ${{ inputs.branches-or-tags-to-list }}
 
   upload-release-assets:
     name: Upload documentation assets 🔼
@@ -244,7 +315,13 @@ jobs:
         with:
           name: pkgdown.zip
 
+      - name: Check if release exists
+        id: check-if-release-exists
+        uses: insightsengineering/release-existence-action@v1
+
       - name: Upload binaries to release ⤴
+        if: >-
+          steps.check-if-release-exists.outputs.release-exists == 'true'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}

@@ -15,6 +15,12 @@ on:
       - main
   workflow_dispatch:
   workflow_call:
+    inputs:
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
 
 concurrency:
   group: version-${{ github.event.pull_request.number || github.ref }}
@@ -45,3 +51,44 @@ jobs:
               exit 1
           fi
         shell: bash
+        working-directory: ${{ inputs.package-subdirectory }}
+
+  emoji:
+    name: Emoji in NEWS.md 📰
+    runs-on: ubuntu-latest
+    if: >
+      !contains(github.event.commits[0].message, '[skip version]')
+        && github.event.pull_request.draft == false
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v3
+
+      - name: Set up Python 🐍
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install the regex package 📦
+        uses: insightsengineering/pip-action@v2
+        with:
+          packages: regex
+
+      - name: Check for emojis in NEWS.md 🏁
+        run: |
+          import regex
+          import sys
+          with open('NEWS.md', 'r') as file:
+              text = file.read()
+          lines = text.split('\n')
+          emoji_pattern = regex.compile(r"(?![\d\p{P}])\p{Emoji}")
+          for line_num, line in enumerate(lines, start=1):
+              matches = [(match.group(), match.start(), match.end()) for match in emoji_pattern.finditer(line)]
+              for emoji, start, end in matches:
+                  print(f"Emoji: {emoji} | Line: {line_num} | Start: {start} | End: {end}")
+          if matches:
+              print("🚨 Emojis were found in the NEWS.md file! Please remove them 🙏")
+              print("ℹ️ Refer to https://github.com/insightsengineering/tern.gee/issues/37#issue-1714621201 for more information")
+              sys.exit(1)
+          print("🥰 No emojis found in the NEWS.md, good to go!")
+        shell: python
+        working-directory: ${{ inputs.package-subdirectory }}

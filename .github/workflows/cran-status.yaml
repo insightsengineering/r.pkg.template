@@ -1,0 +1,42 @@
+---
+name: CRAN Status
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      issue-assignees:
+        description: |
+          Whom should the issue be assigned to if errors are
+          encountered in the CRAN status checks?
+          This is a comma-separated string of GitHub usernames.
+          If undefined or empty, no assignments are made.
+        default: ''
+        required: false
+        type: string
+      statuses:
+        description: |
+          Create an issue if one or more of the following
+          statuses are reported on the check report.
+          This is a comma-separated string of statuses.
+          Allowed statuses are 'NOTE', 'WARN', and 'ERROR'
+        default: 'ERROR'
+        required: false
+        type: string
+
+concurrency:
+  group: cran-status-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cran-status:
+    name: Check Status
+    runs-on: ubuntu-latest
+    container:
+      image: rocker/tidyverse:latest
+    steps:
+      - name: Run CRAN Status Action
+        uses: insightsengineering/cran-status-action@main
+        with:
+          statuses: "${{ inputs.statuses }}"
+          issue-assignees: "${{ inputs.issue-assignees }}"

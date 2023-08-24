@@ -36,6 +36,11 @@ on:
         required: false
         type: string
         default: upstream
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: "."
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -54,9 +59,21 @@ jobs:
       !contains(github.event.commits[0].message, '[skip roxygen]')
         && github.event.pull_request.draft == false
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.2.2_bioc_3.16:latest
+      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
 
     steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v6
@@ -85,9 +102,9 @@ jobs:
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@509_macos
         env:
-          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          path: ${{ github.event.repository.name }}
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
@@ -98,7 +115,7 @@ jobs:
           con <- file(logfile)
           sink(con, append = TRUE, split = TRUE)
           sink(con, append = TRUE, type = "message")
-          roxygen2::roxygenize('.', roclets = c('rd', 'collate', 'namespace'))
+          roxygen2::roxygenize('.')
           sink()
           sink(type = "message")
           logs <- readLines(logfile)
@@ -115,7 +132,7 @@ jobs:
             stop("Please 🙏 fix the errors shown below this message 👇")
           }
         shell: Rscript {0}
-        working-directory: ${{ github.event.repository.name }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Roxygen check 🅾
         run: |
@@ -126,7 +143,7 @@ jobs:
             echo "🙈 Manuals are not up-to-date with roxygen comments!"
             echo "🔀 The following differences were noted:"
             git diff man/* DESCRIPTION
-            # Attempt to commit and push man-page updates            
+            # Attempt to commit and push man-page updates
             if [ "${AUTO_UPDATE}" == "true" ]
             then {
               echo "Regenerating man pages via auto-update"
@@ -158,4 +175,4 @@ jobs:
           }
           fi
         shell: bash
-        working-directory: ${{ github.event.repository.name }}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
