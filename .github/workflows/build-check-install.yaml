@@ -813,13 +813,10 @@ jobs:
       - name: Checkout repo 🛎
         uses: actions/checkout@v3
 
-      - name: Set release version and package build filename 📐
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
-
       - name: Get package build filename 📦
         run: |
-          echo "PKGBUILD=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION))_\
-          ${{ env.RELEASE_VERSION }}.tar.gz" >> $GITHUB_ENV
+          echo "PKGBUILD=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION)_"\
+          "$(awk -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION).tar.gz)" >> $GITHUB_ENV
         shell: bash
 
       - name: Download artifact ⏬
