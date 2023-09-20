@@ -124,7 +124,7 @@ concurrency:
 jobs:
   docs:
     name: Generate 🐣
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     if: >
       !contains(github.event.commits[0].message, '[skip docs]')
         && github.event.pull_request.draft == false
