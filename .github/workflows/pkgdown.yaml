@@ -47,6 +47,11 @@ on:
         required: false
         default: false
         type: boolean
+      upgrade-remotes:
+        description: If true, upgrades the 'remotes' R package to the edge version
+        required: false
+        default: false
+        type: boolean
       additional-env-vars:
         description: |
           Extra environment variables, as a 'key=value' pair, with each pair on a new line.
@@ -187,6 +192,7 @@ jobs:
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
+          upgrade-remotes: ${{ inputs.upgrade-remotes }}
 
       - name: Install R package 🚧
         run: |
