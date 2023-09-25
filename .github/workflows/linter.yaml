@@ -64,7 +64,7 @@ jobs:
         shell: bash
 
       - name: Lint Code Base 🧶
-        uses: github/super-linter/slim@v4
+        uses: github/super-linter/slim@v5
         env:
           LINTER_RULES_PATH: /
           DEFAULT_BRANCH: main
