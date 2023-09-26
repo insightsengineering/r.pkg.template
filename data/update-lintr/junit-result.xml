@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="api" timestamp="2023-09-26T15:24:06Z" hostname="cd57bbc59d36" tests="1" skipped="0" failures="0" errors="0" time="3.966">
+    <testcase time="3.966" classname="api" name="API_greets_the_person"/>
+  </testsuite>
+  <testsuite name="hello" timestamp="2023-09-26T15:24:10Z" hostname="cd57bbc59d36" tests="1" skipped="0" failures="0" errors="0" time="0.097">
+    <testcase time="0.0970000000000004" classname="hello" name="hello_greets_the_entity"/>
+  </testsuite>
+  <testsuite name="shiny" timestamp="2023-09-26T15:24:10Z" hostname="cd57bbc59d36" tests="1" skipped="0" failures="0" errors="0" time="3.065">
+    <testcase time="3.065" classname="shiny" name="The_Shiny_App_returns_a_proper_greeting"/>
+  </testsuite>
+</testsuites>
