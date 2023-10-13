@@ -120,7 +120,7 @@ jobs:
         run: |
           lints <- readRDS("lints.rds")
           if (length(lints) > 0L) {
-            print(lints)
+            cat(format(lints, justify = "left"))
             if (identical("${{ inputs.lintr_error_on_lint }}", "true")) {
               stop("Lints detected. Please review and adjust code according to the comments provided.", call. = FALSE)
             }
