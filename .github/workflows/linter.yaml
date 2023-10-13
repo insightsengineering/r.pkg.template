@@ -92,6 +92,11 @@ jobs:
     container:
       image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
     steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
       - name: Changed files
         id: files
         uses: Ana06/get-changed-files@v2.2.0
