@@ -81,7 +81,6 @@ jobs:
           VALIDATE_MARKDOWN: true
           MARKDOWN_CONFIG_FILE: .markdownlint.yaml
           VALIDATE_YAML: true
-          # LINTR_ERROR_ON_LINT: ${{ inputs.lintr_error_on_lint }}
 
   lint-r-code:
     name: Lint R code
@@ -97,14 +96,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Changed files
+      - name: Changed files 🧶
         id: files
         uses: Ana06/get-changed-files@v2.2.0
         with:
           format: 'json'
           filter: '*'
 
-      - name: Lint
+      - name: Lint 🧶
         run: |
           exclusions_list <- NULL
           if (!identical("${{ inputs.lint-all-files }}", "true")) {
