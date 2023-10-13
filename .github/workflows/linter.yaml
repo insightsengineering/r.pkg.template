@@ -83,7 +83,7 @@ jobs:
           VALIDATE_YAML: true
 
   lint-r-code:
-    name: Lint R code
+    name: Lint R code 🧶
     runs-on: ubuntu-latest
     if: >
       !contains(github.event.commits[0].message, '[skip linter]')
@@ -96,7 +96,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Changed files 🧶
+      - name: Changed files 🖋️
         id: files
         uses: Ana06/get-changed-files@v2.2.0
         with:
