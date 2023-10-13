@@ -113,14 +113,8 @@ jobs:
             exclusions_list <- as.list(setdiff(all_files, changed_files))
           }
           lints <- lintr::lint_package(exclusions = exclusions_list)
-          saveRDS(lints, file = "lints.rds")
-        shell: Rscript {0}
-
-      - name: Error if lints are detected
-        run: |
-          lints <- readRDS("lints.rds")
           if (length(lints) > 0L) {
-            lapply(lints, function(item) cat(item, "\n"))
+            knitr::kable(lints$issues, format = "markdown")
             if (identical("${{ inputs.lintr_error_on_lint }}", "true")) {
               stop("Lints detected. Please review and adjust code according to the comments provided.", call. = FALSE)
             }
