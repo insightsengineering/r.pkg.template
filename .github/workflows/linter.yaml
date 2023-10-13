@@ -22,10 +22,10 @@ on:
         type: boolean
         default: true
       lint-all-files:
-        description: 'Lint all files every time'
-        default: 'false'
+        description: Lint all files every time
+        default: false
         required: false
-        type: string
+        type: boolean
 
 concurrency:
   group: lint-${{ github.event.pull_request.number || github.ref }}
