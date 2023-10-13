@@ -114,7 +114,7 @@ jobs:
           }
           lints <- lintr::lint_package(exclusions = exclusions_list)
           if (length(lints) > 0L) {
-            knitr::kable(lints$issues, format = "markdown")
+            print(lints)
             if (identical("${{ inputs.lintr_error_on_lint }}", "true")) {
               stop("Lints detected. Please review and adjust code according to the comments provided.", call. = FALSE)
             }
