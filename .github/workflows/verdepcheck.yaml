@@ -47,7 +47,7 @@ jobs:
       !contains(github.event.commits[0].message, '[skip dependency-test]')
         && github.event.pull_request.draft == false
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+      image: ghcr.io/insightsengineering/rstudio:latest
 
     steps:
       - name: Setup token 🔑

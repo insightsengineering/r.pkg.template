@@ -124,7 +124,7 @@ jobs:
       !contains(github.event.commits[0].message, '[skip docs]')
         && github.event.pull_request.draft == false
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+      image: ghcr.io/insightsengineering/rstudio:latest
     # Only one job can publish to gh-pages branch concurrently.
     concurrency:
       group: ghpages
