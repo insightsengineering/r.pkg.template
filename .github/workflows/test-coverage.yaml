@@ -101,7 +101,7 @@ jobs:
       !contains(github.event.commits[0].message, '[skip coverage]')
         && github.event.pull_request.draft == false
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+      image: ghcr.io/insightsengineering/rstudio:latest
     outputs:
       publish-coverage-html-report: ${{ steps.coverage-output.outputs.coverage-upload }}
       current-branch-or-tag: ${{ steps.current-branch-or-tag.outputs.ref-name }}
@@ -303,7 +303,7 @@ jobs:
         && github.event.pull_request.draft == false
         && contains(inputs.enable-covtracer, 'true')
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+      image: ghcr.io/insightsengineering/rstudio:latest
     steps:
       - name: Get branch names 🌿
         id: branch-name
