@@ -711,8 +711,9 @@ jobs:
 
       - name: Rebuild R package 🏗
         if: >
-          inputs.disable-unit-test-reports != 'true' ||
-            startsWith(github.ref, 'refs/tags/v')
+          (inputs.disable-unit-test-reports != 'true' ||
+            startsWith(github.ref, 'refs/tags/v')) &&
+            github.event_name != 'pull_request'
         run: |
           # Undo changes to DESCRIPTION and tests/testthat.R
           git checkout DESCRIPTION
