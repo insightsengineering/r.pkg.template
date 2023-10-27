@@ -249,10 +249,6 @@ jobs:
                 cat("__________FULL OUTPUT__________")
                 writeLines(readLines(error_file))
               }
-            },
-            warning = function(w) {
-                message("Warnings generated during coverage analysis:")
-                print(w)
             }
           )
           covr_html <- "coverage-report.html"
