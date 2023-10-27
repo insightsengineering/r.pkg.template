@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE coverage SYSTEM "https://raw.githubusercontent.com/cobertura/cobertura/master/cobertura/src/site/htdocs/xml/coverage-04.dtd">
+<coverage line-rate="0.7" branch-rate="0" lines-covered="14" lines-valid="20" branches-covered="0" branches-valid="0" complexity="0" version="3.6.3" timestamp="2023-10-27 08:35:37.085096">
+  <sources>
+    <source>/__w/r.pkg.template/r.pkg.template/r.pkg.template</source>
+  </sources>
+  <packages>
+    <package name="r.pkg.template" line-rate="0.7" branch-rate="0" complexity="0">
+      <classes>
+        <class name="hello.R" filename="R/hello.R" line-rate="0.7" branch-rate="0" complexity="0">
+          <methods>
+            <method name="hello" signature="" line-rate="1" branch-rate="0" complexity="0">
+              <lines>
+                <line number="13" hits="2" branch="false"/>
+                <line number="14" hits="2" branch="false"/>
+              </lines>
+            </method>
+            <method name="shiny_app" signature="" line-rate="1" branch-rate="0" complexity="0">
+              <lines>
+                <line number="26" hits="1" branch="false"/>
+                <line number="27" hits="1" branch="false"/>
+                <line number="28" hits="1" branch="false"/>
+                <line number="29" hits="1" branch="false"/>
+                <line number="30" hits="1" branch="false"/>
+                <line number="32" hits="1" branch="false"/>
+                <line number="33" hits="1" branch="false"/>
+                <line number="34" hits="1" branch="false"/>
+                <line number="35" hits="1" branch="false"/>
+                <line number="36" hits="1" branch="false"/>
+                <line number="37" hits="1" branch="false"/>
+                <line number="39" hits="1" branch="false"/>
+              </lines>
+            </method>
+            <method name="plumber_api" signature="" line-rate="0" branch-rate="0" complexity="0">
+              <lines>
+                <line number="55" hits="0" branch="false"/>
+                <line number="56" hits="0" branch="false"/>
+                <line number="57" hits="0" branch="false"/>
+                <line number="58" hits="0" branch="false"/>
+                <line number="59" hits="0" branch="false"/>
+                <line number="60" hits="0" branch="false"/>
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="13" hits="2" branch="false"/>
+            <line number="14" hits="2" branch="false"/>
+            <line number="26" hits="1" branch="false"/>
+            <line number="27" hits="1" branch="false"/>
+            <line number="28" hits="1" branch="false"/>
+            <line number="29" hits="1" branch="false"/>
+            <line number="30" hits="1" branch="false"/>
+            <line number="32" hits="1" branch="false"/>
+            <line number="33" hits="1" branch="false"/>
+            <line number="34" hits="1" branch="false"/>
+            <line number="35" hits="1" branch="false"/>
+            <line number="36" hits="1" branch="false"/>
+            <line number="37" hits="1" branch="false"/>
+            <line number="39" hits="1" branch="false"/>
+            <line number="55" hits="0" branch="false"/>
+            <line number="56" hits="0" branch="false"/>
+            <line number="57" hits="0" branch="false"/>
+            <line number="58" hits="0" branch="false"/>
+            <line number="59" hits="0" branch="false"/>
+            <line number="60" hits="0" branch="false"/>
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>
