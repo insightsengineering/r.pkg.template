@@ -20,7 +20,7 @@ Suggests:
     httr,
     knitr,
     shinytest,
-    testthat (>= 2.0)
+    testthat (>= 3.2.0)
 VignetteBuilder:
     knitr
 biocViews:
