@@ -25,6 +25,11 @@ on:
         required: false
         type: string
         default: "."
+      exclude:
+        description: Comma separated list of files or folders to exclude from spellcheck. Accepts globs.
+        type: string
+        default: "inst/extdata/*"
+        required: false
 
 concurrency:
   group: spelling-${{ github.event.pull_request.number || github.ref }}
@@ -67,7 +72,7 @@ jobs:
       - name: Run Spellcheck 👟
         uses: insightsengineering/r-spellcheck-action@v2
         with:
-          exclude: inst/extdata/*
+          exclude: ${{ inputs.exclude }}
           path: ${{ env.package_subdirectory }}
 
       - name: Clean up WORDLIST 🧼
