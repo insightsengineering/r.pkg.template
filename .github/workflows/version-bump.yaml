@@ -138,6 +138,9 @@ jobs:
           else
             FILE_PATTERN="${{ inputs.package-subdirectory }}/NEWS.md ${{ inputs.package-subdirectory }}/DESCRIPTION"
           fi
+          if [[ "${{ steps.precommit-config-exists.outputs.files_exists == 'true' }}" ]]; then
+            FILE_PATTERN="$FILE_PATTERN .pre-commit-config.yaml"
+          fi
           echo "file-pattern=$FILE_PATTERN" >> $GITHUB_OUTPUT
         shell: bash
 
@@ -146,7 +149,7 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: "[skip actions] Bump version to ${{ env.NEW_PKG_VERSION }}"
-          file_pattern: "${{ steps.file-pattern.outputs.file-pattern }} .pre-commit-config.yaml"
+          file_pattern: "${{ steps.file-pattern.outputs.file-pattern }}"
           commit_user_name: insights-engineering-bot
           commit_user_email: >-
             68416928+insights-engineering-bot@users.noreply.github.com
