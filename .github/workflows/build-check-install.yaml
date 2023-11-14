@@ -624,7 +624,7 @@ jobs:
           steps.check-junit-xml.outputs.files_exists == 'true' &&
           env.junit_xml_comparison == 'true' &&
           env.junit_xml_comparison_result_method == 'comment' &&
-          github.event_name == 'pull-request'
+          github.event_name == 'pull_request'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: markdown-table
@@ -637,7 +637,7 @@ jobs:
           env.junit_xml_comparison == 'true' &&
           env.junit_xml_comparison_result_method == 'artifact' &&
           !github.event.pull_request.head.repo.fork &&
-          github.event_name == 'pull-request'
+          github.event_name == 'pull_request'
         uses: actions/upload-artifact@v3
         with:
           path: output-artifact.md
