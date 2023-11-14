@@ -78,16 +78,21 @@ jobs:
           then {
             git config --global --add safe.directory $(pwd)
             DESC_VERSION=$(R --slave -e 'cat(paste(desc::desc_get_version()))')
-            NEWS_VERSION=$(awk '/^#+ /{print $3; exit}' NEWS.md)
+            NEWS_VERSION=$(awk '/^#+ /{print $3,$4; exit}' NEWS.md)
             FIRST_NEWS_LINE=$(head -1 NEWS.md)
             if [ "${{ inputs.vbump-after-release }}" == "true" ]; then
               # Add a new section with the released version that will be vbumped below.
               printf "$FIRST_NEWS_LINE\n\n" | cat - NEWS.md > temp-news.md
               mv temp-news.md NEWS.md
             fi
-            # Replace only the first occurence of $NEWS_VERSION.
-            sed -i "0,/$NEWS_VERSION/s/$NEWS_VERSION/$DESC_VERSION/" NEWS.md
-            NEWS_VERSION=$(awk '/^#+ /{print $3; exit}' NEWS.md)
+            # Replace only the first occurence of $NEWS_VERSION,
+            # but only if it's not already set to (development version)
+            if [ "$NEWS_VERSION" != "(development version)" ]
+            then {
+              sed -i "0,/$NEWS_VERSION/s/$NEWS_VERSION/$DESC_VERSION/" NEWS.md
+            }
+            fi
+            NEWS_VERSION=$(awk '/^#+ /{print $3,$4; exit}' NEWS.md)
             echo "Updated NEWS.md version: $NEWS_VERSION"
             if (test $DESC_VERSION != $NEWS_VERSION ); then
               echo "🙈 Updated NEWS.md and DESCRIPTION have different versions!"
@@ -133,7 +138,7 @@ jobs:
       - name: Set file pattern to commit ⚙️
         id: file-pattern
         run: |
-          if [[ "${{ inputs.package-subdirectory }}" == "." ]]; then
+          if [[ "${{ inputs.package-subdirectory }}" == "." || "${{ inputs.package-subdirectory }}" == "" ]]; then
             FILE_PATTERN="NEWS.md DESCRIPTION"
           else
             FILE_PATTERN="${{ inputs.package-subdirectory }}/NEWS.md ${{ inputs.package-subdirectory }}/DESCRIPTION"
