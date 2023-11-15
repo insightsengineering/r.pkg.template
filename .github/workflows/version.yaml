@@ -44,13 +44,13 @@ jobs:
           DESC_DEV_VERSION=$(echo $DESC_VERSION | awk -F '.' '{print $NF}')
           echo "NEWS.md version: $NEWS_VERSION"
           echo "DESCRIPTION version: $DESC_VERSION"
-          if [[ "$DESC_VERSION" == "$NEWS_VERSION" ]]
+          if [[ "${DESC_VERSION}" == "${NEWS_VERSION}" ]]
           then {
             echo "NEWS.md and DESCRIPTION have the same version 🎉"
             exit 0
           }
           fi
-          if [[ $DESC_DEV_VERSION -ge 9000 && "$NEWS_VERSION" == "(development version)" ]]
+          if [[ $DESC_DEV_VERSION -ge 9000 && "${NEWS_VERSION}" == "(development version)" ]]
           then {
             echo "NEWS.md and DESCRIPTION file versions are okay as package is in development mode."
             echo "All is okay 🆗"

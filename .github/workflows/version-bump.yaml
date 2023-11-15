@@ -87,17 +87,10 @@ jobs:
             fi
             # Replace only the first occurence of $NEWS_VERSION,
             # but only if it's not already set to (development version)
-            if [ "$NEWS_VERSION" != "(development version)" ]
+            if [ "${NEWS_VERSION}" != "(development version)" ]
             then {
               sed -i "0,/$NEWS_VERSION/s/$NEWS_VERSION/$DESC_VERSION/" NEWS.md
             }
-            fi
-            NEWS_VERSION=$(awk '/^#+ /{print $3,$4; exit}' NEWS.md)
-            echo "Updated NEWS.md version: $NEWS_VERSION"
-            if (test $DESC_VERSION != $NEWS_VERSION ); then
-              echo "🙈 Updated NEWS.md and DESCRIPTION have different versions!"
-              echo "Please ensure that the versions in the NEWS.md and DESCRIPTION are the same 🙏"
-              exit 1
             fi
             echo "NEW_PKG_VERSION=${DESC_VERSION}" >> $GITHUB_ENV
           }
