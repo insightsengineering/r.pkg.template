@@ -50,7 +50,7 @@ jobs:
             exit 0
           }
           fi
-          if [[ $DESC_DEV_VERSION -gt 9000 && "$NEWS_VERSION" == "(development version)" ]]
+          if [[ $DESC_DEV_VERSION -ge 9000 && "$NEWS_VERSION" == "(development version)" ]]
           then {
             echo "NEWS.md and DESCRIPTION file versions are okay as package is in development mode."
             echo "All is okay 🆗"
