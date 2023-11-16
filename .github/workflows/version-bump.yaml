@@ -77,8 +77,8 @@ jobs:
           if [ -f NEWS.md ]
           then {
             git config --global --add safe.directory $(pwd)
-            DESC_VERSION=$(R --slave -e 'cat(paste(desc::desc_get_version()))')
-            NEWS_VERSION=$(awk '/^#+ /{print $3,$4; exit}' NEWS.md)
+            DESC_VERSION=$(R --slave -e 'cat(paste(desc::desc_get_version()))' | tr -d '\n')
+            NEWS_VERSION=$(awk '/^#+ /{print $3,$4; exit}' NEWS.md | tr -d '\n')
             FIRST_NEWS_LINE=$(head -1 NEWS.md)
             if [ "${{ inputs.vbump-after-release }}" == "true" ]; then
               # Add a new section with the released version that will be vbumped below.
