@@ -37,7 +37,7 @@ jobs:
         && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Normalize inputs 🛠️
         id: normalizer

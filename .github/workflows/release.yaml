@@ -49,11 +49,11 @@ jobs:
         shell: bash
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v6
+        uses: tj-actions/branch-names@v7
 
       - name: Check if running for rc tag 🏷️
         id: rc-tag
