@@ -40,7 +40,7 @@ jobs:
         && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -92,7 +92,7 @@ jobs:
       image: ghcr.io/insightsengineering/rstudio:latest
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 

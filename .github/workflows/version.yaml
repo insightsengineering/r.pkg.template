@@ -35,7 +35,7 @@ jobs:
         && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: NEWS.md and DESCRIPTION Version check 🏁
         run: |
@@ -71,12 +71,12 @@ jobs:
         && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python 🐍
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: '3.12'
 
       - name: Install the regex package 📦
         uses: insightsengineering/pip-action@v2

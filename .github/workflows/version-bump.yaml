@@ -41,7 +41,7 @@ jobs:
         contains(github.event.head_commit.message, '[skip vbump]')
       )
     container:
-      image: docker.io/rocker/tidyverse:4.3.1
+      image: docker.io/rocker/tidyverse:latest
 
     steps:
       - name: Setup token 🔑
@@ -57,7 +57,7 @@ jobs:
         shell: bash
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ steps.github-token.outputs.token }}
 
@@ -110,7 +110,7 @@ jobs:
             steps.precommit-config-exists.outputs.files_exists == 'true'
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
       - name: Precommit autoupdate 🅿️
         if: |

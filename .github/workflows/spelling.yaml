@@ -59,7 +59,7 @@ jobs:
         shell: bash
 
       - name: Checkout Code 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ steps.github-token.outputs.token }}
 
@@ -110,7 +110,7 @@ jobs:
 
       - name: Commit and push changes 📌
         if: github.event_name == 'push'
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "[skip actions] Update WORDLIST"
           file_pattern: "${{ steps.file-pattern.outputs.file-pattern }}"

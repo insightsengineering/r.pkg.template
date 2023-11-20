@@ -203,14 +203,14 @@ jobs:
 
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v6
+        uses: tj-actions/branch-names@v7
 
       - name: Checkout gh-pages 🛎
         if: >-
           inputs.publish-unit-test-report-gh-pages == true
             && github.event_name != 'pull_request'
         id: checkout-gh-pages
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: gh-pages
@@ -275,10 +275,10 @@ jobs:
         if: >-
           inputs.publish-unit-test-report-gh-pages == true
             && github.event_name != 'pull_request'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         id: npm-cache
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install xunit-viewer ⚙️
         if: >-
@@ -289,7 +289,7 @@ jobs:
         shell: bash
 
       - name: Checkout repo (PR) 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: github.event_name == 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
@@ -297,7 +297,7 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: github.event_name != 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
@@ -443,7 +443,7 @@ jobs:
 
       - name: Fetch report from ${{ env.junit_xml_storage }} ⤵️
         if: env.junit_xml_comparison == 'true'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: ${{ env.junit_xml_storage }}
           fetch-depth: 0
@@ -812,7 +812,7 @@ jobs:
         && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get package build filename 📦
         run: |
