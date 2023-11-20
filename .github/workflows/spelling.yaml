@@ -114,7 +114,7 @@ jobs:
         with:
           commit_message: "[skip actions] Update WORDLIST"
           file_pattern: "${{ steps.file-pattern.outputs.file-pattern }}"
-          commit_user_name: insights-engineering-bot
+          commit_user_name: github-actions
           commit_user_email: >-
-            68416928+insights-engineering-bot@users.noreply.github.com
+            41898282+github-actions[bot]@users.noreply.github.com
         continue-on-error: true
