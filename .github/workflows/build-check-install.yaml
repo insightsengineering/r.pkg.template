@@ -28,6 +28,11 @@ on:
         required: false
         default: false
         type: boolean
+      r-repository-overrides:
+        description: A comma separated named list of R packages repositories to use for installing dependencies
+        required: false
+        default: "CRAN=https://cloud.r-project.org"
+        type: string
       enable-staged-dependencies-check:
         description: Enable staged dependencies YAML check
         required: false
@@ -318,6 +323,7 @@ jobs:
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
+          cran-repos: ${{ inputs.r-repository-overrides }}
 
       - name: Show session info and installed packages ℹ
         run: |
