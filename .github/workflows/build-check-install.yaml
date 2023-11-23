@@ -309,14 +309,14 @@ jobs:
           path: ${{ github.event.repository.name }}
 
       - name: Restore SD cache 💰
-        if: inputs.install-deps-from-cran == ""
+        if: inputs.install-deps-from-cran == ''
         uses: actions/cache@v3
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
 
       - name: Run Staged dependencies 🎦
-        if: inputs.install-deps-from-cran == ""
+        if: inputs.install-deps-from-cran == ''
         uses: insightsengineering/staged-dependencies-action@v1
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
@@ -327,7 +327,7 @@ jobs:
           direction: ${{ inputs.sd-direction }}
 
       - name: Install dependencies from package repositories 🗄️
-        if: inputs.install-deps-from-cran != ""
+        if: inputs.install-deps-from-cran != ''
         run: |
           split_to_map <- function(args) {
             tmp <- strsplit(x = unlist(strsplit(args, ",")), "=")
