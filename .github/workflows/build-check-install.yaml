@@ -335,7 +335,7 @@ jobs:
             names(content) <- unlist(lapply(tmp, function(x) x[1]))
             return(content)
           }
-          devtools::install_dev_deps(".", repos = split_to_map(${{ inputs.install-deps-from-cran }}))
+          devtools::install_dev_deps(".", repos = split_to_map("${{ inputs.install-deps-from-cran }}")
         shell: Rscript {0}
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
