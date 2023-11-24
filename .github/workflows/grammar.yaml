@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: Checkout Code 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Restore npm cache 💰
         uses: actions/cache@v3
@@ -54,7 +54,7 @@ jobs:
         uses: actions/setup-node@v3
         id: npm-cache
         with:
-          node-version: 18
+          node-version: 20
 
       - name: Install write-good and deps ⏬
         if: steps.npm-cache.outputs.cache-hit != 'true'
@@ -63,7 +63,7 @@ jobs:
 
       - name: Get changed files 🗞
         id: changed-files
-        uses: tj-actions/changed-files@v37
+        uses: tj-actions/changed-files@v40
         with:
           separator: ","
           files: |
@@ -75,7 +75,7 @@ jobs:
             **.md
 
       - name: Run write-good 🏃‍♀️
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |

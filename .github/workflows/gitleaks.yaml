@@ -40,7 +40,7 @@ jobs:
         && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download and install gitleaks 💧
         run: |
@@ -55,7 +55,7 @@ jobs:
             (echo "Error moving gitleaks for /usr/bin" && exit 1)
         shell: bash
         env:
-          GITLEAKS_VERSION: "8.16.3"
+          GITLEAKS_VERSION: "8.18.1"
 
       - name: Run gitleaks ☔
         run: gitleaks -v detect --no-git ${{ inputs.additional-args }} --source .
@@ -70,7 +70,7 @@ jobs:
         && inputs.check-for-pii == true
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
