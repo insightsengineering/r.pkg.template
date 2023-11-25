@@ -1,5 +1,5 @@
 ---
-name: R CMD Check 🧬
+name: R CMD Check on MacOS 🧬
 
 on:
   push:
@@ -23,11 +23,6 @@ on:
           Github token with read access to repositories, required for staged.dependencies installation
         required: false
     inputs:
-      install-system-dependencies:
-        description: Check for and install system dependencies
-        required: false
-        default: false
-        type: boolean
       enable-staged-dependencies-check:
         description: Enable staged dependencies YAML check
         required: false
@@ -46,7 +41,7 @@ on:
       skip-r-cmd-install:
         description: Skip the R CMD INSTALL step in this workflow
         required: false
-        default: true
+        default: false
         type: boolean
       enforce-note-blocklist:
         description: Whether to check for specific NOTEs via regexes that should cause the pipeline to fail
@@ -132,85 +127,35 @@ on:
         required: false
         type: boolean
         default: true
-      latest-tag-alt-name:
-        description: |
-          The name of directory to store unit test report when running for latest tag.
-          The variable is named this way to keep it consistent with r-pkgdown-multiversion input name.
-        required: false
-        type: string
-        default: "latest-tag"
-      release-candidate-alt-name:
-        description: |
-          The name of directory to store unit test report when running for rc tag.
-          The variable is named this way to keep it consistent with r-pkgdown-multiversion input name.
-        required: false
-        type: string
-        default: "release-candidate"
-      package-subdirectory:
-        description: Subdirectory in the repository, where the R package is located.
-        required: false
-        type: string
-        default: ""
-      additional-caches:
-        description: |
-          Additional cache directories. One cache path per new line.
-          Example usage:
-          additional-caches: |
-            ~/awesome-cache
-            /tmp/some-cache
-        required: false
-        type: string
-        default: ""
 
 concurrency:
-  group: r-cmd-${{ github.event.pull_request.number || github.ref }}
+  group: r-cmd-on-macos-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   build-install-check:
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - image: ghcr.io/insightsengineering/rstudio
-            tag: latest
-    name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
-    runs-on: ubuntu-latest
+    name: R cmd check on MacOs-latest
+    runs-on: macos-latest
     if: >
       !contains(github.event.commits[0].message, '[skip r-cmd]')
         && github.event.pull_request.draft == false
-    container:
-      image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
     outputs:
       publish-unit-test-html-report: ${{ steps.junit-output.outputs.junit-upload }}
       current-branch-or-tag: ${{ steps.current-branch-or-tag.outputs.ref-name }}
-      is-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-latest-tag }}
-      is-rc-tag: ${{ steps.current-branch-or-tag.outputs.is-rc-tag }}
+      unit-test-html-report-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-tag }}
       multiversion-docs: ${{ steps.current-branch-or-tag.outputs.multiversion-docs }}
 
     steps:
-      - name: Setup token 🔑
-        id: github-token
-        run: |
-          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
-            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
-            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
-          else
-            echo "Using REPO_GITHUB_TOKEN."
-            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
-          fi
-        shell: bash
-
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v7
+        uses: tj-actions/branch-names@v6
 
       - name: Checkout gh-pages 🛎
         if: >-
           inputs.publish-unit-test-report-gh-pages == true
             && github.event_name != 'pull_request'
         id: checkout-gh-pages
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           ref: gh-pages
           path: gh-pages
@@ -226,14 +171,7 @@ jobs:
           if [ "${{ steps.branch-name.outputs.is_tag }}" == "true" ]; then
             echo "Current tag: ${{ steps.branch-name.outputs.tag }}"
             echo "ref-name=${{ steps.branch-name.outputs.tag }}" >> $GITHUB_OUTPUT
-            current_tag="${{ steps.branch-name.outputs.tag }}"
-            if [ "$(echo "$current_tag" | grep -E "^v([0-9]+\.)?([0-9]+\.)?([0-9]+)$")" != "" ]; then
-              echo "Running for latest-tag."
-              echo "is-latest-tag=true" >> $GITHUB_OUTPUT
-            elif [ "$(echo "$current_tag" | grep -E "^v([0-9]+\.)?([0-9]+\.)?([0-9]+)(-rc[0-9]+)$")" != "" ]; then
-              echo "Running for rc-tag."
-              echo "is-rc-tag=true" >> $GITHUB_OUTPUT
-            fi
+            echo "is-tag=true" >> $GITHUB_OUTPUT
           else
             echo "Current branch: ${{ steps.branch-name.outputs.current_branch }}"
             echo "ref-name=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
@@ -275,10 +213,10 @@ jobs:
         if: >-
           inputs.publish-unit-test-report-gh-pages == true
             && github.event_name != 'pull_request'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         id: npm-cache
         with:
-          node-version: 20
+          node-version: 18
 
       - name: Install xunit-viewer ⚙️
         if: >-
@@ -289,7 +227,7 @@ jobs:
         shell: bash
 
       - name: Checkout repo (PR) 🛎
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         if: github.event_name == 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
@@ -297,7 +235,7 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         if: github.event_name != 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
@@ -309,14 +247,27 @@ jobs:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
 
+      - name: Install dep.libs
+        run: |
+          brew update
+          brew install basictex
+          export PATH="/Library/TeX/texbin/:$PATH"
+          echo "PATH=/Library/TeX/texbin/:$PATH" >> $GITHUB_ENV
+          brew install libgit2 fribidi libssh2
+          brew install --cask phantomjs 
+          sudo tlmgr update --self
+          sudo tlmgr update --all
+          sudo tlmgr install titling framed inconsolata
+          sudo tlmgr install collection-fontsrecommended
+        
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@509_macos
         env:
-          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
+          GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
         with:
-          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          path: ${{ github.event.repository.name }}
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
-          run-system-dependencies: ${{ inputs.install-system-dependencies }}
+          run-system-dependencies: true
           direction: ${{ inputs.sd-direction }}
 
       - name: Show session info and installed packages ℹ
@@ -330,15 +281,7 @@ jobs:
             x <- desc::desc_set_dep("xml2", "Suggests")
           }
         shell: Rscript {0}
-        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
-
-      - name: Get package name 📦
-        run: |
-          echo "PKGBUILD=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION)_"\
-          "$(awk -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION).tar.gz)" >> $GITHUB_ENV
-          echo "PKGNAME=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION))" >> $GITHUB_ENV
-        shell: bash
-        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+        working-directory: ${{ github.event.repository.name }}
 
       - name: Replace testthat.R for test reporting 🎚
         if: inputs.disable-unit-test-reports != 'true'
@@ -346,7 +289,7 @@ jobs:
           if [ -f "tests/testthat.R" ]; then {
             # Overwrite testthat.R for JUnit XML reporting
             cat > tests/testthat.R <<EOF
-            pkg_name <- "${{ env.PKGNAME }}"
+            pkg_name <- "${{ github.event.repository.name }}"
             if (requireNamespace("testthat", quietly = TRUE)) {
               library(testthat)
               reporter <- MultiReporter\$new(list(
@@ -360,14 +303,7 @@ jobs:
           cat tests/testthat.R
           fi
         shell: bash
-        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
-
-      - name: Restore any additional caches 📥
-        if: inputs.additional-caches != ''
-        uses: actions/cache@v3
-        with:
-          path: "${{ inputs.additional-caches }}"
-          key: additional-caches-${{ runner.os }}
+        working-directory: ${{ github.event.repository.name }}
 
       - name: Build R package 🏗
         run: |
@@ -377,7 +313,8 @@ jobs:
             export $(tr '\n' ' ' < /tmp/dotenv.env)
           }
           fi
-          R CMD build ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          R CMD build ${{ github.event.repository.name }}
+          echo "PKGBUILD=$(echo ${{ github.event.repository.name }}_*.tar.gz)" >> $GITHUB_ENV
         shell: bash
 
       - name: Set TESTING_DEPTH ⚙
@@ -399,7 +336,7 @@ jobs:
             echo "TESTING_DEPTH=1" >> $GITHUB_ENV
           fi
         shell: bash
-        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+        working-directory: ${{ github.event.repository.name }}
 
       - name: Run R CMD check 🏁
         run: |
@@ -443,7 +380,7 @@ jobs:
 
       - name: Fetch report from ${{ env.junit_xml_storage }} ⤵️
         if: env.junit_xml_comparison == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           path: ${{ env.junit_xml_storage }}
           fetch-depth: 0
@@ -482,7 +419,7 @@ jobs:
         if: env.junit_xml_comparison == 'true'
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ steps.github-token.outputs.token }}
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
           branch: ${{ env.junit_xml_storage }}
           directory: ${{ env.junit_xml_storage }}
           force: true
@@ -492,7 +429,7 @@ jobs:
         id: check-junit-xml
         uses: andstor/file-existence-action@v2
         with:
-          files: "${{ env.PKGNAME }}.Rcheck/tests/testthat/junit-result.xml"
+          files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
 
       - name: Convert JUnit XML to HTML 📝
         if: >-
@@ -504,10 +441,10 @@ jobs:
           if [ "${{ inputs.unit-test-report-brand }}" != "" ]; then
             brand_option='--brand ${{ inputs.unit-test-report-brand }}'
           fi
-          xunit-viewer -r "${{ env.PKGNAME }}.Rcheck/tests/testthat/junit-result.xml" \
+          xunit-viewer -r "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml" \
             -o index.html \
             -f "https://www.clipboardmaster.com/favicon.ico" \
-            -t "${{ env.PKGNAME }} Unit Test Results" \
+            -t "${{ github.event.repository.name }} Unit Test Results" \
             $brand_option
         shell: bash
 
@@ -532,13 +469,10 @@ jobs:
       - name: Publish Unit Test Summary 📑
         uses: EnricoMi/publish-unit-test-result-action@v2
         id: test-results
-        # Second line of the condition skips the step if workflow is running in a fork.
-        if: |
-          steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request' &&
-          github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
+        if: steps.check-junit-xml.outputs.files_exists == 'true' && github.event_name == 'pull_request'
         with:
           check_name: Unit Tests Summary
-          junit_files: "${{ env.PKGNAME }}.Rcheck/tests/testthat/junit-result.xml"
+          junit_files: "${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml"
 
       - name: Fetch JUnit XML reports from ${{ env.junit_xml_storage }} ⤵️
         if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
@@ -564,7 +498,7 @@ jobs:
           git switch ${{ env.junit_xml_storage }} || true
           git config pull.rebase false
           git pull origin ${{ env.junit_xml_storage }} || true
-          cp ../../${{ env.PKGNAME }}.Rcheck/tests/testthat/junit-result.xml \
+          cp ../../${{ github.event.repository.name }}.Rcheck/tests/testthat/junit-result.xml \
             ./${{ env.diff_storage_branch }}/junit-result.xml
           git add -f "${{ env.diff_storage_branch }}/junit-result.xml"
           git commit -m "Add/Update JUnit report: ${{ github.sha }}" || true
@@ -574,7 +508,7 @@ jobs:
         if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ steps.github-token.outputs.token }}
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
           branch: ${{ env.junit_xml_storage }}
           directory: ${{ env.junit_xml_storage }}/data
         continue-on-error: true
@@ -623,61 +557,45 @@ jobs:
         if: >
           steps.check-junit-xml.outputs.files_exists == 'true' &&
           env.junit_xml_comparison == 'true' &&
-          env.junit_xml_comparison_result_method == 'comment' &&
-          !github.event.pull_request.head.repo.fork &&
-          github.event_name == 'pull_request'
+          env.junit_xml_comparison_result_method == 'comment'
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: markdown-table
           path: output.md
-        continue-on-error: true
 
       - name: Upload JUnit XML comparison ⤴
         if: >
           steps.check-junit-xml.outputs.files_exists == 'true' &&
           env.junit_xml_comparison == 'true' &&
-          env.junit_xml_comparison_result_method == 'artifact' &&
-          !github.event.pull_request.head.repo.fork &&
-          github.event_name == 'pull_request'
+          env.junit_xml_comparison_result_method == 'artifact'
         uses: actions/upload-artifact@v3
         with:
           path: output-artifact.md
           name: junit-xml-report-comparison
-        continue-on-error: true
-
-      - name: Show R CMD check logs 🔎
-        if: inputs.skip-r-cmd-check != true
-        run: |
-          find ${{ env.PKGNAME }}.Rcheck -type f -regextype posix-egrep \
-            -regex '.*00install.out|.*00check.log|.*00build.out' -print0 | while IFS= read -r -d $'\0' file; do
-            printf "==================================\n$file\n==================================\n"
-            cat $file
-          done
-        shell: bash
 
       - name: Catch warnings in R CMD check output 🗳
         id: catch-errors
         run: |
-          check_log <- "${{ env.PKGNAME }}.Rcheck/00check.log"
+          check_log <- "${{ github.event.repository.name }}.Rcheck/00check.log"
           if (file.exists(check_log)) {
             x <- tail(readLines(check_log), 1)
             if (grepl("ERROR", x)) {
               writeLines(readLines(check_log))
-              stop("❌ R CMD check has errors. Please refer to the 'Show R CMD check logs 🔎' step above.")
+              stop("❌ R CMD check has errors")
             }
             if (grepl("WARNING", x)) {
               writeLines(readLines(check_log))
-              stop("⚠ R CMD check has warnings. Please refer to the 'Show R CMD check logs 🔎' step above.")
+              stop("⚠ R CMD check has warnings")
             }
             if ("${{ inputs.enforce-note-blocklist }}" == "true") {
               print("Checking notes...")
               regexes <- "${{ inputs.note-blocklist }}"
               regexes <- unlist(strsplit(regexes, split = "\n"))
-              lines <- paste(readLines(check_log), collapse = "\n")
+              lines <- paste(readLines(check_log), collapse = " ")
               notes_result <- vapply(
                 regexes,
                 function(r){
-                  if (grepl(paste0(r, "\n"), lines, perl=T)) {
+                  if (grepl(r, lines)) {
                     print(r)
                     return(TRUE)
                   }
@@ -686,7 +604,7 @@ jobs:
                 logical(1)
               )
               if (any(notes_result)) {
-                stop("NOTEs on the blocklist were found. Please refer to the 'Run R CMD check 🏁' step above.")
+                stop("NOTEs on the blocklist were found (see above).")
               }
             }
           }
@@ -710,10 +628,7 @@ jobs:
         shell: bash
 
       - name: Rebuild R package 🏗
-        if: >
-          (inputs.disable-unit-test-reports != 'true' ||
-            startsWith(github.ref, 'refs/tags/v')) &&
-            github.event_name != 'pull_request'
+        if: inputs.disable-unit-test-reports != 'true'
         run: |
           # Undo changes to DESCRIPTION and tests/testthat.R
           git checkout DESCRIPTION
@@ -727,14 +642,15 @@ jobs:
           }
           fi
           R CMD build .
+          echo "PKGBUILD=$(echo ${{ github.event.repository.name }}_*.tar.gz)" >> $GITHUB_ENV
         shell: bash
-        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+        working-directory: ${{ github.event.repository.name }}
 
       - name: Upload package build ⤴
         if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v3
         with:
-          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/${{ env.PKGBUILD }}
+          path: ${{ github.event.repository.name }}/${{ env.PKGBUILD }}
           name: ${{ env.PKGBUILD }}
 
   publish-junit-html-report:
@@ -748,18 +664,6 @@ jobs:
     concurrency:
       group: ghpages
     steps:
-      - name: Setup token 🔑
-        id: github-token
-        run: |
-          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
-            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
-            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
-          else
-            echo "Using REPO_GITHUB_TOKEN."
-            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
-          fi
-        shell: bash
-
       - name: Download JUnit HTML report as artifact ⤵️
         uses: actions/download-artifact@v3
         with:
@@ -770,68 +674,52 @@ jobs:
         if: needs.build-install-check.outputs.multiversion-docs == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ steps.github-token.outputs.token }}
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
           publish_dir: ./unit-test-report
           destination_dir: ${{ needs.build-install-check.outputs.current-branch-or-tag }}/unit-test-report
 
       - name: Upload JUnit HTML report to GitHub pages (latest-tag) 🏷️
         if: >
-          needs.build-install-check.outputs.is-latest-tag == 'true'
+          needs.build-install-check.outputs.unit-test-html-report-latest-tag == 'true'
             && needs.build-install-check.outputs.multiversion-docs == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ steps.github-token.outputs.token }}
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
           publish_dir: ./unit-test-report
-          destination_dir: ${{ inputs.latest-tag-alt-name }}/unit-test-report
-
-      - name: Upload JUnit HTML report to GitHub pages (release-candidate) 🏷️
-        if: >
-          needs.build-install-check.outputs.is-rc-tag == 'true'
-            && needs.build-install-check.outputs.multiversion-docs == 'true'
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ steps.github-token.outputs.token }}
-          publish_dir: ./unit-test-report
-          destination_dir: ${{ inputs.release-candidate-alt-name }}/unit-test-report
+          destination_dir: latest-tag/unit-test-report
 
       - name: Upload JUnit HTML report to GitHub pages (non-multiversion) 🗞️
         if: needs.build-install-check.outputs.multiversion-docs == 'false'
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ steps.github-token.outputs.token }}
+          github_token: ${{ secrets.REPO_GITHUB_TOKEN }}
           publish_dir: ./unit-test-report
           destination_dir: unit-test-report
 
   upload-release-assets:
     name: Upload build tar.gz
     needs: build-install-check
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     if: >
       startsWith(github.ref, 'refs/tags/v')
         && (!contains(github.event.commits[0].message, '[skip r-cmd]'))
         && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
+
+      - name: Set release version and package build filename 📐
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/v}" >> $GITHUB_ENV
 
       - name: Get package build filename 📦
-        run: |
-          echo "PKGBUILD=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION)_"\
-          "$(awk -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION).tar.gz)" >> $GITHUB_ENV
-        shell: bash
+        run: echo "PKGBUILD=${{ github.event.repository.name }}_${{ env.RELEASE_VERSION }}.tar.gz" >> $GITHUB_ENV
 
       - name: Download artifact ⏬
         uses: actions/download-artifact@v3
         with:
           name: ${{ env.PKGBUILD }}
 
-      - name: Check if release exists
-        id: check-if-release-exists
-        uses: insightsengineering/release-existence-action@v1
-
       - name: Upload binaries to release 🔼
-        if: >-
-          steps.check-if-release-exists.outputs.release-exists == 'true'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
