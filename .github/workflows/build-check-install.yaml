@@ -124,7 +124,7 @@ on:
         default: upstream
       install-deps-from-package-repositories:
         description: |
-          Set this to a comma-separated list of R packages repositories to use for installing dependencies.
+          Set this to a comma-separated named list of R packages repositories to use for installing dependencies.
           Example: "R-universe=https://insightsengineering.r-universe.dev/,CRAN=https://cloud.r-project.org/"
         required: false
         type: string
