@@ -122,6 +122,13 @@ on:
         required: false
         type: string
         default: upstream
+      install-deps-from-package-repositories:
+        description: |
+          Set this to a comma-separated named list of R packages repositories to use for installing dependencies.
+          Example: "R-universe=https://insightsengineering.r-universe.dev/,CRAN=https://cloud.r-project.org/"
+        required: false
+        type: string
+        default: ""
       unit-test-report-brand:
         description: Image URL to use in unit test report for branding. If empty, the default xunit-viewer brand will be used.
         required: false
@@ -304,12 +311,14 @@ jobs:
           path: ${{ github.event.repository.name }}
 
       - name: Restore SD cache 💰
+        if: inputs.install-deps-from-package-repositories == ''
         uses: actions/cache@v3
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
 
       - name: Run Staged dependencies 🎦
+        if: inputs.install-deps-from-package-repositories == ''
         uses: insightsengineering/staged-dependencies-action@v1
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
@@ -318,6 +327,19 @@ jobs:
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
+
+      - name: Install dependencies from package repositories 🗄️
+        if: inputs.install-deps-from-package-repositories != ''
+        run: |
+          split_to_map <- function(args) {
+            tmp <- strsplit(x = unlist(strsplit(args, ",")), "=")
+            content <- unlist(lapply(tmp, function(x) x[2]))
+            names(content) <- unlist(lapply(tmp, function(x) x[1]))
+            return(content)
+          }
+          devtools::install_dev_deps(".", repos = split_to_map("${{ inputs.install-deps-from-package-repositories }}"))
+        shell: Rscript {0}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Show session info and installed packages ℹ
         run: |
