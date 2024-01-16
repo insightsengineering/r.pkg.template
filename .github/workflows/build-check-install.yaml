@@ -587,8 +587,8 @@ jobs:
           git config pull.rebase false
           git pull origin ${{ env.junit_xml_storage }} || true
           cp ../../${{ env.PKGNAME }}.Rcheck/tests/testthat/junit-result.xml \
-            ./${{ env.diff_storage_branch }}/junit-result.xml
-          git add -f "${{ env.diff_storage_branch }}/junit-result.xml"
+            './${{ env.diff_storage_branch }}/junit-result.xml'
+          git add -f '${{ env.diff_storage_branch }}/junit-result.xml'
           git commit -m "Add/Update JUnit report: ${{ github.sha }}" || true
         shell: bash
 
