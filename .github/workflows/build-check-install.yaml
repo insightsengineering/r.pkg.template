@@ -604,7 +604,7 @@ jobs:
       - name: Run XML comparison 🔍
         if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
         run: |
-          cp ${{ env.junit_xml_storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml new.xml
+          cp '${{ env.junit_xml_storage }}/data/${{ env.diff_storage_branch }}/junit-result.xml' new.xml
           if [ ! -f ${{ env.junit_xml_storage }}/data/${{ env.junit_xml_diff_branch }}/junit-result.xml ]; then
             # If XML for the branch against which we're comparing doesn't exist, we're skipping the comparison.
             echo "JUnit report for branch \`${{ env.junit_xml_diff_branch }}\` " \
