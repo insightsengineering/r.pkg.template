@@ -119,6 +119,8 @@ jobs:
           sink()
           sink(type = "message")
           logs <- readLines(logfile)
+          cat("🪵 Log output of 'roxygen2::roxygenize()':\n")
+          system2("cat", logfile)
           error_marker <- grep("Error:", logs)
           warnings_marker <- grep("Warning message", logs)
           if (length(warnings_marker) > 0) {
