@@ -165,7 +165,7 @@ jobs:
             then {
               echo -e "\n💻 Please rerun the following command on your workstation and push your changes"
               echo "--------------------------------------------------------------------"
-              echo "roxygen2::roxygenize('.', roclets = c('rd', 'collate', 'namespace'))"
+              echo "roxygen2::roxygenize('.')"
               echo "--------------------------------------------------------------------"
               echo "ℹ roxygen2 version that was used in this workflow: $ROXYGEN_VERSION"
               echo "🙏 Please ensure that the 'RoxygenNote' field in the DESCRIPTION file matches this version"
