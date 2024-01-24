@@ -119,6 +119,8 @@ jobs:
           sink()
           sink(type = "message")
           logs <- readLines(logfile)
+          cat("🪵 Log output of 'roxygen2::roxygenize()':\n")
+          system2("cat", logfile)
           error_marker <- grep("Error:", logs)
           warnings_marker <- grep("Warning message", logs)
           if (length(warnings_marker) > 0) {
@@ -163,7 +165,7 @@ jobs:
             then {
               echo -e "\n💻 Please rerun the following command on your workstation and push your changes"
               echo "--------------------------------------------------------------------"
-              echo "roxygen2::roxygenize('.', roclets = c('rd', 'collate', 'namespace'))"
+              echo "roxygen2::roxygenize('.')"
               echo "--------------------------------------------------------------------"
               echo "ℹ roxygen2 version that was used in this workflow: $ROXYGEN_VERSION"
               echo "🙏 Please ensure that the 'RoxygenNote' field in the DESCRIPTION file matches this version"
