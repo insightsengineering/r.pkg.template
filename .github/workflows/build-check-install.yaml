@@ -564,7 +564,7 @@ jobs:
 
       - name: Fetch JUnit XML reports from ${{ env.junit_xml_storage }} ⤵️
         if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: ${{ env.junit_xml_storage }}
           fetch-depth: 0
