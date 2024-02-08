@@ -181,7 +181,7 @@ jobs:
           path: ${{ github.event.repository.name }}
 
       - name: Restore SD cache 💰
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
@@ -257,7 +257,7 @@ jobs:
 
       - name: Check whether coverage reports exists 💭
         id: check_coverage_reports
-        uses: andstor/file-existence-action@v2
+        uses: andstor/file-existence-action@v3
         with:
           files: >-
             ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/coverage.xml,
@@ -276,7 +276,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload report 🔼
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: |
@@ -312,7 +312,7 @@ jobs:
           path: ${{ github.event.repository.name }}
 
       - name: Restore SD cache 💰
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies

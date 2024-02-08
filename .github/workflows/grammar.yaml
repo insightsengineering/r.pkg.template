@@ -43,7 +43,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Restore npm cache 💰
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: npm-${{ runner.os }}-${{ github.job }}
           restore-keys: |
@@ -51,7 +51,7 @@ jobs:
           path: node_modules
 
       - name: Setup NodeJS ☊
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         id: npm-cache
         with:
           node-version: 20
@@ -122,7 +122,7 @@ jobs:
       - name: Check whether annotations exist 💭
         id: check-annotations
         if: inputs.enable-annotations
-        uses: andstor/file-existence-action@v2
+        uses: andstor/file-existence-action@v3
         with:
           files: "annotations.json"
 
