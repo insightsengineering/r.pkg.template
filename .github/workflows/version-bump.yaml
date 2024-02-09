@@ -144,7 +144,7 @@ jobs:
 
       - name: Commit and push changes 📌
         if: ${{ env.NEW_PKG_VERSION }}
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "[skip actions] Bump version to ${{ env.NEW_PKG_VERSION }}"
           file_pattern: "${{ steps.file-pattern.outputs.file-pattern }}"
