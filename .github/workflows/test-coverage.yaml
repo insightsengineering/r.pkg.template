@@ -180,6 +180,17 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
 
+      - name: Normalize inputs ⊳
+        id: normalizer
+        shell: bash
+        run: |
+          echo "publish-coverage-report=${{ inputs.publish-coverage-report }}" >> $GITHUB_OUTPUT
+          if [ "${{ inputs.publish-coverage-report }}" == "" ]
+          then {
+            echo "publish-coverage-report=true" >> $GITHUB_OUTPUT
+          }
+          fi
+
       - name: Restore SD cache 💰
         uses: actions/cache@v4
         with:
@@ -271,7 +282,7 @@ jobs:
           path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/coverage.xml
           threshold: 80
           fail: false
-          publish: ${{ inputs.publish-coverage-report }}
+          publish: ${{ steps.normalizer.outputs.publish-coverage-report }}
           diff: true
         continue-on-error: true
 
