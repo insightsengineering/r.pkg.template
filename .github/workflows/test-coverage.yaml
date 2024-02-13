@@ -158,16 +158,10 @@ jobs:
             echo "ref-name=${{ steps.branch-name.outputs.current_branch }}" >> $GITHUB_OUTPUT
           fi
           # Check if pkgdown multiversion docs are used at all.
-          echo "multiversion-docs=false" >> $GITHUB_OUTPUT
           if [ $(grep -rl '<!-- start dropdown for versions -->' gh-pages | wc -l) -gt 0 ]; then
             echo "multiversion-docs=true" >> $GITHUB_OUTPUT
-          fi
-          # Normalize the 'publish-coverage-report' option
-          echo "publish-coverage-report=${{ inputs.publish-coverage-report }}" >> $GITHUB_OUTPUT
-          if [ "${{ inputs.publish-coverage-report }}" == "" ]
-          then {
-            echo "publish-coverage-report=true" >> $GITHUB_OUTPUT
-          }
+          else
+            echo "multiversion-docs=false" >> $GITHUB_OUTPUT
           fi
         shell: bash
 
@@ -185,6 +179,17 @@ jobs:
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
+
+      - name: Normalize inputs ⊳
+        id: normalizer
+        shell: bash
+        run: |
+          echo "publish-coverage-report=${{ inputs.publish-coverage-report }}" >> $GITHUB_OUTPUT
+          if [ "${{ inputs.publish-coverage-report }}" == "" ]
+          then {
+            echo "publish-coverage-report=true" >> $GITHUB_OUTPUT
+          }
+          fi
 
       - name: Restore SD cache 💰
         uses: actions/cache@v4
@@ -277,7 +282,7 @@ jobs:
           path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/coverage.xml
           threshold: 80
           fail: false
-          publish: ${{ steps.current-branch-or-tag.outputs.publish-coverage-report }}
+          publish: ${{ steps.normalizer.outputs.publish-coverage-report }}
           diff: true
         continue-on-error: true
 
