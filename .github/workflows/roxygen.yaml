@@ -85,6 +85,7 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ steps.github-token.outputs.token }}
 
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
