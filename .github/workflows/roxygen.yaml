@@ -156,8 +156,8 @@ jobs:
               BRANCH_NAME="${{ steps.branch-name.outputs.head_ref_branch }}"
               git pull origin ${BRANCH_NAME}
               git push -v origin HEAD:${BRANCH_NAME} || \
-                echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)" && \
-                AUTO_UPDATE=failed
+                (echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)" && \
+                AUTO_UPDATE=failed)
             }
             fi
             # If auto-update is disabled or is unsuccessful, let 'em know to fix manually
