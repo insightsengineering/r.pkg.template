@@ -112,7 +112,7 @@ jobs:
         if: github.event_name == 'push'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "[skip actions] Update WORDLIST"
+          commit_message: "Update WORDLIST"
           file_pattern: "${{ steps.file-pattern.outputs.file-pattern }}"
           commit_user_name: github-actions
           commit_user_email: >-
