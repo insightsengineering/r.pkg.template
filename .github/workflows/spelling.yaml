@@ -25,6 +25,11 @@ on:
         required: false
         type: string
         default: "."
+      exclude:
+        description: Comma separated list of files or folders to exclude from spellcheck. Accepts globs.
+        type: string
+        default: "inst/extdata/*"
+        required: false
 
 concurrency:
   group: spelling-${{ github.event.pull_request.number || github.ref }}
@@ -38,7 +43,7 @@ jobs:
       !contains(github.event.commits[0].message, '[skip spelling]')
         && github.event.pull_request.draft == false
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+      image: ghcr.io/insightsengineering/rstudio:latest
 
     steps:
       - name: Setup token 🔑
@@ -54,7 +59,7 @@ jobs:
         shell: bash
 
       - name: Checkout Code 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ steps.github-token.outputs.token }}
 
@@ -67,7 +72,7 @@ jobs:
       - name: Run Spellcheck 👟
         uses: insightsengineering/r-spellcheck-action@v2
         with:
-          exclude: inst/extdata/*
+          exclude: ${{ inputs.exclude }}
           path: ${{ env.package_subdirectory }}
 
       - name: Clean up WORDLIST 🧼
@@ -105,11 +110,11 @@ jobs:
 
       - name: Commit and push changes 📌
         if: github.event_name == 'push'
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "[skip actions] Update WORDLIST"
           file_pattern: "${{ steps.file-pattern.outputs.file-pattern }}"
-          commit_user_name: insights-engineering-bot
+          commit_user_name: github-actions
           commit_user_email: >-
-            68416928+insights-engineering-bot@users.noreply.github.com
+            41898282+github-actions[bot]@users.noreply.github.com
         continue-on-error: true

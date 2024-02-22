@@ -129,7 +129,7 @@ jobs:
       !contains(github.event.commits[0].message, '[skip docs]')
         && github.event.pull_request.draft == false
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+      image: ghcr.io/insightsengineering/rstudio:latest
     # Only one job can publish to gh-pages branch concurrently.
     concurrency:
       group: ghpages
@@ -148,7 +148,7 @@ jobs:
 
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v6
+        uses: tj-actions/branch-names@v7
 
       - name: Get current branch or tag 🏷️
         id: current-branch-or-tag
@@ -163,7 +163,7 @@ jobs:
         shell: bash
 
       - name: Checkout repo (PR) 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: github.event_name == 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
@@ -171,14 +171,14 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: github.event_name != 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
 
       - name: Restore SD cache 💰
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
@@ -233,7 +233,7 @@ jobs:
 
       - name: Checkout gh-pages 🛎
         if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'push'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: "gh-pages"
           fetch-depth: 0
@@ -273,7 +273,7 @@ jobs:
 
       - name: Upload docs for review ⬆
         if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/tags/v')
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pkgdown.zip
           path: pkgdown.zip
@@ -290,16 +290,28 @@ jobs:
         && !contains(github.event.commits[0].message, '[skip docs]')
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: ${{ github.event.repository.name }}
           ref: "gh-pages"
+
+      - name: Normalize inputs 📄
+        id: normalize
+        run: |
+          DEFAULT_LANDING_PAGE="${{ inputs.default-landing-page }}"
+          if [ "$DEFAULT_LANDING_PAGE" == "" ]
+          then {
+            DEFAULT_LANDING_PAGE=main
+          }
+          fi
+          echo "default-landing-page=$DEFAULT_LANDING_PAGE" >> "$GITHUB_ENV"
+        shell: bash
 
       - name: Create and publish docs ↗️
         uses: insightsengineering/r-pkgdown-multiversion@v2
         with:
           path: ${{ github.event.repository.name }}
-          default-landing-page: ${{ inputs.default-landing-page }}
+          default-landing-page: ${{ env.default-landing-page }}
           refs-order: ${{ inputs.refs-order }}
           latest-tag-alt-name: ${{ inputs.latest-tag-alt-name }}
           release-candidate-alt-name: ${{ inputs.release-candidate-alt-name }}
@@ -314,10 +326,10 @@ jobs:
         && !contains(github.event.commits[0].message, '[skip docs]')
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download artifact ⏬
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: pkgdown.zip
 

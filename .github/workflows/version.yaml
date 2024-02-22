@@ -35,21 +35,31 @@ jobs:
         && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: NEWS.md and DESCRIPTION Version check 🏁
         run: |
-          DESC_VERSION=$(awk -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION)
-          NEWS_VERSION=$(awk '/^#+ /{print $3; exit}' NEWS.md)
+          DESC_VERSION=$(awk -F: '/Version:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION | tr -d '\n' | xargs)
+          NEWS_VERSION=$(awk '/^#+ /{print $3,$4; exit}' NEWS.md | tr -d '\n' | xargs)
+          DESC_DEV_VERSION=$(echo $DESC_VERSION | awk -F '.' '{print $NF}')
           echo "NEWS.md version: $NEWS_VERSION"
           echo "DESCRIPTION version: $DESC_VERSION"
-          if (test $DESC_VERSION = $NEWS_VERSION ); then
-              echo "NEWS.md and DESCRIPTION have the same version"
-          else
-              echo "🙈 NEWS.md and DESCRIPTION have different versions!"
-              echo "🙏 Please fix this."
-              exit 1
+          if test $DESC_VERSION = $NEWS_VERSION
+          then {
+            echo "NEWS.md and DESCRIPTION have the same version 🎉"
+            exit 0
+          }
           fi
+          if [[ $DESC_DEV_VERSION -ge 9000 && "${NEWS_VERSION}" == "(development version)" ]]
+          then {
+            echo "NEWS.md and DESCRIPTION file versions are okay as package is in development mode."
+            echo "All is okay 🆗"
+            exit 0
+          }
+          fi
+          echo "🙈 NEWS.md and DESCRIPTION have different versions!"
+          echo "🙏 Please fix this."
+          exit 1
         shell: bash
         working-directory: ${{ inputs.package-subdirectory }}
 
@@ -61,12 +71,12 @@ jobs:
         && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python 🐍
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: '3.12'
 
       - name: Install the regex package 📦
         uses: insightsengineering/pip-action@v2

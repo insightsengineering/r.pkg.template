@@ -47,7 +47,7 @@ jobs:
       !contains(github.event.commits[0].message, '[skip dependency-test]')
         && github.event.pull_request.draft == false
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+      image: ghcr.io/insightsengineering/rstudio:latest
 
     steps:
       - name: Setup token 🔑
@@ -63,7 +63,7 @@ jobs:
         shell: bash
 
       - name: Checkout Code 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Normalize variables 📏
         run: |
@@ -92,14 +92,14 @@ jobs:
 
       - name: Upload lock file ⤴️
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "lock-file-${{ env.strategy }}"
           path: pkg.lock
 
       - name: Upload output file ⤴️
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: "res-${{ env.strategy }}"
           path: res.RDS

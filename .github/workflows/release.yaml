@@ -49,11 +49,11 @@ jobs:
         shell: bash
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v6
+        uses: tj-actions/branch-names@v7
 
       - name: Check if running for rc tag 🏷️
         id: rc-tag
@@ -79,7 +79,8 @@ jobs:
         if: >-
           steps.rc-tag.outputs.is-rc-tag == 'false' ||
             inputs.create-rc-releases == true
-        uses: softprops/action-gh-release@v1
+        # https://github.com/softprops/action-gh-release/pull/406#issuecomment-1934635958
+        uses: softprops/action-gh-release@4634c16e79c963813287e889244c50009e7f0981
         with:
           body_path: ${{ inputs.package-subdirectory }}/RELEASE_BODY.txt
           token: ${{ steps.github-token.outputs.token }}

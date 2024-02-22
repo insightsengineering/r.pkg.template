@@ -21,6 +21,11 @@ on:
         required: false
         type: boolean
         default: true
+      lint-all-files:
+        description: Lint all files every time
+        default: false
+        required: false
+        type: boolean
 
 concurrency:
   group: lint-${{ github.event.pull_request.number || github.ref }}
@@ -35,7 +40,7 @@ jobs:
         && github.event.pull_request.draft == false
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -75,6 +80,42 @@ jobs:
           VALIDATE_DOCKERFILE: true
           VALIDATE_MARKDOWN: true
           MARKDOWN_CONFIG_FILE: .markdownlint.yaml
-          VALIDATE_R: true
           VALIDATE_YAML: true
-          LINTR_ERROR_ON_LINT: ${{ inputs.lintr_error_on_lint }}
+
+  lint-r-code:
+    name: Lint R code 🧶
+    runs-on: ubuntu-latest
+    if: >
+      !contains(github.event.commits[0].message, '[skip linter]')
+        && github.event.pull_request.draft == false
+    container:
+      image: ghcr.io/insightsengineering/rstudio:latest
+    steps:
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Changed files 🖋️
+        id: files
+        uses: Ana06/get-changed-files@v2.2.0
+        with:
+          format: 'json'
+          filter: '*'
+
+      - name: Lint 🧶
+        run: |
+          exclusions_list <- NULL
+          if (!identical("${{ inputs.lint-all-files }}", "true")) {
+            changed_files <- jsonlite::fromJSON('${{ steps.files.outputs.added_modified }}')
+            all_files <- list.files(recursive = TRUE)
+            exclusions_list <- as.list(setdiff(all_files, changed_files))
+          }
+          lints <- lintr::lint_package(exclusions = exclusions_list)
+          if (length(lints) > 0L) {
+            print(lints)
+            if (identical("${{ inputs.lintr_error_on_lint }}", "true")) {
+              stop("Lints detected. Please review and adjust code according to the comments provided.", call. = FALSE)
+            }
+          }
+        shell: Rscript {0}

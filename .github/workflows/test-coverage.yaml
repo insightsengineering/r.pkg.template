@@ -101,7 +101,7 @@ jobs:
       !contains(github.event.commits[0].message, '[skip coverage]')
         && github.event.pull_request.draft == false
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+      image: ghcr.io/insightsengineering/rstudio:latest
     outputs:
       publish-coverage-html-report: ${{ steps.coverage-output.outputs.coverage-upload }}
       current-branch-or-tag: ${{ steps.current-branch-or-tag.outputs.ref-name }}
@@ -123,14 +123,14 @@ jobs:
 
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v6
+        uses: tj-actions/branch-names@v7
 
       - name: Checkout gh-pages 🛎
         if: >-
           github.event_name != 'pull_request'
             && inputs.publish-coverage-report-gh-pages == true
         id: checkout-gh-pages
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: gh-pages
@@ -166,7 +166,7 @@ jobs:
         shell: bash
 
       - name: Checkout repo (PR) 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: github.event_name == 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
@@ -174,14 +174,25 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: github.event_name != 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
 
+      - name: Normalize inputs ⊳
+        id: normalizer
+        shell: bash
+        run: |
+          echo "publish-coverage-report=${{ inputs.publish-coverage-report }}" >> $GITHUB_OUTPUT
+          if [ "${{ inputs.publish-coverage-report }}" == "" ]
+          then {
+            echo "publish-coverage-report=true" >> $GITHUB_OUTPUT
+          }
+          fi
+
       - name: Restore SD cache 💰
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
@@ -249,10 +260,6 @@ jobs:
                 cat("__________FULL OUTPUT__________")
                 writeLines(readLines(error_file))
               }
-            },
-            warning = function(w) {
-                message("Warnings generated during coverage analysis:")
-                print(w)
             }
           )
           covr_html <- "coverage-report.html"
@@ -261,7 +268,7 @@ jobs:
 
       - name: Check whether coverage reports exists 💭
         id: check_coverage_reports
-        uses: andstor/file-existence-action@v2
+        uses: andstor/file-existence-action@v3
         with:
           files: >-
             ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/coverage.xml,
@@ -275,12 +282,12 @@ jobs:
           path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/coverage.xml
           threshold: 80
           fail: false
-          publish: ${{ inputs.publish-coverage-report }}
+          publish: ${{ steps.normalizer.outputs.publish-coverage-report }}
           diff: true
         continue-on-error: true
 
       - name: Upload report 🔼
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: |
@@ -303,20 +310,20 @@ jobs:
         && github.event.pull_request.draft == false
         && contains(inputs.enable-covtracer, 'true')
     container:
-      image: ghcr.io/insightsengineering/rstudio_4.3.1_bioc_3.17:latest
+      image: ghcr.io/insightsengineering/rstudio:latest
     steps:
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v6
+        uses: tj-actions/branch-names@v7
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
 
       - name: Restore SD cache 💰
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
@@ -363,7 +370,7 @@ jobs:
         shell: bash
 
       - name: Download coverage report as artifact ⤵️
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: coverage-report
           path: coverage-report
