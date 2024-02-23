@@ -59,6 +59,11 @@ jobs:
           fi
         shell: bash
 
+      - name: Get branch names 🌿
+        if: inputs.auto-update
+        id: branch-name
+        uses: tj-actions/branch-names@v7
+
       - name: Checkout Code 🛎
         uses: actions/checkout@v4
         with:
@@ -66,11 +71,6 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.github-token.outputs.token }}
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
-
-      - name: Get branch names 🌿
-        if: inputs.auto-update
-        id: branch-name
-        uses: tj-actions/branch-names@v7
 
       - name: Install styler 👚
         run: |
