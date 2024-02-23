@@ -306,7 +306,7 @@ jobs:
           # to the branch between this step and Set TESTING_DEPTH, git might fail
           # referencing ${{ github.event.after }} commit
           # because it's not the latest commit fetched by this step.
-          fetch-depth: 5
+          fetch-depth: 0
 
       - name: Checkout repo 🛎
         uses: actions/checkout@v4

@@ -156,7 +156,7 @@ jobs:
               BRANCH_NAME="${{ steps.branch-name.outputs.head_ref_branch }}"
               git pull origin ${BRANCH_NAME} || true
               git add -A man/ DESCRIPTION
-              git commit -m "Roxygen Man Pages Auto Update"
+              git commit -m "[skip roxygen] [skip vbump] Roxygen Man Pages Auto Update"
               git push -v origin HEAD:${BRANCH_NAME} || \
                 (echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)" && \
                 AUTO_UPDATE=failed)

@@ -18,7 +18,7 @@ on:
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
-          Github token with read access to repositories, required for staged.dependencies installation
+          Github token with write access to the repo
         required: false
     inputs:
       auto-update:
@@ -141,7 +141,7 @@ jobs:
           git add ${{ steps.problem-files.outputs.unstyled-files }}
           git config pull.rebase false
           git pull origin ${{ steps.branch-name.outputs.head_ref_branch }} || true
-          git commit -m 'Restyle files'
+          git commit -m '[skip style] [skip vbump] Restyle files'
           git push -v origin HEAD:${{ steps.branch-name.outputs.head_ref_branch }} || \
             echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)"
         shell: bash
