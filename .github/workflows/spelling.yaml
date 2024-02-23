@@ -95,6 +95,7 @@ jobs:
       - name: Fetch latest commits from PR branch
         if: github.event_name != 'push'
         run: |
+          git config --global --add safe.directory $(pwd)
           git config pull.rebase false
           BRANCH_NAME="${{ steps.branch-name.outputs.head_ref_branch }}"
           git pull origin ${BRANCH_NAME} || true
