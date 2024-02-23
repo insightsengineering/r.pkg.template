@@ -65,6 +65,7 @@ jobs:
           path: ${{ github.event.repository.name }}
           fetch-depth: 0
           token: ${{ steps.github-token.outputs.token }}
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
 
       - name: Get branch names 🌿
         if: inputs.auto-update
