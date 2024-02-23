@@ -15,6 +15,11 @@ on:
       - main
   workflow_dispatch:
   workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with write access to the repo
+        required: false
     inputs:
       auto-update:
         description: If R code style is not up-to-date, styling will automatically be applied and restyled files will be automatically committed o the branch.
@@ -42,16 +47,30 @@ jobs:
       image: ghcr.io/insightsengineering/rstudio:latest
 
     steps:
-      - name: Checkout Code 🛎
-        uses: actions/checkout@v4
-        with:
-          path: ${{ github.event.repository.name }}
-          fetch-depth: 0
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
 
       - name: Get branch names 🌿
         if: inputs.auto-update
         id: branch-name
         uses: tj-actions/branch-names@v7
+
+      - name: Checkout Code 🛎
+        uses: actions/checkout@v4
+        with:
+          path: ${{ github.event.repository.name }}
+          fetch-depth: 0
+          token: ${{ steps.github-token.outputs.token }}
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
 
       - name: Install styler 👚
         run: |
@@ -119,9 +138,10 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config pull.rebase false
+          git pull origin ${{ steps.branch-name.outputs.head_ref_branch }} || true
           git add ${{ steps.problem-files.outputs.unstyled-files }}
-          git commit -m 'Restyle files'
-          git pull origin ${{ steps.branch-name.outputs.head_ref_branch }}
+          git commit -m '[skip style] [skip vbump] Restyle files'
           git push -v origin HEAD:${{ steps.branch-name.outputs.head_ref_branch }} || \
             echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)"
         shell: bash

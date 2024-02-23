@@ -302,6 +302,11 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
+          # When fetch-depth is set to 1 (default), and if additional commits are added
+          # to the branch between this step and the 'Set TESTING_DEPTH' step, git might fail
+          # referencing ${{ github.event.after }} commit
+          # because it's not the latest commit fetched by this step.
+          fetch-depth: 0
 
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
