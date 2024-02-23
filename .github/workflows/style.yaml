@@ -138,9 +138,9 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add ${{ steps.problem-files.outputs.unstyled-files }}
           git config pull.rebase false
           git pull origin ${{ steps.branch-name.outputs.head_ref_branch }} || true
+          git add ${{ steps.problem-files.outputs.unstyled-files }}
           git commit -m '[skip style] [skip vbump] Restyle files'
           git push -v origin HEAD:${{ steps.branch-name.outputs.head_ref_branch }} || \
             echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)"
