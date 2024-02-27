@@ -36,11 +36,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check-whether-skip:
+    name: Check whether skip
+    runs-on: ubuntu-latest
+    outputs:
+      head-commit-message: ${{ steps.debug.head_commit_message }}
+    steps:
+      - name: Debug
+        id: debug
+        run: |
+          echo "PR number = ${{ github.event.pull_request.number }}"
+          echo "PR head SHA = ${{ github.event.pull_request.head.sha }}"
+          echo "head_commit_message=$(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }} | tr '\r\n' ' ' | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          echo "head_commit_message = $(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }} | tr '\r\n' ' ' | tr '\n' ' ')"
+        shell: bash
+
   spelling:
     name: Check spelling 🔠
     runs-on: ubuntu-latest
     if: >
-      !contains(github.event.commits[0].message, '[skip spelling]')
+      !contains(needs.check-whether-skip.outputs.head-commit-message, '[skip spelling]')
         && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
@@ -56,12 +71,6 @@ jobs:
             echo "Using REPO_GITHUB_TOKEN."
             echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
           fi
-        shell: bash
-
-      - name: Debug
-        run: |
-          echo "PR number = ${{ github.event.pull_request.number }}"
-          echo "PR head SHA = ${{ github.event.pull_request.head.sha }}"
         shell: bash
 
       - name: Checkout Code 🛎
