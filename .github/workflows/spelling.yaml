@@ -40,7 +40,7 @@ jobs:
     name: Check whether skip
     runs-on: ubuntu-latest
     outputs:
-      head-commit-message: ${{ steps.debug.head_commit_message }}
+      head-commit-message: ${{ steps.debug.outputs.head_commit_message }}
     steps:
       - name: Checkout Code 🛎
         uses: actions/checkout@v4
@@ -68,6 +68,11 @@ jobs:
       image: ghcr.io/insightsengineering/rstudio:latest
 
     steps:
+      - name: Test
+        run: |
+          echo "${{ contains(needs.check-whether-skip.outputs.head-commit-message, '[skip spelling]') }}"
+          echo "${{ needs.check-whether-skip.outputs.head-commit-message }}"
+
       - name: Setup token 🔑
         id: github-token
         run: |
