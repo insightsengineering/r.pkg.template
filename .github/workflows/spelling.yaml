@@ -60,7 +60,7 @@ jobs:
 
       - name: Debug
         run: |
-          echo "${{ github.event }}"
+          echo "${{ toJson(github) }}"
         shell: bash
 
       - name: Checkout Code 🛎
