@@ -60,7 +60,9 @@ jobs:
 
       - name: Debug
         run: |
-          echo "${{ toJson(github) }}"
+          # echo "${{ toJson(github) }}"
+          echo "PR number = ${{ github.event.pull_request.number }}"
+          echo "PR head SHA = ${{ github.event.pull_request.head.sha }}"
         shell: bash
 
       - name: Checkout Code 🛎
