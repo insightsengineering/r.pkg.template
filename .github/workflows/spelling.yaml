@@ -58,6 +58,11 @@ jobs:
           fi
         shell: bash
 
+      - name: Debug
+        run: |
+          echo "${{ github.event }}"
+        shell: bash
+
       - name: Checkout Code 🛎
         uses: actions/checkout@v4
         with:
