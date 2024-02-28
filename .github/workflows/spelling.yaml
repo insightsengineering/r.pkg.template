@@ -36,11 +36,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check-whether-skip:
-    name: Check whether skip
+  check-skip-instructions:
+    name: Check skip instructions ⚙️
     runs-on: ubuntu-latest
     outputs:
-      head-commit-message: ${{ steps.debug.outputs.head_commit_message }}
+      head-commit-message: ${{ steps.get-commit-message.outputs.head_commit_message }}
     steps:
       - name: Checkout Code 🛎
         uses: actions/checkout@v4
@@ -48,30 +48,28 @@ jobs:
           fetch-depth: 1
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Debug
-        id: debug
+      - name: Get commit message 💬
+        id: get-commit-message
         run: |
-          echo "PR number = ${{ github.event.pull_request.number }}"
-          echo "PR head SHA = ${{ github.event.pull_request.head.sha }}"
-          echo "head_commit_message=$(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }} | tr '\r\n' ' ' | tr '\n' ' ')" >> $GITHUB_OUTPUT
-          echo "head_commit_message = $(git log --format=%B -n 1 ${{ github.event.pull_request.head.sha }} | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message=$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          echo "head_commit_message = $(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
         shell: bash
 
   spelling:
     name: Check spelling 🔠
     runs-on: ubuntu-latest
-    needs: check-whether-skip
+    needs: check-skip-instructions
     if: >
-      !contains(needs.check-whether-skip.outputs.head-commit-message, '[skip spelling]')
+      !contains(needs.check-skip-instructions.outputs.head-commit-message, '[skip spelling]')
         && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
 
     steps:
-      - name: Test
+      - name: Debug
         run: |
-          echo "${{ contains(needs.check-whether-skip.outputs.head-commit-message, '[skip spelling]') }}"
-          echo "${{ needs.check-whether-skip.outputs.head-commit-message }}"
+          echo "skip_spelling = ${{ contains(needs.check-skip-instructions.outputs.head-commit-message, '[skip spelling]') }}"
+          echo "head_commit_message = ${{ needs.check-skip-instructions.outputs.head-commit-message }}"
 
       - name: Setup token 🔑
         id: github-token
