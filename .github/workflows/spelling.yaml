@@ -92,6 +92,7 @@ jobs:
 
       - name: Get commit message 💬
         run: |
+          git config --global --add safe.directory $(pwd)
           export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
           echo "head_commit_message = $(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
           if [[ $head_commit_message == *"[skip spelling]"* ]]; then
@@ -128,7 +129,6 @@ jobs:
       - name: Checkout to main 🛎
         if: github.event_name == 'push'
         run: |
-          git config --global --add safe.directory $(pwd)
           git fetch origin main
           git checkout main
           git pull origin main
