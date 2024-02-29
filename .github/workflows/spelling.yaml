@@ -87,6 +87,15 @@ jobs:
 
       - name: Checkout Code 🛎
         uses: actions/checkout@v4
+        if: github.event_name != 'push'
+        with:
+          token: ${{ steps.github-token.outputs.token }}
+          fetch-depth: 1
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Checkout Code 🛎
+        uses: actions/checkout@v4
+        if: github.event_name == 'push'
         with:
           token: ${{ steps.github-token.outputs.token }}
 
