@@ -107,21 +107,21 @@ jobs:
           echo "head_commit_message=$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')" >> $GITHUB_OUTPUT
           echo "head_commit_message = $(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
           if [[ $head_commit_message == *"[skip spelling]"* ]]; then
-            echo "Skip instruction detected."
+            echo "Skip instruction detected - cancelling the workflow."
+            gh run cancel ${{ github.run_id }}
+            gh run watch ${{ github.run_id }}
           fi
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ steps.github-token.outputs.token }}
 
       - name: Normalize variables 📏
-        if: >
-          !contains(steps.get-commit-message.outputs.head_commit_message, '[skip spelling]')
         run: |
           package_subdirectory_input="${{ inputs.package-subdirectory }}"
           echo "package_subdirectory=${package_subdirectory_input:-.}" >> $GITHUB_ENV
         shell: bash
 
       - name: Run Spellcheck 👟
-        if: >
-          !contains(steps.get-commit-message.outputs.head_commit_message, '[skip spelling]')
         uses: insightsengineering/r-spellcheck-action@v2
         with:
           exclude: ${{ inputs.exclude }}
@@ -129,8 +129,7 @@ jobs:
 
       - name: Clean up WORDLIST 🧼
         if: >
-          github.event_name == 'push' &&
-            !contains(steps.get-commit-message.outputs.head_commit_message, '[skip spelling]')
+          github.event_name == 'push'
         run: |
           x <- readLines('inst/WORDLIST')
           file.remove('inst/WORDLIST')
@@ -144,8 +143,7 @@ jobs:
 
       - name: Checkout to main 🛎
         if: >
-          github.event_name == 'push' &&
-            !contains(steps.get-commit-message.outputs.head_commit_message, '[skip spelling]')
+          github.event_name == 'push'
         run: |
           git fetch origin main
           git checkout main
@@ -153,8 +151,7 @@ jobs:
 
       - name: Set file pattern to commit ⚙️
         if: >
-          github.event_name == 'push' &&
-            !contains(steps.get-commit-message.outputs.head_commit_message, '[skip spelling]')
+          github.event_name == 'push'
         id: file-pattern
         run: |
           if [[ "${{ inputs.package-subdirectory }}" == "." ]]; then
@@ -167,8 +164,7 @@ jobs:
 
       - name: Commit and push changes 📌
         if: >
-          github.event_name == 'push' &&
-            !contains(steps.get-commit-message.outputs.head_commit_message, '[skip spelling]')
+          github.event_name == 'push'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "[skip ci] Update WORDLIST"
