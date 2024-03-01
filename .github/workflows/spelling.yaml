@@ -108,8 +108,10 @@ jobs:
           echo "head_commit_message = $(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
           if [[ $head_commit_message == *"[skip spelling]"* ]]; then
             echo "Skip instruction detected - cancelling the workflow."
-            gh run cancel ${{ github.run_id }}
-            gh run watch ${{ github.run_id }}
+            curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v2.44.1/gh_2.44.1_linux_amd64.tar.gz
+            tar -xzf gh.tar.gz --strip-components 2
+            ./gh run cancel ${{ github.run_id }}
+            ./gh run watch ${{ github.run_id }}
           fi
         shell: bash
         env:
