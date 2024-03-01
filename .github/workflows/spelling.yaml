@@ -115,7 +115,7 @@ jobs:
           fi
         shell: bash
         env:
-          GITHUB_TOKEN: ${{ steps.github-token.outputs.token }}
+          GH_TOKEN: ${{ steps.github-token.outputs.token }}
 
       - name: Normalize variables 📏
         run: |
