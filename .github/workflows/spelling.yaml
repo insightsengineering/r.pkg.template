@@ -36,43 +36,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # check-skip-instructions:
-  #   name: Check skip instructions ⚙️
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     head-commit-message: ${{ steps.get-commit-message.outputs.head_commit_message }}
-  #   steps:
-  #     - name: Checkout Code 🛎
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 1
-  #         ref: ${{ github.event.pull_request.head.sha }}
-
-  #     - name: Get commit message 💬
-  #       id: get-commit-message
-  #       run: |
-  #         echo "head_commit_message=$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')" >> $GITHUB_OUTPUT
-  #         echo "head_commit_message = $(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
-  #       shell: bash
-
   spelling:
     name: Check spelling 🔠
     runs-on: ubuntu-latest
-    # needs: check-skip-instructions
     if: >
       github.event.pull_request.draft == false
-    # if: >
-    #   !contains(needs.check-skip-instructions.outputs.head-commit-message, '[skip spelling]')
-    #     && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
 
     steps:
-      # - name: Debug
-      #   run: |
-      #     echo "skip_spelling = ${{ contains(needs.check-skip-instructions.outputs.head-commit-message, '[skip spelling]') }}"
-      #     echo "head_commit_message = ${{ needs.check-skip-instructions.outputs.head-commit-message }}"
-
       - name: Setup token 🔑
         id: github-token
         run: |
@@ -99,25 +71,20 @@ jobs:
         with:
           token: ${{ steps.github-token.outputs.token }}
 
-      - name: Install GH CLI
-        uses: dev-hanz-ops/install-gh-cli-action@v0.1.0
-        with:
-          gh-cli-version: 2.44.1
-
       - name: Get commit message 💬
         id: get-commit-message
         run: |
           git config --global --add safe.directory $(pwd)
           export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
           echo "head_commit_message=$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')" >> $GITHUB_OUTPUT
-          echo "head_commit_message = $(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
           if [[ $head_commit_message == *"[skip spelling]"* ]]; then
             echo "Skip instruction detected - cancelling the workflow."
-            # curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v2.44.1/gh_2.44.1_linux_amd64.tar.gz
-            # tar -xzf gh.tar.gz --strip-components 2
-            gh version
-            gh run cancel ${{ github.run_id }}
-            gh run watch ${{ github.run_id }}
+            curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v2.44.1/gh_2.44.1_linux_amd64.tar.gz
+            tar -xzf gh.tar.gz --strip-components 2
+            ./gh version
+            ./gh run cancel ${{ github.run_id }}
+            ./gh run watch ${{ github.run_id }}
           fi
         shell: bash
         env:
