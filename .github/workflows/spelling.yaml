@@ -130,8 +130,7 @@ jobs:
           path: ${{ env.package_subdirectory }}
 
       - name: Clean up WORDLIST 🧼
-        if: >
-          github.event_name == 'push'
+        if: github.event_name == 'push'
         run: |
           x <- readLines('inst/WORDLIST')
           file.remove('inst/WORDLIST')
@@ -144,16 +143,14 @@ jobs:
         shell: Rscript {0}
 
       - name: Checkout to main 🛎
-        if: >
-          github.event_name == 'push'
+        if: github.event_name == 'push'
         run: |
           git fetch origin main
           git checkout main
           git pull origin main
 
       - name: Set file pattern to commit ⚙️
-        if: >
-          github.event_name == 'push'
+        if: github.event_name == 'push'
         id: file-pattern
         run: |
           if [[ "${{ inputs.package-subdirectory }}" == "." ]]; then
@@ -165,8 +162,7 @@ jobs:
         shell: bash
 
       - name: Commit and push changes 📌
-        if: >
-          github.event_name == 'push'
+        if: github.event_name == 'push'
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "[skip ci] Update WORDLIST"
