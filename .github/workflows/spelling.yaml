@@ -76,7 +76,6 @@ jobs:
         run: |
           git config --global --add safe.directory $(pwd)
           export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
-          echo "head_commit_message=$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')" >> $GITHUB_OUTPUT
           echo "head_commit_message = $head_commit_message"
           if [[ $head_commit_message == *"[skip spelling]"* ]]; then
             echo "Skip instruction detected - cancelling the workflow."
