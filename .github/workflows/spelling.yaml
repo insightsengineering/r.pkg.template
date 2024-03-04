@@ -115,8 +115,9 @@ jobs:
             echo "Skip instruction detected - cancelling the workflow."
             # curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v2.44.1/gh_2.44.1_linux_amd64.tar.gz
             # tar -xzf gh.tar.gz --strip-components 2
-            ./gh run cancel ${{ github.run_id }}
-            ./gh run watch ${{ github.run_id }}
+            gh version
+            gh run cancel ${{ github.run_id }}
+            gh run watch ${{ github.run_id }}
           fi
         shell: bash
         env:
