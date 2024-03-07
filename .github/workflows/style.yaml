@@ -96,6 +96,7 @@ jobs:
             echo "Skip instruction not detected - continuing the workflow."
           fi
         shell: bash
+        working-directory: ${{ github.event.repository.name }}
         env:
           GH_TOKEN: ${{ steps.github-token.outputs.token }}
           GH_CLI_VERSION: 2.44.1

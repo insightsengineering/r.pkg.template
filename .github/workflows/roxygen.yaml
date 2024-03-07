@@ -93,13 +93,6 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
 
-      - name: Show github context
-        env:
-          JSON_DOC: ${{ toJSON(github) }}
-        run: |
-          printf '%s\n' "$JSON_DOC" > github.json
-          cat github.json
-
       - name: Check commit message 💬
         run: |
           git config --global --add safe.directory $(pwd)

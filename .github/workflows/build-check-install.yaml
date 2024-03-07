@@ -247,6 +247,7 @@ jobs:
             echo "Skip instruction not detected - continuing the workflow."
           fi
         shell: bash
+        working-directory: ${{ github.event.repository.name }}
         env:
           GH_TOKEN: ${{ steps.github-token.outputs.token }}
           GH_CLI_VERSION: 2.44.1
@@ -856,42 +857,10 @@ jobs:
     if: >
       startsWith(github.ref, 'refs/tags/v')
         && github.event.pull_request.draft == false
-    steps:
-      - name: Setup token 🔑
-        id: github-token
-        run: |
-          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
-            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
-            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
-          else
-            echo "Using REPO_GITHUB_TOKEN."
-            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
-          fi
-        shell: bash
 
+    steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
-
-      - name: Check commit message 💬
-        run: |
-          git config --global --add safe.directory $(pwd)
-          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
-          echo "head_commit_message = $head_commit_message"
-          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
-            echo "Skip instruction detected - cancelling the workflow."
-            curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
-            tar -xzf gh.tar.gz --strip-components 2
-            ./gh version
-            ./gh run cancel ${{ github.run_id }}
-            ./gh run watch ${{ github.run_id }}
-          else
-            echo "Skip instruction not detected - continuing the workflow."
-          fi
-        shell: bash
-        env:
-          GH_TOKEN: ${{ steps.github-token.outputs.token }}
-          GH_CLI_VERSION: 2.44.1
-          SKIP_INSTRUCTION: "[skip r-cmd]"
 
       - name: Get package build filename 📦
         run: |
