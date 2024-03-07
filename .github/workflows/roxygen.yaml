@@ -5,15 +5,14 @@ on:
   push:
     branches:
       - main
-      - debug-skip-phrases
-  # pull_request:
-  #   types:
-  #     - opened
-  #     - synchronize
-  #     - reopened
-  #     - ready_for_review
-  #   branches:
-  #     - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+    branches:
+      - main
   workflow_dispatch:
   workflow_call:
     inputs:
@@ -113,6 +112,8 @@ jobs:
             ./gh version
             ./gh run cancel ${{ github.run_id }}
             ./gh run watch ${{ github.run_id }}
+          else
+            echo "Skip instruction not detected - continuing the workflow."
           fi
         shell: bash
         working-directory: ${{ github.event.repository.name }}

@@ -121,13 +121,14 @@ jobs:
     name: Generate 🐣
     runs-on: ubuntu-latest
     if: >
-      !contains(github.event.commits[0].message, '[skip docs]')
-        && github.event.pull_request.draft == false
+      github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
+
     # Only one job can publish to gh-pages branch concurrently.
     concurrency:
       group: ghpages
+
     steps:
       - name: Setup token 🔑
         id: github-token
@@ -171,6 +172,27 @@ jobs:
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
+            tar -xzf gh.tar.gz --strip-components 2
+            ./gh version
+            ./gh run cancel ${{ github.run_id }}
+            ./gh run watch ${{ github.run_id }}
+          else
+            echo "Skip instruction not detected - continuing the workflow."
+          fi
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_CLI_VERSION: 2.44.1
+          SKIP_INSTRUCTION: "[skip docs]"
 
       - name: Restore SD cache 💰
         uses: actions/cache@v4
@@ -280,8 +302,7 @@ jobs:
     concurrency:
       group: ghpages
     if: >
-      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-        && !contains(github.event.commits[0].message, '[skip docs]')
+      github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
@@ -317,7 +338,6 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       startsWith(github.ref, 'refs/tags/v')
-        && !contains(github.event.commits[0].message, '[skip docs]')
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
