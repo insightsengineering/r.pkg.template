@@ -96,7 +96,7 @@ jobs:
       - name: Show github context
         run: |
           echo "head commit message = ${{ toJSON(github.event.head_commit.message) }}"
-          echo "github context = ${{ toJSON(github) }}
+          echo "github context = ${{ toJSON(github) }}"
 
       - name: Check commit message 💬
         run: |
