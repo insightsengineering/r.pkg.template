@@ -364,6 +364,7 @@ jobs:
             ./gh run watch ${{ github.run_id }}
           fi
         shell: bash
+        working-directory: ${{ github.event.repository.name }}
         env:
           GH_TOKEN: ${{ steps.github-token.outputs.token }}
           GH_CLI_VERSION: 2.44.1

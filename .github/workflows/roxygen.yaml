@@ -93,6 +93,11 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
 
+      - name: Show github context
+        run: |
+          echo "head commit message = ${{ toJSON(github.event.head_commit.message) }}"
+          echo "github context = ${{ toJSON(github) }}
+
       - name: Check commit message 💬
         run: |
           git config --global --add safe.directory $(pwd)
@@ -107,6 +112,7 @@ jobs:
             ./gh run watch ${{ github.run_id }}
           fi
         shell: bash
+        working-directory: ${{ github.event.repository.name }}
         env:
           GH_TOKEN: ${{ steps.github-token.outputs.token }}
           GH_CLI_VERSION: 2.44.1
