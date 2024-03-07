@@ -72,7 +72,7 @@ jobs:
         uses: super-linter/super-linter/slim@v5
         env:
           LINTER_RULES_PATH: /
-          DEFAULT_BRANCH: main
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
           FILTER_REGEX_EXCLUDE: NEWS.md|design/.*|testthat/_snaps/.*
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false
