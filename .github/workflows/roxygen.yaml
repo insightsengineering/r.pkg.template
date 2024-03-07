@@ -94,9 +94,11 @@ jobs:
           path: ${{ github.event.repository.name }}
 
       - name: Show github context
+        env:
+          JSON_DOC: ${{ toJSON(github) }}
         run: |
-          echo "head commit message = ${{ toJSON(github.event.head_commit.message) }}"
-          echo "github context = ${{ toJSON(github) }}"
+          printf '%s\n' "$JSON_DOC" > github.json
+          cat github.json
 
       - name: Check commit message 💬
         run: |
