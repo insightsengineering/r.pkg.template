@@ -251,7 +251,7 @@ jobs:
       #     SKIP_INSTRUCTION: "[skip r-cmd]"
 
       - name: Check commit message 💬
-        uses: ./${{ github.event.repository.name }}/.github/workflows/check-commit-message
+        uses: ./r.pkg.template/.github/workflows/check-commit-message
         with:
           gh-token: ${{ steps.github-token.outputs.token }}
           skip-instruction: "[skip r-cmd]"
