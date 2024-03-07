@@ -251,7 +251,7 @@ jobs:
       #     SKIP_INSTRUCTION: "[skip r-cmd]"
 
       - name: Check commit message 💬
-        uses: ./check-commit-message
+        uses: ./check-commit-message@debug-skip-phrases
         with:
           gh-token: ${{ steps.github-token.outputs.token }}
           skip-instruction: "[skip r-cmd]"
