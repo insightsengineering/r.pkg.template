@@ -57,18 +57,24 @@ jobs:
           fi
         shell: bash
 
-      - name: Checkout Code 🛎
-        uses: actions/checkout@v4
-        if: github.event_name != 'push'
-        with:
-          token: ${{ steps.github-token.outputs.token }}
-          fetch-depth: 1
-          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v7
 
-      - name: Checkout Code 🛎
+      - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v4
-        if: github.event_name == 'push'
+        if: github.event_name == 'pull_request'
         with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          fetch-depth: 1
+          token: ${{ steps.github-token.outputs.token }}
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v4
+        if: github.event_name != 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           token: ${{ steps.github-token.outputs.token }}
 
       - name: Check commit message 💬

@@ -184,8 +184,7 @@ jobs:
     name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
     runs-on: ubuntu-latest
     if: >
-      !contains(github.event.commits[0].message, '[skip r-cmd]')
-        && github.event.pull_request.draft == false
+      github.event.pull_request.draft == false
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
     outputs:
@@ -211,6 +210,51 @@ jobs:
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v7
+
+      - name: Checkout repo (PR) 🛎
+        uses: actions/checkout@v4
+        if: github.event_name == 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          # When fetch-depth is set to 1 (default), and if additional commits are added
+          # to the branch between this step and the 'Set TESTING_DEPTH' step, git might fail
+          # referencing ${{ github.event.after }} commit
+          # because it's not the latest commit fetched by this step.
+          fetch-depth: 0
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v4
+        if: github.event_name != 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
+
+      # - name: Check commit message 💬
+      #   run: |
+      #     git config --global --add safe.directory $(pwd)
+      #     export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+      #     echo "head_commit_message = $head_commit_message"
+      #     if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+      #       echo "Skip instruction detected - cancelling the workflow."
+      #       curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
+      #       tar -xzf gh.tar.gz --strip-components 2
+      #       ./gh version
+      #       ./gh run cancel ${{ github.run_id }}
+      #       ./gh run watch ${{ github.run_id }}
+      #     fi
+      #   shell: bash
+      #   env:
+      #     GH_TOKEN: ${{ steps.github-token.outputs.token }}
+      #     GH_CLI_VERSION: 2.44.1
+      #     SKIP_INSTRUCTION: "[skip r-cmd]"
+
+      - name: Check commit message 💬
+        uses: ./check-commit-message
+        with:
+          gh-token: ${{ steps.github-token.outputs.token }}
+          skip-instruction: "[skip r-cmd]"
 
       - name: Checkout gh-pages 🛎
         if: >-
@@ -294,26 +338,6 @@ jobs:
             && github.event_name != 'pull_request'
         run: npm i -g xunit-viewer
         shell: bash
-
-      - name: Checkout repo (PR) 🛎
-        uses: actions/checkout@v4
-        if: github.event_name == 'pull_request'
-        with:
-          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
-          path: ${{ github.event.repository.name }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          # When fetch-depth is set to 1 (default), and if additional commits are added
-          # to the branch between this step and the 'Set TESTING_DEPTH' step, git might fail
-          # referencing ${{ github.event.after }} commit
-          # because it's not the latest commit fetched by this step.
-          fetch-depth: 0
-
-      - name: Checkout repo 🛎
-        uses: actions/checkout@v4
-        if: github.event_name != 'pull_request'
-        with:
-          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
-          path: ${{ github.event.repository.name }}
 
       - name: Restore SD cache 💰
         if: inputs.install-deps-from-package-repositories == ''

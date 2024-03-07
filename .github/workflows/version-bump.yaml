@@ -36,10 +36,6 @@ jobs:
   vbump:
     name: Bump version ⤴
     runs-on: ubuntu-latest
-    if: |
-      !(contains(github.event.commits[0].message, '[skip vbump]') ||
-        contains(github.event.head_commit.message, '[skip vbump]')
-      )
     container:
       image: docker.io/rocker/tidyverse:latest
 
@@ -56,10 +52,34 @@ jobs:
           fi
         shell: bash
 
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v7
+
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
         with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           token: ${{ steps.github-token.outputs.token }}
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
+            tar -xzf gh.tar.gz --strip-components 2
+            ./gh version
+            ./gh run cancel ${{ github.run_id }}
+            ./gh run watch ${{ github.run_id }}
+          fi
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.github-token.outputs.token }}
+          GH_CLI_VERSION: 2.44.1
+          SKIP_INSTRUCTION: "[skip vbump]"
 
       - name: Bump version in DESCRIPTION 📜
         if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || inputs.vbump-after-release == true }}

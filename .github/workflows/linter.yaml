@@ -15,6 +15,11 @@ on:
       - main
   workflow_dispatch:
   workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with read access and write access to repositories.
+        required: false
     inputs:
       lintr_error_on_lint:
         description: Produce an error when lints are found
@@ -36,13 +41,46 @@ jobs:
     name: SuperLinter 🦸‍♂️
     runs-on: ubuntu-latest
     if: >
-      !contains(github.event.commits[0].message, '[skip linter]')
-        && github.event.pull_request.draft == false
+      github.event.pull_request.draft == false
+
     steps:
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v7
+
+      - name: Checkout repo (PR) 🛎
+        uses: actions/checkout@v4
+        if: github.event_name == 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          fetch-depth: 0
+
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
+        if: github.event_name != 'pull_request'
         with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           fetch-depth: 0
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
+            tar -xzf gh.tar.gz --strip-components 2
+            ./gh version
+            ./gh run cancel ${{ github.run_id }}
+            ./gh run watch ${{ github.run_id }}
+          fi
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_CLI_VERSION: 2.44.1
+          SKIP_INSTRUCTION: "[skip linter]"
 
       - name: Override SuperLinter configs 💾
         run: |
@@ -86,15 +124,42 @@ jobs:
     name: Lint R code 🧶
     runs-on: ubuntu-latest
     if: >
-      !contains(github.event.commits[0].message, '[skip linter]')
-        && github.event.pull_request.draft == false
+      github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
+
     steps:
+      - name: Checkout repo (PR) 🛎
+        uses: actions/checkout@v4
+        if: github.event_name == 'pull_request'
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
+        if: github.event_name != 'pull_request'
         with:
           fetch-depth: 0
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
+            tar -xzf gh.tar.gz --strip-components 2
+            ./gh version
+            ./gh run cancel ${{ github.run_id }}
+            ./gh run watch ${{ github.run_id }}
+          fi
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_CLI_VERSION: 2.44.1
+          SKIP_INSTRUCTION: "[skip linter]"
 
       - name: Changed files 🖋️
         id: files

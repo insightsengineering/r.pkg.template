@@ -1,0 +1,38 @@
+name: 'Check commit message'
+inputs:
+  gh-cli-version:
+    description: 'GitHub CLI version'
+    required: true
+    default: '2.44.1'
+  skip-instruction:
+    description: 'Skip instruction'
+    required: true
+    default: ''
+  github-token:
+    description: 'GitHub token'
+    required: true
+    default: ''
+runs:
+  using: "composite"
+  steps:
+    - name: Check commit message 💬
+      run: |
+        git config --global --add safe.directory $(pwd)
+        export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+        echo "head_commit_message = $head_commit_message"
+        if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+          echo "Skip instruction detected - cancelling the workflow."
+          curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
+          tar -xzf gh.tar.gz --strip-components 2
+          ./gh version
+          ./gh run cancel ${{ github.run_id }}
+          ./gh run watch ${{ github.run_id }}
+        else
+          echo "Skip instruction not detected - continuing the workflow."
+        fi
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        GH_CLI_VERSION: ${{ inputs.gh-cli-version }}
+        SKIP_INSTRUCTION: ${{ inputs.skip-instruction }}
+

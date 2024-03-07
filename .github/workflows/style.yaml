@@ -41,8 +41,7 @@ jobs:
     name: Check code style 🔠
     runs-on: ubuntu-latest
     if: >
-      !contains(github.event.commits[0].message, '[skip style]')
-        && github.event.pull_request.draft == false
+      github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
 
@@ -60,17 +59,45 @@ jobs:
         shell: bash
 
       - name: Get branch names 🌿
-        if: inputs.auto-update
         id: branch-name
         uses: tj-actions/branch-names@v7
 
-      - name: Checkout Code 🛎
+      - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v4
+        if: github.event_name == 'pull_request'
         with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
           fetch-depth: 0
           token: ${{ steps.github-token.outputs.token }}
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v4
+        if: github.event_name != 'pull_request'
+        with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
+          token: ${{ steps.github-token.outputs.token }}
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
+            tar -xzf gh.tar.gz --strip-components 2
+            ./gh version
+            ./gh run cancel ${{ github.run_id }}
+            ./gh run watch ${{ github.run_id }}
+          fi
+        shell: bash
+        env:
+          GH_TOKEN: ${{ steps.github-token.outputs.token }}
+          GH_CLI_VERSION: 2.44.1
+          SKIP_INSTRUCTION: "[skip style]"
 
       - name: Install styler 👚
         run: |
