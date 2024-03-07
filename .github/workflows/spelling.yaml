@@ -76,9 +76,9 @@ jobs:
           git config --global --add safe.directory $(pwd)
           export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
           echo "head_commit_message = $head_commit_message"
-          if [[ $head_commit_message == *${SKIP_INSTRUCTION}* ]]; then
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
             echo "Skip instruction detected - cancelling the workflow."
-            curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
+            curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v$GH_CLI_VERSION/gh_$GH_CLI_VERSION_linux_amd64.tar.gz
             tar -xzf gh.tar.gz --strip-components 2
             ./gh version
             ./gh run cancel ${{ github.run_id }}
