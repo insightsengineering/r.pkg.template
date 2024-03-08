@@ -168,9 +168,15 @@ on:
         required: false
         type: string
         default: ""
+      concurrency-group:
+        description: |
+          Concurrency group name
+        required: false
+        type: string
+        default: ""
 
 concurrency:
-  group: r-cmd-${{ github.event.pull_request.number || github.ref }}
+  group: r-cmd-${{ inputs.concurrency-group }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
