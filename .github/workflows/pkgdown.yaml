@@ -121,7 +121,8 @@ jobs:
     name: Generate 🐣
     runs-on: ubuntu-latest
     if: >
-      github.event.pull_request.draft == false
+      !contains(github.event.commits[0].message, '[skip docs]')
+        && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
 
@@ -295,7 +296,8 @@ jobs:
     concurrency:
       group: ghpages
     if: >
-      github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        && !contains(github.event.commits[0].message, '[skip docs]')
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
@@ -331,6 +333,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       startsWith(github.ref, 'refs/tags/v')
+        && !contains(github.event.commits[0].message, '[skip docs]')
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v4

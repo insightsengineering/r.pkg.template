@@ -31,7 +31,8 @@ jobs:
     name: Validate Links 🔎
     runs-on: ubuntu-latest
     if: >
-      github.event.pull_request.draft == false
+      !contains(github.event.commits[0].message, '[skip links]')
+        && github.event.pull_request.draft == false
     steps:
       - name: Get branch names 🌿
         id: branch-name

@@ -36,6 +36,10 @@ jobs:
   vbump:
     name: Bump version ⤴
     runs-on: ubuntu-latest
+    if: |
+      !(contains(github.event.commits[0].message, '[skip vbump]') ||
+        contains(github.event.head_commit.message, '[skip vbump]')
+      )
     container:
       image: docker.io/rocker/tidyverse:latest
 
@@ -61,19 +65,6 @@ jobs:
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           token: ${{ steps.github-token.outputs.token }}
-
-      - name: Check commit message 💬
-        run: |
-          git config --global --add safe.directory $(pwd)
-          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
-          echo "head_commit_message = $head_commit_message"
-          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
-            echo "Skip instruction detected - cancelling the workflow."
-            exit 1
-          fi
-        shell: bash
-        env:
-          SKIP_INSTRUCTION: "[skip vbump]"
 
       - name: Bump version in DESCRIPTION 📜
         if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || inputs.vbump-after-release == true }}

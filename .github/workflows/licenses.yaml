@@ -30,7 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     name: Check 🚩
     if: >
-      github.event.pull_request.draft == false
+      !contains(github.event.commits[0].message, '[skip licenses]')
+        && github.event.pull_request.draft == false
 
     steps:
       - name: Get branch names 🌿

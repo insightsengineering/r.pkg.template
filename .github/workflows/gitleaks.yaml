@@ -36,7 +36,8 @@ jobs:
     name: gitleaks 💧
     runs-on: ubuntu-latest
     if: >
-      github.event.pull_request.draft == false
+      !contains(github.event.commits[0].message, '[skip gitleaks]')
+        && github.event.pull_request.draft == false
 
     steps:
       - name: Get branch names 🌿
@@ -92,7 +93,8 @@ jobs:
     name: PII Check 💳
     runs-on: ubuntu-latest
     if: >
-      github.event.pull_request.draft == false
+      !contains(github.event.commits[0].message, '[skip pii-check]')
+        && github.event.pull_request.draft == false
         && inputs.check-for-pii == true
 
     steps:

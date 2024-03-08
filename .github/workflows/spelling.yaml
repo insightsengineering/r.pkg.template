@@ -40,7 +40,8 @@ jobs:
     name: Check spelling 🔠
     runs-on: ubuntu-latest
     if: >
-      github.event.pull_request.draft == false
+      !contains(github.event.commits[0].message, '[skip spelling]')
+        && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
 
@@ -118,6 +119,7 @@ jobs:
       - name: Checkout to main 🛎
         if: github.event_name == 'push'
         run: |
+          git config --global --add safe.directory $(pwd)
           git fetch origin main
           git checkout main
           git pull origin main

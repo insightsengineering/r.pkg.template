@@ -36,7 +36,8 @@ jobs:
     name: SuperLinter 🦸‍♂️
     runs-on: ubuntu-latest
     if: >
-      github.event.pull_request.draft == false
+      !contains(github.event.commits[0].message, '[skip linter]')
+        && github.event.pull_request.draft == false
 
     steps:
       - name: Get branch names 🌿
@@ -113,7 +114,8 @@ jobs:
     name: Lint R code 🧶
     runs-on: ubuntu-latest
     if: >
-      github.event.pull_request.draft == false
+      !contains(github.event.commits[0].message, '[skip linter]')
+        && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
 

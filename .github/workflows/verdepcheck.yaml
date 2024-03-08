@@ -44,7 +44,8 @@ jobs:
     name: Dependency Test 🔢
     runs-on: ubuntu-latest
     if: >
-      github.event.pull_request.draft == false
+      !contains(github.event.commits[0].message, '[skip dependency-test]')
+        && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
 

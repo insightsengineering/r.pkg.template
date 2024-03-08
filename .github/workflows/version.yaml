@@ -31,7 +31,8 @@ jobs:
     name: Version check 🏁
     runs-on: ubuntu-latest
     if: >
-      github.event.pull_request.draft == false
+      !contains(github.event.commits[0].message, '[skip version]')
+        && github.event.pull_request.draft == false
 
     steps:
       - name: Get branch names 🌿
@@ -94,7 +95,8 @@ jobs:
     name: Emoji in NEWS.md 📰
     runs-on: ubuntu-latest
     if: >
-      github.event.pull_request.draft == false
+      !contains(github.event.commits[0].message, '[skip version]')
+        && github.event.pull_request.draft == false
     steps:
       - name: Get branch names 🌿
         id: branch-name
