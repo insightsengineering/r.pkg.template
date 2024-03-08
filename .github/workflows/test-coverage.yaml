@@ -321,7 +321,8 @@ jobs:
     name: Covtracer 🐄
     runs-on: ubuntu-latest
     if: >
-      github.event.pull_request.draft == false
+      !contains(github.event.commits[0].message, '[skip coverage]')
+        && github.event.pull_request.draft == false
         && contains(inputs.enable-covtracer, 'true')
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
