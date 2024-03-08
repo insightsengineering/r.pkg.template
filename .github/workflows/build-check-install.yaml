@@ -195,6 +195,19 @@ jobs:
       multiversion-docs: ${{ steps.current-branch-or-tag.outputs.multiversion-docs }}
 
     steps:
+      - name: Get PR Commits
+        id: 'get-pr-commits'
+        uses: tim-actions/get-pr-commits@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check commit message
+        uses: tim-actions/commit-message-checker-with-regex@v0.3.1
+        with:
+          commits: ${{ steps.get-pr-commits.outputs.commits }}
+          pattern: '^.*\[skip\ r-cmd\].*$'
+          error: 'Skip instruction detected'
+
       - name: Setup token 🔑
         id: github-token
         run: |
