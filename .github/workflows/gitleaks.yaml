@@ -63,6 +63,7 @@ jobs:
           echo "head_commit_message = $head_commit_message"
           if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
             echo "Skip instruction detected - cancelling the workflow."
+            exit 1
             curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
             tar -xzf gh.tar.gz --strip-components 2
             ./gh version
@@ -130,6 +131,7 @@ jobs:
           echo "head_commit_message = $head_commit_message"
           if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
             echo "Skip instruction detected - cancelling the workflow."
+            exit 1
             curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
             tar -xzf gh.tar.gz --strip-components 2
             ./gh version
