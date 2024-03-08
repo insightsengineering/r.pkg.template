@@ -101,7 +101,7 @@ jobs:
           echo "head_commit_message = $head_commit_message"
           if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
             echo "Skip instruction detected - cancelling the workflow."
-            exit 1
+            exit 0
           fi
         shell: bash
         working-directory: ${{ github.event.repository.name }}
