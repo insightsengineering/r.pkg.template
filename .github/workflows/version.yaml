@@ -59,18 +59,9 @@ jobs:
           if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
             echo "Skip instruction detected - cancelling the workflow."
             exit 1
-            curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
-            tar -xzf gh.tar.gz --strip-components 2
-            ./gh version
-            ./gh run cancel ${{ github.run_id }}
-            ./gh run watch ${{ github.run_id }}
-          else
-            echo "Skip instruction not detected - continuing the workflow."
           fi
         shell: bash
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_CLI_VERSION: 2.44.1
           SKIP_INSTRUCTION: "[skip version]"
 
       - name: NEWS.md and DESCRIPTION Version check 🏁
@@ -130,18 +121,9 @@ jobs:
           if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
             echo "Skip instruction detected - cancelling the workflow."
             exit 1
-            curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
-            tar -xzf gh.tar.gz --strip-components 2
-            ./gh version
-            ./gh run cancel ${{ github.run_id }}
-            ./gh run watch ${{ github.run_id }}
-          else
-            echo "Skip instruction not detected - continuing the workflow."
           fi
         shell: bash
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_CLI_VERSION: 2.44.1
           SKIP_INSTRUCTION: "[skip version]"
 
       - name: Set up Python 🐍

@@ -35,19 +35,6 @@ jobs:
     if: >
       github.event.pull_request.draft == false
     steps:
-      - name: Get PR Commits
-        id: 'get-pr-commits'
-        uses: tim-actions/get-pr-commits@master
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Check commit message
-        uses: tim-actions/commit-message-checker-with-regex@v0.3.1
-        with:
-          commits: ${{ steps.get-pr-commits.outputs.commits }}
-          pattern: '^.*\[skip\ audit\].*$'
-          error: 'Skip instruction detected'
-
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v7
@@ -75,18 +62,9 @@ jobs:
           if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
             echo "Skip instruction detected - cancelling the workflow."
             exit 1
-            curl -s -LJ -o gh.tar.gz https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_amd64.tar.gz
-            tar -xzf gh.tar.gz --strip-components 2
-            ./gh version
-            ./gh run cancel ${{ github.run_id }}
-            ./gh run watch ${{ github.run_id }}
-          else
-            echo "Skip instruction not detected - continuing the workflow."
           fi
         shell: bash
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_CLI_VERSION: 2.44.1
           SKIP_INSTRUCTION: "[skip audit]"
 
       - name: Normalize inputs 🛠️
