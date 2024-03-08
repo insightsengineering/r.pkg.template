@@ -170,7 +170,7 @@ on:
         default: ""
       concurrency-group:
         description: |
-          Concurrency group name
+          Concurrency group name in case a calling workflow would like to use multiple instances of this workflow simultaneously.
         required: false
         type: string
         default: ""
