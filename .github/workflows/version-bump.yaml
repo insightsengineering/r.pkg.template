@@ -56,9 +56,14 @@ jobs:
           fi
         shell: bash
 
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v7
+
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
         with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           token: ${{ steps.github-token.outputs.token }}
 
       - name: Bump version in DESCRIPTION 📜

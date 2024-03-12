@@ -60,17 +60,40 @@ jobs:
         shell: bash
 
       - name: Get branch names 🌿
-        if: inputs.auto-update
         id: branch-name
         uses: tj-actions/branch-names@v7
 
-      - name: Checkout Code 🛎
+      - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v4
+        if: github.event_name == 'pull_request'
         with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
           fetch-depth: 0
           token: ${{ steps.github-token.outputs.token }}
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v4
+        if: github.event_name != 'pull_request'
+        with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
+          token: ${{ steps.github-token.outputs.token }}
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            exit 1
+          fi
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}
+        env:
+          SKIP_INSTRUCTION: "[skip style]"
 
       - name: Install styler 👚
         run: |

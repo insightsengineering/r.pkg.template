@@ -35,6 +35,7 @@ jobs:
     if: "! contains(github.event.commits[0].message, '[skip release]')"
     permissions:
       contents: write
+
     steps:
       - name: Setup token 🔑
         id: github-token
@@ -50,6 +51,19 @@ jobs:
 
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            exit 1
+          fi
+        shell: bash
+        env:
+          SKIP_INSTRUCTION: "[skip release]"
 
       - name: Get branch names 🌿
         id: branch-name
