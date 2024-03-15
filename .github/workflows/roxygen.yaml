@@ -94,6 +94,20 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
 
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            exit 1
+          fi
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}
+        env:
+          SKIP_INSTRUCTION: "[skip roxygen]"
+
       - name: Restore SD cache 💰
         uses: actions/cache@v4
         with:

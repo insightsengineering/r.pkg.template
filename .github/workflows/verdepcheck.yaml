@@ -62,8 +62,28 @@ jobs:
           fi
         shell: bash
 
-      - name: Checkout Code 🛎
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v7
+
+      - name: Checkout repo 🛎
         uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          fetch-depth: 1
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            exit 1
+          fi
+        shell: bash
+        env:
+          SKIP_INSTRUCTION: "[skip dependency-test]"
 
       - name: Normalize variables 📏
         run: |

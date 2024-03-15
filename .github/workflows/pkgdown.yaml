@@ -125,9 +125,11 @@ jobs:
         && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
+
     # Only one job can publish to gh-pages branch concurrently.
     concurrency:
       group: ghpages
+
     steps:
       - name: Setup token 🔑
         id: github-token
@@ -171,6 +173,20 @@ jobs:
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            exit 1
+          fi
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}
+        env:
+          SKIP_INSTRUCTION: "[skip docs]"
 
       - name: Restore SD cache 💰
         uses: actions/cache@v4

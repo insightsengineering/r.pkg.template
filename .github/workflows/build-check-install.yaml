@@ -218,6 +218,40 @@ jobs:
         id: branch-name
         uses: tj-actions/branch-names@v7
 
+      - name: Checkout repo (PR) 🛎
+        uses: actions/checkout@v4
+        if: github.event_name == 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          # When fetch-depth is set to 1 (default), and if additional commits are added
+          # to the branch between this step and the 'Set TESTING_DEPTH' step, git might fail
+          # referencing ${{ github.event.after }} commit
+          # because it's not the latest commit fetched by this step.
+          fetch-depth: 0
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v4
+        if: github.event_name != 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            exit 1
+          fi
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}
+        env:
+          SKIP_INSTRUCTION: "[skip r-cmd]"
+
       - name: Checkout gh-pages 🛎
         if: >-
           inputs.publish-unit-test-report-gh-pages == true
@@ -300,26 +334,6 @@ jobs:
             && github.event_name != 'pull_request'
         run: npm i -g xunit-viewer
         shell: bash
-
-      - name: Checkout repo (PR) 🛎
-        uses: actions/checkout@v4
-        if: github.event_name == 'pull_request'
-        with:
-          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
-          path: ${{ github.event.repository.name }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          # When fetch-depth is set to 1 (default), and if additional commits are added
-          # to the branch between this step and the 'Set TESTING_DEPTH' step, git might fail
-          # referencing ${{ github.event.after }} commit
-          # because it's not the latest commit fetched by this step.
-          fetch-depth: 0
-
-      - name: Checkout repo 🛎
-        uses: actions/checkout@v4
-        if: github.event_name != 'pull_request'
-        with:
-          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
-          path: ${{ github.event.repository.name }}
 
       - name: Restore SD cache 💰
         if: inputs.install-deps-from-package-repositories == ''
@@ -843,6 +857,7 @@ jobs:
       startsWith(github.ref, 'refs/tags/v')
         && (!contains(github.event.commits[0].message, '[skip r-cmd]'))
         && github.event.pull_request.draft == false
+
     steps:
       - name: Checkout repo 🛎
         uses: actions/checkout@v4

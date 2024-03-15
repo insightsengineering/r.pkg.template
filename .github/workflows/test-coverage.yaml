@@ -108,6 +108,7 @@ jobs:
       is-latest-tag: ${{ steps.current-branch-or-tag.outputs.is-latest-tag }}
       is-rc-tag: ${{ steps.current-branch-or-tag.outputs.is-rc-tag }}
       multiversion-docs: ${{ steps.current-branch-or-tag.outputs.multiversion-docs }}
+
     steps:
       - name: Setup token 🔑
         id: github-token
@@ -179,6 +180,20 @@ jobs:
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            exit 1
+          fi
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}
+        env:
+          SKIP_INSTRUCTION: "[skip coverage]"
 
       - name: Normalize inputs ⊳
         id: normalizer
@@ -311,16 +326,40 @@ jobs:
         && contains(inputs.enable-covtracer, 'true')
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
+
     steps:
       - name: Get branch names 🌿
         id: branch-name
         uses: tj-actions/branch-names@v7
 
-      - name: Checkout repo 🛎
+      - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v4
+        if: github.event_name == 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v4
+        if: github.event_name != 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            exit 1
+          fi
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}
+        env:
+          SKIP_INSTRUCTION: "[skip coverage]"
 
       - name: Restore SD cache 💰
         uses: actions/cache@v4
