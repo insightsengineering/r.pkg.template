@@ -174,6 +174,12 @@ on:
         required: false
         type: string
         default: ""
+      enable-sd:
+        description: |
+          Whether staged.dependencies installation should be enabled.
+        required: false
+        type: boolean
+        default: true
 
 concurrency:
   group: r-cmd-${{ inputs.concurrency-group }}-${{ github.event.pull_request.number || github.ref }}
@@ -338,23 +344,27 @@ jobs:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
 
+      # TODO remove
       - name: List R package versions
         run: |
           as.data.frame(installed.packages())[,c("Package", "Version")]
         shell: Rscript {0}
 
-      - name: Update R packages
+      - name: Update R packages 🗓️
         run: |
           update.packages()
         shell: Rscript {0}
 
+      # TODO remove
       - name: List R package versions
         run: |
-          as.data.frame(installed.packages())[,c("Package", "Version")]
+          as.data.frame(installed.packages()[, c("LibPath", "Version")])
         shell: Rscript {0}
 
       - name: Run Staged dependencies 🎦
-        if: inputs.install-deps-from-package-repositories == ''
+        if: >-
+          inputs.enable-sd == true
+            && inputs.install-deps-from-package-repositories == ''
         uses: insightsengineering/staged-dependencies-action@v1
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
@@ -363,6 +373,12 @@ jobs:
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
+
+      # TODO remove
+      - name: List R package versions
+        run: |
+          as.data.frame(installed.packages()[, c("LibPath", "Version")])
+        shell: Rscript {0}
 
       - name: Install dependencies from package repositories 🗄️
         if: inputs.install-deps-from-package-repositories != ''
