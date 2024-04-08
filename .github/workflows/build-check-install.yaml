@@ -338,6 +338,21 @@ jobs:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
 
+      - name: List R package versions
+        run: |
+          as.data.frame(installed.packages())[,c("Package", "Version")]
+        shell: Rscript {0}
+
+      - name: Update R packages
+        run: |
+          update.packages()
+        shell: Rscript {0}
+
+      - name: List R package versions
+        run: |
+          as.data.frame(installed.packages())[,c("Package", "Version")]
+        shell: Rscript {0}
+
       - name: Run Staged dependencies 🎦
         if: inputs.install-deps-from-package-repositories == ''
         uses: insightsengineering/staged-dependencies-action@v1
