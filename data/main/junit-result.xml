@@ -1,12 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="api" timestamp="2024-03-21T14:58:44Z" hostname="4a3e4ea0a33f" tests="1" skipped="0" failures="0" errors="0" time="4.051">
-    <testcase time="4.051" classname="api" name="API_greets_the_person"/>
+  <testsuite name="api" timestamp="2024-04-09T14:22:33Z" hostname="8d77ca1ff6ab" tests="1" skipped="0" failures="0" errors="0" time="4.032">
+    <testcase time="4.032" classname="api" name="API_greets_the_person"/>
   </testsuite>
-  <testsuite name="hello" timestamp="2024-03-21T14:58:48Z" hostname="4a3e4ea0a33f" tests="1" skipped="0" failures="0" errors="0" time="0.081">
-    <testcase time="0.0810000000000004" classname="hello" name="hello_greets_the_entity"/>
+  <testsuite name="hello" timestamp="2024-04-09T14:22:37Z" hostname="8d77ca1ff6ab" tests="1" skipped="0" failures="0" errors="0" time="0.08">
+    <testcase time="0.0800000000000001" classname="hello" name="hello_greets_the_entity"/>
   </testsuite>
-  <testsuite name="shiny" timestamp="2024-03-21T14:58:48Z" hostname="4a3e4ea0a33f" tests="1" skipped="0" failures="0" errors="0" time="2.758">
-    <testcase time="2.758" classname="shiny" name="The_Shiny_App_returns_a_proper_greeting"/>
+  <testsuite name="shiny" timestamp="2024-04-09T14:22:37Z" hostname="8d77ca1ff6ab" tests="1" skipped="0" failures="0" errors="1" time="101.843">
+    <testcase time="101.843" classname="shiny" name="The_Shiny_App_returns_a_proper_greeting">
+      <error type="error" message="Error in `sd_initialize(self, private, path, loadTimeout, checkNames, debug,  ('test-shiny.R:3:3')">Error in `sd_initialize(self, private, path, loadTimeout, checkNames, debug, 
+    phantomTimeout = phantomTimeout, seed = seed, cleanLogs = cleanLogs, 
+    shinyOptions = shinyOptions, renderArgs = renderArgs, options = options)`: Shiny app did not load in 1e+05ms.
+S/I 14:22:39.00 window.shinytest loaded
+S/I 14:22:39.00 waiting for shiny session to connect
+B/W 14:22:39.01 TypeError: Type error
+  toString (http://127.0.0.1:4930/shiny-javascript-1.8.1.1/shiny.min.js:2)
+  call (:0)
+  call (:0)
+  call (:0)
+  inspectSource (http://127.0.0.1:4930/shiny-javascript-1.8.1.1/shiny.min.js:2)
+  (anonymous function) (http://127.0.0.1:4930/shiny-javascript-1.8.1.1/shiny.min.js:2)
+  UK (http://127.0.0.1:4930/shiny-javascript-1.8.1.1/shiny.min.js:2)
+  Sv (http://127.0.0.1:4930/shiny-javascript-1.8.1.1/shiny.min.js:2)
+  Sv (http://127.0.0.1:4930/shiny-javascript-1.8.1.1/shiny.min.js:2)
+  (anonymous function) (http://127.0.0.1:4930/shiny-javascript-1.8.1.1/shiny.min.js:2)
+C/E ----------- Loading required package: shiny
+C/E ----------- Running application in test mode.
+C/E ----------- 
+C/E ----------- Listening on http://127.0.0.1:4930
+Backtrace:
+    ▆
+ 1. └─ShinyDriver$new(...) at test-shiny.R:3:3
+ 2.   └─shinytest (local) initialize(...)
+ 3.     └─shinytest:::sd_initialize(...)
+ 4.       └─rlang::abort(...)</error>
+    </testcase>
   </testsuite>
 </testsuites>
