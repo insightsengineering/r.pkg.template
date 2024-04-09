@@ -308,11 +308,13 @@ jobs:
           junit_xml_comparison_input="${{ inputs.junit-xml-comparison }}"
           junit_xml_positive_threshold="${{ inputs.junit-xml-positive-threshold }}"
           junit_xml_negative_threshold="${{ inputs.junit-xml-negative-threshold }}"
+          enable_sd="${{ inputs.enable-sd }}"
           echo "junit_xml_storage=${junit_xml_storage_input:-_junit_xml_reports}" >> $GITHUB_ENV
           echo "junit_xml_diff_branch=${junit_xml_diff_branch_input:-main}" >> $GITHUB_ENV
           echo "junit_xml_comparison=${junit_xml_comparison_input:-true}" >> $GITHUB_ENV
           echo "junit_xml_positive_threshold=${junit_xml_positive_threshold:-1.0}" >> $GITHUB_ENV
           echo "junit_xml_negative_threshold=${junit_xml_negative_threshold:-1.0}" >> $GITHUB_ENV
+          echo "enable_sd=${enable_sd:-true}" >> $GITHUB_ENV
         shell: bash
 
       - name: Restore npm cache 💰
@@ -359,7 +361,7 @@ jobs:
 
       - name: Run Staged dependencies 🎦
         if: >-
-          inputs.enable-sd == true
+          env.enable-sd == 'true'
             && inputs.install-deps-from-package-repositories == ''
         uses: insightsengineering/staged-dependencies-action@v1
         env:
