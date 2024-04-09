@@ -182,7 +182,7 @@ on:
         default: true
       update-r-packages:
         description: |
-          Whether R packages installed in the image should be updated to their latest version from CRAN/BioC.
+          Whether R packages installed in the container should be updated to their latest version from CRAN/BioC.
         required: false
         type: boolean
         default: false
