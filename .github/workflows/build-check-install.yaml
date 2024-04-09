@@ -361,7 +361,7 @@ jobs:
 
       - name: Run Staged dependencies 🎦
         if: >-
-          env.enable-sd == 'true'
+          env.enable_sd == 'true'
             && inputs.install-deps-from-package-repositories == ''
         uses: insightsengineering/staged-dependencies-action@v1
         env:
