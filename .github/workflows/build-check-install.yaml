@@ -185,7 +185,7 @@ on:
           Whether R packages installed in the image should be updated to their latest version from CRAN/BioC.
         required: false
         type: boolean
-        default: true
+        default: false
 
 concurrency:
   group: r-cmd-${{ inputs.concurrency-group }}-${{ github.event.pull_request.number || github.ref }}
@@ -352,14 +352,14 @@ jobs:
 
       - name: Update R packages 🗓️
         if: >-
-          inputs.update-r-packages == "true"
+          inputs.update-r-packages == true
         run: |
           update.packages()
         shell: Rscript {0}
 
       - name: Run Staged dependencies 🎦
         if: >-
-          inputs.enable-sd == "true"
+          inputs.enable-sd == true
             && inputs.install-deps-from-package-repositories == ''
         uses: insightsengineering/staged-dependencies-action@v1
         env:
