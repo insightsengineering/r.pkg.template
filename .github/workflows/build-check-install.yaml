@@ -353,7 +353,7 @@ jobs:
       # TODO remove
       - name: List R package versions
         run: |
-          as.data.frame(installed.packages())[,c("Package", "Version")]
+          as.data.frame(installed.packages()[, c("LibPath", "Version")])
         shell: Rscript {0}
 
       - name: Update R packages 🗓️
