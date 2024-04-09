@@ -180,6 +180,12 @@ on:
         required: false
         type: boolean
         default: true
+      update-r-packages:
+        description: |
+          Whether R packages installed in the image should be updated to their latest version from CRAN/BioC.
+        required: false
+        type: boolean
+        default: true
 
 concurrency:
   group: r-cmd-${{ inputs.concurrency-group }}-${{ github.event.pull_request.number || github.ref }}
@@ -351,6 +357,8 @@ jobs:
         shell: Rscript {0}
 
       - name: Update R packages 🗓️
+        if: >-
+          inputs.update-r-packages == true
         run: |
           update.packages()
         shell: Rscript {0}
