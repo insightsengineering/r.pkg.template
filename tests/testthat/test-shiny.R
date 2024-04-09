@@ -1,25 +1,23 @@
 test_that("The Shiny App returns a proper greeting", {
-  library(shinytest)
-  app <- ShinyDriver$new(
+  library(shinytest2)
+  app <- AppDriver$new(
     "shiny-app/",
-    loadTimeout = 1e5,
-    debug = "all",
-    phantomTimeout = 1e5,
+    load_timeout = 1e5,
+    timeout = 1e5,
     seed = 123
   )
-  app$getDebugLog()
+  app$get_logs()
 
   # Set input
-  app$setInputs(name = "john")
-  app$setInputs(greet = "click")
-  output <- app$getValue(name = "greeting")
+  app$set_inputs(name = "john")
+  app$click("greet")
 
-  # test
+  # Get output
+  output <- app$get_value(output = "greeting")
+
+  # Assert
   expect_equal(output, "Hello, John")
 
-  # wait for the process to close gracefully
-  # this allows covr to write out the coverage results
-  p <- app$.__enclos_env__$private$shinyProcess
-  p$interrupt()
-  p$wait()
+  # Stop the app
+  app$stop()
 })
