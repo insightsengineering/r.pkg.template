@@ -31,7 +31,8 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       !contains(github.event.commits[0].message, '[skip revdepcheck]')
-        && github.event.pull_request.draft == false
+    # Restore this in the if condition
+    #    && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
 
