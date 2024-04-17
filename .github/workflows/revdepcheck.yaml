@@ -77,11 +77,6 @@ jobs:
           echo "gchat_webhook=${{ secrets.GCHAT_WEBHOOK }}" >> $GITHUB_ENV
         shell: bash
 
-      - name: List CPU info
-        run: |
-          cat /proc/cpuinfo
-        shell: bash
-
       - name: revdepcheck 🔄
         id: revdepcheck
         # TODO update branch to main
@@ -101,11 +96,10 @@ jobs:
       - name: Prepare revdep artifact
         run: |
           rm -rf revdep/library.noindex
-          zip -r9 revdep.zip revdep/
         shell: bash
 
       - name: Upload artifact ⬆
         uses: actions/upload-artifact@v4
         with:
           name: revdep
-          path: revdep.zip
+          path: revdep/
