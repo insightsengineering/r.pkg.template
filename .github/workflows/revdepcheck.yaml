@@ -92,3 +92,9 @@ jobs:
           name: ${{ github.event.repository.name }} - revdepcheck - ${{ env.strategy }}
           url: ${{ secrets.GCHAT_WEBHOOK }}
           status: ${{ job.status }}
+
+      - name: List revdep directory
+        run: |
+          ls -la revdep
+          du -sh ./revdep
+        shell: bash
