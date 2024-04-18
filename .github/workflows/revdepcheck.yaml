@@ -96,6 +96,7 @@ jobs:
       - name: Prepare revdep artifact
         run: |
           rm -rf revdep/library.noindex
+          rm -rf revdep/library
         shell: bash
 
       - name: Upload artifact ⬆
