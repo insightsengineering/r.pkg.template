@@ -85,6 +85,18 @@ jobs:
           github-token: ${{ steps.github-token.outputs.token }}
           additional-env-vars:  ${{ inputs.additional-env-vars }}
 
+      - name: Get cache
+        run : |
+          crancache_path="$(R -q -e 'cat(crancache::get_cache_dir(), "\n")' 2>/dev/null | head -2 | tail -1 | tr -d ' ')"
+          pkgcache_path="$(R -q -e 'cat(pkgcache::pkg_cache_summary()$cachepath, "\n")' 2>/dev/null | head -2 | tail -1 | tr -d ' ')"
+          echo "crancache_path = $crancache_path"
+          echo "pkgcache_path = $pkgcache_path"
+          echo "crancache size:"
+          du -sh "$crancache_path" || true
+          echo "pkgcache size:"
+          du -sh "$pkgcache_path" || true
+        shell: bash
+
       - name: GChat notification 🔔
         if: (failure() || cancelled()) && steps.revdepcheck.outcome != 'success' && env.gchat_webhook != ''
         uses: insightsengineering/google-chat-notification@master
