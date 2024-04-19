@@ -86,6 +86,7 @@ jobs:
           additional-env-vars:  ${{ inputs.additional-env-vars }}
 
       - name: Get cache
+        if: always()
         run : |
           crancache_path="$(R -q -e 'cat(crancache::get_cache_dir(), "\n")' 2>/dev/null | head -2 | tail -1 | tr -d ' ')"
           pkgcache_path="$(R -q -e 'cat(pkgcache::pkg_cache_summary()$cachepath, "\n")' 2>/dev/null | head -2 | tail -1 | tr -d ' ')"
