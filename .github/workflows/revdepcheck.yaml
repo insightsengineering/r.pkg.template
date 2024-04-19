@@ -67,7 +67,9 @@ jobs:
         uses: actions/cache@v4
         with:
           key: revdepcheck-${{ runner.os }}-${{ github.event.repository.name }}
-          path: /github/home/.cache/R/pkgcache/pkg
+          path: |
+            /github/home/.cache/R/pkgcache/pkg
+            /github/home/.cache/R-crancache
 
       - name: Check commit message 💬
         run: |
