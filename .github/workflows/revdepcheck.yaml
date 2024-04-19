@@ -59,6 +59,16 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           fetch-depth: 1
 
+      - name: Debug
+        run: |
+          echo "Home is at: $(echo ~)"
+
+      - name: Restore cache 💰
+        uses: actions/cache@v4
+        with:
+          key: revdepcheck-${{ runner.os }}-${{ github.event.repository.name }}
+          path: /github/home/.cache/R/pkgcache/pkg
+
       - name: Check commit message 💬
         run: |
           git config --global --add safe.directory $(pwd)
@@ -88,7 +98,7 @@ jobs:
       - name: Get cache
         if: always()
         run : |
-          crancache_path="$(R -q -e 'cat(crancache::get_cache_dir(), "\n")' 2>/dev/null | head -2 | tail -1 | tr -d ' ')"
+          crancache_path="$(R -q -e 'cat(normalizePath(crancache::get_cache_dir()), "\n")' 2>/dev/null | head -2 | tail -1 | tr -d ' ')"
           pkgcache_path="$(R -q -e 'cat(pkgcache::pkg_cache_summary()$cachepath, "\n")' 2>/dev/null | head -2 | tail -1 | tr -d ' ')"
           echo "crancache_path = $crancache_path"
           echo "pkgcache_path = $pkgcache_path"
@@ -96,6 +106,9 @@ jobs:
           du -sh "$crancache_path" || true
           echo "pkgcache size:"
           du -sh "$pkgcache_path" || true
+          apt-get update && apt-get install -yq tree
+          echo "listing cache directory"
+          tree ~/.cache
         shell: bash
 
       - name: GChat notification 🔔
