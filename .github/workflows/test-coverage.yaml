@@ -167,12 +167,12 @@ jobs:
         shell: bash
 
       - name: Checkout repo (PR) 🛎
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
         if: github.event_name == 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
-          # repository: ${{ github.event.pull_request.head.repo.full_name }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
@@ -206,17 +206,17 @@ jobs:
           }
           fi
 
-      - name: Test
-        shell: bash
-        run: |
-          # apt update && apt install -yq tree
-          echo "pwd = $(pwd)"
-          ls -la
-          # tree -a .
-          R -q -e 'packageVersion("git2r")'
-          chmod -R 777 ${{ github.event.repository.name }}
-          ls -la
-          ls -la ${{ github.event.repository.name }}
+      # - name: Test
+      #   shell: bash
+      #   run: |
+      #     # apt update && apt install -yq tree
+      #     echo "pwd = $(pwd)"
+      #     ls -la
+      #     # tree -a .
+      #     R -q -e 'packageVersion("git2r")'
+      #     chmod -R 777 ${{ github.event.repository.name }}
+      #     ls -la
+      #     ls -la ${{ github.event.repository.name }}
 
       - name: Restore SD cache 💰
         uses: actions/cache@v4

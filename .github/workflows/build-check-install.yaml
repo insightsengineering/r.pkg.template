@@ -231,13 +231,13 @@ jobs:
         uses: tj-actions/branch-names@v7
 
       - name: Checkout repo (PR) 🛎
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
         if: github.event_name == 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
-          # repository: ${{ github.event.pull_request.head.repo.full_name }}
-          # fetch-depth: 0
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          fetch-depth: 0
 
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
@@ -359,17 +359,17 @@ jobs:
           update.packages()
         shell: Rscript {0}
 
-      - name: Test
-        shell: bash
-        run: |
-          # apt update && apt install -yq tree
-          echo "pwd = $(pwd)"
-          ls -la
-          # tree -a .
-          R -q -e 'packageVersion("git2r")'
-          chmod -R 777 ${{ github.event.repository.name }}
-          ls -la
-          ls -la ${{ github.event.repository.name }}
+      # - name: Test
+      #   shell: bash
+      #   run: |
+      #     # apt update && apt install -yq tree
+      #     echo "pwd = $(pwd)"
+      #     ls -la
+      #     # tree -a .
+      #     R -q -e 'packageVersion("git2r")'
+      #     chmod -R 777 ${{ github.event.repository.name }}
+      #     ls -la
+      #     ls -la ${{ github.event.repository.name }}
 
       - name: Run Staged dependencies 🎦
         if: >-
