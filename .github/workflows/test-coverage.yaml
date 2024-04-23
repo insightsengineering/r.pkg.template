@@ -101,7 +101,7 @@ jobs:
       !contains(github.event.commits[0].message, '[skip coverage]')
         && github.event.pull_request.draft == false
     container:
-      image: ghcr.io/insightsengineering/rstudio:latest
+      image: ghcr.io/insightsengineering/rstudio:2024.04.05
     outputs:
       publish-coverage-html-report: ${{ steps.coverage-output.outputs.coverage-upload }}
       current-branch-or-tag: ${{ steps.current-branch-or-tag.outputs.ref-name }}

@@ -198,7 +198,7 @@ jobs:
       matrix:
         config:
           - image: ghcr.io/insightsengineering/rstudio
-            tag: latest
+            tag: '2024.04.05'
     name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
     runs-on: ubuntu-latest
     if: >
