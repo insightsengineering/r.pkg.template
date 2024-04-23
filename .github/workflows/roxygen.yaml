@@ -84,8 +84,8 @@ jobs:
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          token: ${{ steps.github-token.outputs.token }}
+          # repository: ${{ github.event.pull_request.head.repo.full_name }}
+          # token: ${{ steps.github-token.outputs.token }}
 
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
@@ -121,6 +121,7 @@ jobs:
           echo "pwd = $(pwd)"
           ls -la
           tree -a .
+          R -e -q 'packageVersion("git2r")'
 
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1

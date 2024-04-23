@@ -236,8 +236,8 @@ jobs:
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          fetch-depth: 0
+          # repository: ${{ github.event.pull_request.head.repo.full_name }}
+          # fetch-depth: 0
 
       - name: Checkout repo 🛎
         uses: actions/checkout@v4
@@ -352,9 +352,14 @@ jobs:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
 
+      - name: Test
+        shell: bash
+        run: |
+          R -e -q 'packageVersion("git2r")'
+
       - name: Update R packages 🗓️
-        if: >-
-          inputs.update-r-packages == true
+        # if: >-
+        #   inputs.update-r-packages == true
         run: |
           update.packages()
         shell: Rscript {0}
@@ -366,6 +371,7 @@ jobs:
           echo "pwd = $(pwd)"
           ls -la
           tree -a .
+          R -e -q 'packageVersion("git2r")'
 
       - name: Run Staged dependencies 🎦
         if: >-
