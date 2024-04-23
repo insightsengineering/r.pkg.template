@@ -198,7 +198,7 @@ jobs:
       matrix:
         config:
           - image: ghcr.io/insightsengineering/rstudio
-            tag: '2024.04.05'
+            tag: latest
     name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
     runs-on: ubuntu-latest
     if: >
@@ -379,7 +379,7 @@ jobs:
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          path: ${{ github.event.repository.name }}
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
