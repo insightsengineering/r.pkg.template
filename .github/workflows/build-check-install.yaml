@@ -359,18 +359,6 @@ jobs:
           update.packages()
         shell: Rscript {0}
 
-      # - name: Test
-      #   shell: bash
-      #   run: |
-      #     # apt update && apt install -yq tree
-      #     echo "pwd = $(pwd)"
-      #     ls -la
-      #     # tree -a .
-      #     R -q -e 'packageVersion("git2r")'
-      #     chmod -R 777 ${{ github.event.repository.name }}
-      #     ls -la
-      #     ls -la ${{ github.event.repository.name }}
-
       - name: Run Staged dependencies 🎦
         if: >-
           env.enable_sd == 'true'

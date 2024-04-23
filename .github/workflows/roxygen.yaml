@@ -114,18 +114,6 @@ jobs:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
 
-      # - name: Test
-      #   shell: bash
-      #   run: |
-      #     # apt update && apt install -yq tree
-      #     echo "pwd = $(pwd)"
-      #     ls -la
-      #     # tree -a .
-      #     R -q -e 'packageVersion("git2r")'
-      #     chmod -R 777 ${{ github.event.repository.name }}
-      #     ls -la
-      #     ls -la ${{ github.event.repository.name }}
-
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
         env:
