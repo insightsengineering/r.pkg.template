@@ -120,14 +120,14 @@ jobs:
           apt update && apt install -yq tree
           echo "pwd = $(pwd)"
           ls -la
-          tree .
+          tree -a .
 
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          path: ${{ github.event.repository.name }}
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
