@@ -355,7 +355,7 @@ jobs:
       - name: Test
         shell: bash
         run: |
-          R -e -q 'packageVersion("git2r")'
+          R -q -e 'packageVersion("git2r")'
 
       - name: Update R packages 🗓️
         # if: >-
@@ -371,7 +371,7 @@ jobs:
           echo "pwd = $(pwd)"
           ls -la
           tree -a .
-          R -e -q 'packageVersion("git2r")'
+          R -q -e 'packageVersion("git2r")'
 
       - name: Run Staged dependencies 🎦
         if: >-

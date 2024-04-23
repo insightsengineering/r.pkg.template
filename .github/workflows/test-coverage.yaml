@@ -213,7 +213,7 @@ jobs:
           echo "pwd = $(pwd)"
           ls -la
           tree -a .
-          R -e -q 'packageVersion("git2r")'
+          R -q -e 'packageVersion("git2r")'
 
       - name: Restore SD cache 💰
         uses: actions/cache@v4
