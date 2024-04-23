@@ -359,6 +359,14 @@ jobs:
           update.packages()
         shell: Rscript {0}
 
+      - name: Test
+        shell: bash
+        run: |
+          apt update && apt install -yq tree
+          echo "pwd = $(pwd)"
+          ls -la
+          tree .
+
       - name: Run Staged dependencies 🎦
         if: >-
           env.enable_sd == 'true'
