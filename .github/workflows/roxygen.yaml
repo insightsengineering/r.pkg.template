@@ -122,6 +122,7 @@ jobs:
           ls -la
           tree -a .
           R -q -e 'packageVersion("git2r")'
+          chmod -R 777 ${{ github.event.repository.name }}
 
       - name: Run Staged dependencies 🎦
         uses: insightsengineering/staged-dependencies-action@v1

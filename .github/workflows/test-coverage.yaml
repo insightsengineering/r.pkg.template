@@ -214,6 +214,7 @@ jobs:
           ls -la
           tree -a .
           R -q -e 'packageVersion("git2r")'
+          chmod -R 777 ${{ github.event.repository.name }}
 
       - name: Restore SD cache 💰
         uses: actions/cache@v4
