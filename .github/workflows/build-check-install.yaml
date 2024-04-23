@@ -240,7 +240,7 @@ jobs:
           fetch-depth: 0
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
         if: github.event_name != 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
@@ -265,7 +265,7 @@ jobs:
           inputs.publish-unit-test-report-gh-pages == true
             && github.event_name != 'pull_request'
         id: checkout-gh-pages
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
         with:
           ref: gh-pages
           path: gh-pages
@@ -488,7 +488,7 @@ jobs:
 
       - name: Fetch report from ${{ env.junit_xml_storage }} ⤵️
         if: env.junit_xml_comparison == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
         with:
           path: ${{ env.junit_xml_storage }}
           fetch-depth: 0
@@ -587,7 +587,7 @@ jobs:
 
       - name: Fetch JUnit XML reports from ${{ env.junit_xml_storage }} ⤵️
         if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
         with:
           path: ${{ env.junit_xml_storage }}
           fetch-depth: 0
@@ -858,7 +858,7 @@ jobs:
 
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
 
       - name: Get package build filename 📦
         run: |
