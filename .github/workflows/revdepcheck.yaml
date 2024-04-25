@@ -1,0 +1,112 @@
+---
+name: revdepcheck ⏪
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with read access to repositories, required for dependencies installation
+        required: false
+      GCHAT_WEBHOOK:
+        description: |
+          Google Chat webhook to send failure notifications
+        required: false
+    inputs:
+      additional-env-vars:
+        description: |
+          Extra environment variables, as a 'key=value' pair, with each pair on a new line.
+          Example usage:
+          additional-env-vars: |
+            ABC=123
+            XYZ=456
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  revdepcheck:
+    name: revdepcheck ⏪
+    runs-on: ubuntu-latest
+    if: >
+      !contains(github.event.commits[0].message, '[skip revdepcheck]')
+       && github.event.pull_request.draft == false
+    container:
+      image: ghcr.io/insightsengineering/rstudio:latest
+
+    steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v7
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v4.1.1
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          fetch-depth: 1
+
+      - name: Restore cache 💰
+        uses: actions/cache@v4
+        with:
+          key: revdepcheck-${{ runner.os }}-${{ github.event.repository.name }}
+          path: |
+            ~/.cache/R/pkgcache/pkg
+            ~/.cache/R-crancache
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            exit 1
+          fi
+        shell: bash
+        env:
+          SKIP_INSTRUCTION: "[skip revdepcheck]"
+
+      - name: Normalize variables 📏
+        run: |
+          echo "gchat_webhook=${{ secrets.GCHAT_WEBHOOK }}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: revdepcheck 🔄
+        id: revdepcheck
+        uses: insightsengineering/r-revdepcheck-action@main
+        with:
+          github-token: ${{ steps.github-token.outputs.token }}
+          additional-env-vars:  ${{ inputs.additional-env-vars }}
+
+      - name: GChat notification 🔔
+        if: (failure() || cancelled()) && steps.revdepcheck.outcome != 'success' && env.gchat_webhook != ''
+        uses: insightsengineering/google-chat-notification@master
+        with:
+          name: ${{ github.event.repository.name }} - revdepcheck - ${{ env.strategy }}
+          url: ${{ secrets.GCHAT_WEBHOOK }}
+          status: ${{ job.status }}
+
+      - name: Prepare revdep artifact 🎁
+        run: |
+          rm -rf revdep/library.noindex
+          rm -rf revdep/library
+        shell: bash
+
+      - name: Upload artifact ⬆
+        uses: actions/upload-artifact@v4
+        with:
+          name: revdep
+          path: revdep/
