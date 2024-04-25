@@ -26,13 +26,12 @@ on:
         type: string
 
 jobs:
-  dependency-test:
+  revdepcheck:
     name: revdepcheck ⏪
     runs-on: ubuntu-latest
     if: >
       !contains(github.event.commits[0].message, '[skip revdepcheck]')
-    # Restore this in the if condition
-    #    && github.event.pull_request.draft == false
+       && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
 
@@ -54,22 +53,18 @@ jobs:
         uses: tj-actions/branch-names@v7
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           fetch-depth: 1
-
-      - name: Debug
-        run: |
-          echo "Home is at: $(echo ~)"
 
       - name: Restore cache 💰
         uses: actions/cache@v4
         with:
           key: revdepcheck-${{ runner.os }}-${{ github.event.repository.name }}
           path: |
-            /github/home/.cache/R/pkgcache/pkg
-            /github/home/.cache/R-crancache
+            ~/.cache/R/pkgcache/pkg
+            ~/.cache/R-crancache
 
       - name: Check commit message 💬
         run: |
@@ -91,27 +86,10 @@ jobs:
 
       - name: revdepcheck 🔄
         id: revdepcheck
-        # TODO update branch to main
         uses: insightsengineering/r-revdepcheck-action@initialize-action
         with:
           github-token: ${{ steps.github-token.outputs.token }}
           additional-env-vars:  ${{ inputs.additional-env-vars }}
-
-      - name: Get cache
-        if: always()
-        run : |
-          crancache_path="$(R -q -e 'cat(normalizePath(crancache::get_cache_dir()), "\n")' 2>/dev/null | head -2 | tail -1 | tr -d ' ')"
-          pkgcache_path="$(R -q -e 'cat(pkgcache::pkg_cache_summary()$cachepath, "\n")' 2>/dev/null | head -2 | tail -1 | tr -d ' ')"
-          echo "crancache_path = $crancache_path"
-          echo "pkgcache_path = $pkgcache_path"
-          echo "crancache size:"
-          du -sh "$crancache_path" || true
-          echo "pkgcache size:"
-          du -sh "$pkgcache_path" || true
-          apt-get update && apt-get install -yq tree
-          echo "listing cache directory"
-          tree ~/.cache
-        shell: bash
 
       - name: GChat notification 🔔
         if: (failure() || cancelled()) && steps.revdepcheck.outcome != 'success' && env.gchat_webhook != ''
@@ -121,7 +99,7 @@ jobs:
           url: ${{ secrets.GCHAT_WEBHOOK }}
           status: ${{ job.status }}
 
-      - name: Prepare revdep artifact
+      - name: Prepare revdep artifact 🎁
         run: |
           rm -rf revdep/library.noindex
           rm -rf revdep/library
