@@ -125,9 +125,7 @@ jobs:
               ext %in% c("R", "Rmd", "Rnw", "Rmarkdown", "qmd")
           }
           changed_r_files <- Filter(is_r_file, changed_files)
-          # TODO: Re-enable after styler unicode issues are fixed
-          #dry <- if(isTRUE(as.logical("${{ inputs.auto-update }}"))) "off" else "on"
-          dry <- "on"
+          dry <- if(isTRUE(as.logical("${{ inputs.auto-update }}"))) "off" else "on"
           detect <- styler::style_file(changed_r_files, dry = dry)
           if (TRUE %in% detect$changed) {
             problems <- subset(detect$file, detect$changed == T)
@@ -140,6 +138,8 @@ jobs:
           }
         shell: Rscript {0}
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+        env:
+          LANG: en_US.UTF-8
 
       - name: Check file existence 🤔
         id: check_files
@@ -157,11 +157,9 @@ jobs:
 
       - name: Autocommit styled files ↗️
         id: autocommit-styled-files
-        if: false
-        # TODO: Re-enable after styler unicode issues are fixed
-        #if: >
-        #  inputs.auto-update
-        #    && steps.check_files.outputs.files_exists == 'true'
+        if: >
+          inputs.auto-update
+            && steps.check_files.outputs.files_exists == 'true'
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
