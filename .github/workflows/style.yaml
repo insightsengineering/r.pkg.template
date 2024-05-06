@@ -155,24 +155,25 @@ jobs:
           echo "unstyled-files=$(cat /tmp/style-problems.txt)" >> $GITHUB_OUTPUT
         shell: bash
 
-      # TODO: Re-enable after styler unicode issues are fixed
-      #- name: Autocommit styled files ↗️
-      #  id: autocommit-styled-files
-      #  if: >
-      #    inputs.auto-update
-      #      && steps.check_files.outputs.files_exists == 'true'
-      #  run: |
-      #    git config --global user.name 'github-actions'
-      #    git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
-      #    git config pull.rebase false
-      #    git pull origin ${{ steps.branch-name.outputs.head_ref_branch }} || true
-      #    git add ${{ steps.problem-files.outputs.unstyled-files }}
-      #    git commit -m '[skip style] [skip vbump] Restyle files'
-      #    git push -v origin HEAD:${{ steps.branch-name.outputs.head_ref_branch }} || \
-      #      echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)"
-      #  shell: bash
-      #  working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
-      #  continue-on-error: true
+      - name: Autocommit styled files ↗️
+        id: autocommit-styled-files
+        if: false
+        # TODO: Re-enable after styler unicode issues are fixed
+        #if: >
+        #  inputs.auto-update
+        #    && steps.check_files.outputs.files_exists == 'true'
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config pull.rebase false
+          git pull origin ${{ steps.branch-name.outputs.head_ref_branch }} || true
+          git add ${{ steps.problem-files.outputs.unstyled-files }}
+          git commit -m '[skip style] [skip vbump] Restyle files'
+          git push -v origin HEAD:${{ steps.branch-name.outputs.head_ref_branch }} || \
+            echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)"
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+        continue-on-error: true
 
       - name: Styler check summary 🅾
         if: >
@@ -187,12 +188,14 @@ jobs:
             "or simply run the following commands",
             "for an immediate fix:\n"
           ))
-          cat("────────────────────────────────────────\n")
-          cat(paste0(
-            "styler::style_file(",
-              readLines("/tmp/style-problems.R", warn=FALSE),
-            ")\n"
-          ))
-          cat("────────────────────────────────────────\n")
+          if (file.exists("/tmp/style-problems.R")) {
+            cat("────────────────────────────────────────\n")
+            cat(paste0(
+              "styler::style_file(",
+                readLines("/tmp/style-problems.R", warn=FALSE),
+              ")\n"
+            ))
+            cat("────────────────────────────────────────\n")
+          }
           quit(status = 1)
         shell: Rscript {0}
