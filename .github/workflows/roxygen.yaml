@@ -163,17 +163,19 @@ jobs:
             # Attempt to commit and push man-page updates
             if [ "${AUTO_UPDATE}" == "true" ]
             then {
-              echo "Regenerating man pages via auto-update"
-              git config --global user.name "github-actions"
-              git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-              git config pull.rebase false
-              BRANCH_NAME="${{ steps.branch-name.outputs.head_ref_branch }}"
-              git pull origin ${BRANCH_NAME} || true
-              git add -A man/ DESCRIPTION
-              git commit -m "[skip roxygen] [skip vbump] Roxygen Man Pages Auto Update"
-              git push -v origin HEAD:${BRANCH_NAME} || \
-                (echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)" && \
-                AUTO_UPDATE=failed)
+              # TODO: Disable Roxygen auto-updates until unicode issues are fixed
+              :
+              #echo "Regenerating man pages via auto-update"
+              #git config --global user.name "github-actions"
+              #git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+              #git config pull.rebase false
+              #BRANCH_NAME="${{ steps.branch-name.outputs.head_ref_branch }}"
+              #git pull origin ${BRANCH_NAME} || true
+              #git add -A man/ DESCRIPTION
+              #git commit -m "[skip roxygen] [skip vbump] Roxygen Man Pages Auto Update"
+              #git push -v origin HEAD:${BRANCH_NAME} || \
+              #  (echo "⚠️ Could not push to ${BRANCH_NAME} on $(git remote -v show -n origin | grep Push)" && \
+              #  AUTO_UPDATE=failed)
             }
             fi
             # If auto-update is disabled or is unsuccessful, let 'em know to fix manually
