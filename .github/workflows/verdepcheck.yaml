@@ -92,6 +92,13 @@ jobs:
           echo "gchat_webhook=${{ secrets.GCHAT_WEBHOOK }}" >> $GITHUB_ENV
         shell: bash
 
+      - name: Restore cache 💰
+        uses: actions/cache@v4
+        with:
+          key: verdepcheck-${{ runner.os }}-${{ github.event.repository.name }}-${{ env.strategy }}
+          path: |
+            ~/.cache/R/pkgcache/pkg
+
       - name: Dependency Test - ${{ env.strategy }} 🔢
         id: verdepcheck
         uses: insightsengineering/r-verdepcheck-action@main
@@ -107,6 +114,7 @@ jobs:
           echo "Home is at: $(echo ~)"
           echo "pkgcache is at:"
           R -e 'pkgcache::pkg_cache_summary()$cachepath'
+          ls -lR ~/.cache/R/pkgcache/pkg
         shell: bash
 
       - name: GChat notification 🔔
