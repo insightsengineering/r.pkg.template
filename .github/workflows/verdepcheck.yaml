@@ -102,6 +102,13 @@ jobs:
           additional-env-vars:  ${{ inputs.additional-env-vars }}
           strategy: ${{ env.strategy }}
 
+      - name: Check cache
+        run: |
+          echo "Home is at: $(echo ~)"
+          echo "pkgcache is at:"
+          R -e 'pkgcache::pkg_cache_summary()$cachepath'
+        shell: bash
+
       - name: GChat notification 🔔
         if: (failure() || cancelled()) && steps.verdepcheck.outcome != 'success' && env.gchat_webhook != ''
         uses: insightsengineering/google-chat-notification@master
