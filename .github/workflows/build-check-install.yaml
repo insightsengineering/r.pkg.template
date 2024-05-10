@@ -198,7 +198,7 @@ jobs:
       matrix:
         config:
           # - image: ghcr.io/insightsengineering/rstudio
-            image: rocker/tidyverse
+          - image: rocker/tidyverse
             tag: latest
     name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
     runs-on: ubuntu-latest
