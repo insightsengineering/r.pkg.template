@@ -197,8 +197,8 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          # - image: ghcr.io/insightsengineering/rstudio
-          - image: rocker/tidyverse
+          - image: ghcr.io/insightsengineering/rstudio
+          # - image: rocker/tidyverse
             tag: latest
     name: ${{ matrix.config.image }}, version ${{ matrix.config.tag }}
     runs-on: ubuntu-latest
