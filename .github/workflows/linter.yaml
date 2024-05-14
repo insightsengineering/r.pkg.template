@@ -154,7 +154,7 @@ jobs:
           format: 'json'
           filter: '*'
 
-      - name: Get GitHub event name
+      - name: Get GitHub event name ⚙️
         run: |
           echo "GITHUB_EVENT_NAME=${{ github.event_name }}" >> $GITHUB_ENV
 
