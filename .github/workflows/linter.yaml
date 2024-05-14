@@ -167,6 +167,10 @@ jobs:
             changed_files <- jsonlite::fromJSON('${{ steps.files.outputs.added_modified }}')
             all_files <- list.files(recursive = TRUE)
             exclusions_list <- as.list(setdiff(all_files, changed_files))
+            cat("Linting only changed files:\n")
+            cat(changed_files)
+          } else {
+            cat("Linting all files.\n")
           }
           lints <- lintr::lint_package(exclusions = exclusions_list)
           if (length(lints) > 0L) {
