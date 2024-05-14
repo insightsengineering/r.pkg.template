@@ -154,11 +154,9 @@ jobs:
           format: 'json'
           filter: '*'
 
-      - name: Get GitHub event name ⚙️
-        run: |
-          echo "GITHUB_EVENT_NAME=${{ github.event_name }}" >> $GITHUB_ENV
-
       - name: Lint 🧶
+        env:
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
         run: |
           github_event_name <- Sys.getenv("GITHUB_EVENT_NAME")
           cat(paste0("GitHub event name = ", github_event_name, "\n"))
