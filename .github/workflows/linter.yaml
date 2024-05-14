@@ -147,16 +147,23 @@ jobs:
           SKIP_INSTRUCTION: "[skip linter]"
 
       - name: Changed files 🖋️
+        if: github.event_name != 'workflow_dispatch'
         id: files
         uses: Ana06/get-changed-files@v2.2.0
         with:
           format: 'json'
           filter: '*'
 
+      - name: Get GitHub event name
+        run: |
+          echo "GITHUB_EVENT_NAME=${{ github.event_name }}" >> $GITHUB_ENV
+
       - name: Lint 🧶
         run: |
+          github_event_name <- Sys.getenv("GITHUB_EVENT_NAME")
+          cat(paste0("GitHub event name = ", github_event_name, "\n"))
           exclusions_list <- NULL
-          if (!identical("${{ inputs.lint-all-files }}", "true")) {
+          if (!(identical("${{ inputs.lint-all-files }}", "true") || identical(github_event_name, "workflow_dispatch"))) {
             changed_files <- jsonlite::fromJSON('${{ steps.files.outputs.added_modified }}')
             all_files <- list.files(recursive = TRUE)
             exclusions_list <- as.list(setdiff(all_files, changed_files))
