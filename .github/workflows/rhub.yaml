@@ -1,13 +1,7 @@
-# R-hub's generic GitHub Actions workflow file. It's canonical location is at
-# https://github.com/r-hub/actions/blob/v1/workflows/rhub.yaml
-# You can update this file to a newer version using the rhub2 package:
-#
-# rhub::rhub_setup()
-#
-# It is unlikely that you need to modify this file manually.
+# R-hub's generic GitHub Actions workflow file. Its canonical location is at
+# https://github.com/r-hub/actions/blob/main/workflows/rhub.yaml
 
-name: R-hub
-run-name: "${{ inputs.id }}: ${{ inputs.name || format('Manually run by {0}', github.triggering_actor) }}"
+name: R-hub 🌐
 
 on:
   workflow_call:
@@ -15,13 +9,9 @@ on:
       config:
         description: 'A comma separated list of R-hub platforms to use.'
         type: string
+        # These platforms correspond roughly to CRAN package checks.
+        # More information: https://github.com/insightsengineering/idr-tasks/issues/781
         default: 'ubuntu-clang,ubuntu-gcc12,gcc13,windows,ubuntu-next,ubuntu-release,macos-arm64,macos,windows'
-      name:
-        description: 'Run name. You can leave this empty now.'
-        type: string
-      id:
-        description: 'Unique ID. You can leave this empty now.'
-        type: string
 
 jobs:
 
@@ -32,7 +22,6 @@ jobs:
       platforms: ${{ steps.rhub-setup.outputs.platforms }}
 
     steps:
-    # NO NEED TO CHECKOUT HERE
     - uses: r-hub/actions/setup@v1
       with:
         config: ${{ inputs.config }}
