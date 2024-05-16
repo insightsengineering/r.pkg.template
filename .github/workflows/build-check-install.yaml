@@ -380,6 +380,7 @@ jobs:
             names(content) <- unlist(lapply(tmp, function(x) x[1]))
             return(content)
           }
+          if (!require("pak")) install.packages("pak", upgrade = "never")
           pak::repo_add(split_to_map("${{ inputs.install-deps-from-package-repositories }}"))
           cat("Currently configured pak repositories:\n")
           pak::repo_get()
