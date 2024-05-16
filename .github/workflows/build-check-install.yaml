@@ -381,7 +381,10 @@ jobs:
             names(content) <- unlist(lapply(tmp, function(x) x[1]))
             return(content)
           }
-          devtools::install_dev_deps(".", repos = split_to_map("${{ inputs.install-deps-from-package-repositories }}"))
+          pak::repo_add(split_to_map("${{ inputs.install-deps-from-package-repositories }}")
+          cat("Currently configured pak repositories:\n")
+          pak::repo_get()
+          pak::local_install_dev_deps(root = ".", upgrade = FALSE)
         shell: Rscript {0}
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
