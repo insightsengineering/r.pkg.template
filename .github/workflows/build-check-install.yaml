@@ -203,7 +203,6 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       !contains(github.event.commits[0].message, '[skip r-cmd]')
-        && github.event.pull_request.draft == false
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
     outputs:
