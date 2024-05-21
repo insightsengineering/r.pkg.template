@@ -127,7 +127,7 @@ jobs:
           direction: ${{ inputs.sd-direction }}
 
       - name: Build report 🏗
-        uses: insightsengineering/thevalidatoR@v2
+        uses: insightsengineering/thevalidatoR@update-quarto-version
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
