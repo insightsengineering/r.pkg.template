@@ -137,6 +137,9 @@ jobs:
 
       - name: Check URLs with urlchecker 🔬
         run: |
-          if (nr <- nrow(print(urlchecker::url_check(".")))) stop(nr, " bad URL(s)")
+          bad_urls <- nrow(print(urlchecker::url_check(".")))
+          if (bad_urls > 0) {
+            stop("Looks like a total of ", bad_urls, " URL(s) were found! Please correct them.")
+          }
         shell: Rscript {0}
         working-directory: ${{ inputs.package-subdirectory }}
