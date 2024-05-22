@@ -96,7 +96,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   urlchecker:
-    name: URL Checker
+    name: URL Checker 🔎
     runs-on: ubuntu-latest
     container:
       image: rocker/tidyverse:latest
