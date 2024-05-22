@@ -133,5 +133,6 @@ jobs:
 
       - name: Debug
         run: |
+          apt-get update && apt-get install -yq curl
           curl -vvv https://pharmaverse.slack.com
         shell: bash
