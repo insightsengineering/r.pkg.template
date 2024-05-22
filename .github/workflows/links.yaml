@@ -26,6 +26,14 @@ on:
         required: false
         type: string
         default: ""
+      link-checking-method:
+        description: |
+          Which link checking method should be used? Supported methods are:
+          lychee
+          urlchecker
+        required: false
+        type: string
+        default: "urlchecker"
 
 concurrency:
   group: links-${{ github.event.pull_request.number || github.ref }}
@@ -38,6 +46,7 @@ jobs:
     if: >
       !contains(github.event.commits[0].message, '[skip links]')
         && github.event.pull_request.draft == false
+        && inputs.link-checking-method == 'lychee'
     steps:
       - name: Get branch names 🌿
         id: branch-name
@@ -94,6 +103,7 @@ jobs:
     if: >
       !contains(github.event.commits[0].message, '[skip links]')
         && github.event.pull_request.draft == false
+        && inputs.link-checking-method == 'urlchecker'
     steps:
       - name: Get branch names 🌿
         id: branch-name
@@ -127,12 +137,6 @@ jobs:
 
       - name: Check URLs with urlchecker 🔬
         run: |
-          urlchecker::url_check(".")
+          R -q -e 'if (nr <- nrow(print(urlchecker::url_check(".")))) stop(nr, " bad URL(s)")'
         shell: Rscript {0}
         working-directory: ${{ inputs.package-subdirectory }}
-
-      - name: Debug
-        run: |
-          apt-get update && apt-get install -yq curl
-          curl -vvv https://pharmaverse.slack.com
-        shell: bash
