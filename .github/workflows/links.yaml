@@ -130,3 +130,8 @@ jobs:
           urlchecker::url_check(".")
         shell: Rscript {0}
         working-directory: ${{ inputs.package-subdirectory }}
+
+      - name: Debug
+        run: |
+          curl -vvv https://pharmaverse.slack.com
+        shell: bash
