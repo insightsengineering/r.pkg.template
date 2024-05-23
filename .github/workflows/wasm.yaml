@@ -12,12 +12,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+
     - name: Build wasm packages
       uses: r-wasm/actions/build-rwasm@v1
       with:
-        packages: '.'
+        packages: |
+          insightsengineering/tern@v0.9.4
+          insightsengineering/teal.logger@v0.2.0
 
     - name: Debug
       run: |
         apt-get update && apt-get install -yq tree
-        tree .
+        ls -la
+        tree _site
