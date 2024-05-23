@@ -1,0 +1,21 @@
+---
+name: WASM
+
+on:
+  push:
+    branches:
+      - wasm-poc
+
+jobs:
+  repo:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build wasm packages
+      uses: r-wasm/actions/build-rwasm@v1
+      with:
+        packages: |
+          cli
+
+    # Use `library.data` and `library.js.metadata` files or repository files
+    # in `./_site` directory to create a GitHub Pages site.
