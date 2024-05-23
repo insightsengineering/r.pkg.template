@@ -15,8 +15,15 @@ jobs:
     - name: Build wasm packages
       uses: r-wasm/actions/build-rwasm@v1
       with:
-        packages: |
-          cli
+        packages: '.'
+
+    - name: Debug
+      run: |
+        echo "_site"
+        ls -la _site || true
+        echo "pwd"
+        ls -la || true
+
 
     # Use `library.data` and `library.js.metadata` files or repository files
     # in `./_site` directory to create a GitHub Pages site.
