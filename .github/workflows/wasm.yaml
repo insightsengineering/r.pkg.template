@@ -8,7 +8,7 @@ on:
   workflow_call:
 
 jobs:
-  repo:
+  wasm:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -19,9 +19,11 @@ jobs:
         packages: |
           insightsengineering/tern@v0.9.4
           insightsengineering/teal.logger@v0.2.0
+          insightsengineering/chevron@v0.2.6
 
     - name: Debug
       run: |
         apt-get update && apt-get install -yq tree
         ls -la
         tree _site
+        cat _site/bin/emscripten/contrib/4.4/PACKAGES
