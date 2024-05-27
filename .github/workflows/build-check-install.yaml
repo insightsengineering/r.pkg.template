@@ -385,6 +385,12 @@ jobs:
         shell: Rscript {0}
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
+      - name: Debug
+        run: |
+          renv::status()
+        shell: Rscript {0}
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+
       - name: Show session info and installed packages ℹ
         run: |
           sessionInfo()
