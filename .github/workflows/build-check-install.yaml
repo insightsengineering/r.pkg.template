@@ -359,6 +359,11 @@ jobs:
           update.packages()
         shell: Rscript {0}
 
+      - name: Debug
+        run: |
+          echo "" > .Rprofile
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+
       - name: Run Staged dependencies 🎦
         if: >-
           env.enable_sd == 'true'
