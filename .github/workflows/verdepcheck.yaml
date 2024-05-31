@@ -101,7 +101,7 @@ jobs:
 
       - name: Dependency Test - ${{ env.strategy }} 🔢
         id: verdepcheck
-        uses: insightsengineering/r-verdepcheck-action@main
+        uses: insightsengineering/r-verdepcheck-action@alternate_mirror
         with:
           github-token: ${{ steps.github-token.outputs.token }}
           check-args: ${{ inputs.check-args }}
