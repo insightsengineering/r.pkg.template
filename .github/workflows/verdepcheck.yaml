@@ -95,7 +95,7 @@ jobs:
       - name: Restore cache 💰
         uses: actions/cache@v4
         with:
-          key: verdepcheck-${{ runner.os }}-${{ github.event.repository.name }}-${{ env.strategy }}
+          key: verdepcheck-v2-${{ runner.os }}-${{ github.event.repository.name }}-${{ env.strategy }}
           path: |
             ~/.cache/R/pkgcache/pkg
 
