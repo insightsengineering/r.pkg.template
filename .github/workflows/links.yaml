@@ -137,7 +137,7 @@ jobs:
 
       - name: Check URLs with urlchecker 🔬
         run: |
-          bad_urls <- nrow(print(urlchecker::url_check(".")))
+          bad_urls <- nrow(print(urlchecker::url_check(".", parallel = FALSE)))
           if (bad_urls > 0) {
             stop("Looks like a total of ", bad_urls, " URL(s) were found! Please correct them.")
           }
