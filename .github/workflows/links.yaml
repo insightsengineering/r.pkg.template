@@ -137,6 +137,7 @@ jobs:
 
       - name: Check URLs with urlchecker 🔬
         run: |
+          # For unexplained reasons, parallel = FALSE is required to prevent some false positives.
           bad_urls <- nrow(print(urlchecker::url_check(".", parallel = FALSE)))
           if (bad_urls > 0) {
             stop("Looks like a total of ", bad_urls, " URL(s) were found! Please correct them.")
