@@ -96,6 +96,7 @@ jobs:
             **/*.Rmd
             **/*.yaml
             **/*.yml
+            *.md
           fail: ${{ inputs.lychee-fail }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
