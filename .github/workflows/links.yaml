@@ -16,7 +16,7 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
-      additional_args:
+      lychee-additional-args:
         description: Additional arguments to pass to lychee
         required: false
         type: string
@@ -85,7 +85,7 @@ jobs:
             --exclude "https://github.com.*.git|https://insightsengineering.github.io.*|lewagon.*|knightdave.*|.*users.noreply.github.com|lycheeverse.*"
             --verbose
             --no-progress
-            ${{ inputs.additional_args }}
+            ${{ inputs.lychee-additional-args }}
             **/*.md
             **/*.html
             **/*.Rmd
