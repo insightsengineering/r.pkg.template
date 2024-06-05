@@ -20,7 +20,7 @@ on:
         description: Additional arguments to pass to lychee
         required: false
         type: string
-        default: ""
+        default: "--exclude-private"
       package-subdirectory:
         description: Subdirectory in the repository, where the R package is located.
         required: false
@@ -82,7 +82,6 @@ jobs:
         uses: lycheeverse/lychee-action@v1.8.0
         with:
           args: >-
-            --exclude-private
             --exclude "https://github.com.*.git|https://insightsengineering.github.io.*|lewagon.*|knightdave.*|.*users.noreply.github.com|lycheeverse.*"
             --verbose
             --no-progress
