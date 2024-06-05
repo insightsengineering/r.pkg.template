@@ -21,6 +21,11 @@ on:
         required: false
         type: string
         default: "--exclude-private"
+      lychee-fail:
+        description: Fail workflow run on error (i.e. when lychee exit code is not 0)
+        required: false
+        type: boolean
+        default: false
       package-subdirectory:
         description: Subdirectory in the repository, where the R package is located.
         required: false
@@ -79,7 +84,7 @@ jobs:
           SKIP_INSTRUCTION: "[skip links]"
 
       - name: Check URLs in docs 🔬
-        uses: lycheeverse/lychee-action@v1.8.0
+        uses: lycheeverse/lychee-action@v1.10.0
         with:
           args: >-
             --exclude "https://github.com.*.git|https://insightsengineering.github.io.*|lewagon.*|knightdave.*|.*users.noreply.github.com|lycheeverse.*"
@@ -91,6 +96,7 @@ jobs:
             **/*.Rmd
             **/*.yaml
             **/*.yml
+          fail: ${{ inputs.lychee-fail }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
