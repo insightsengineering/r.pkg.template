@@ -138,9 +138,9 @@ jobs:
       - name: Check URLs
         run: |
             apt update && apt install -yq curl
-            curl -vvv https://doi.org/10.1002/cpt.1450
-            curl -vvv https://doi.org/10.1002/sim.8756
-            curl -vvv https://doi.org/10.1111/bcp.15200
+            curl -vvv https://ascpt.onlinelibrary.wiley.com/doi/10.1002/cpt.1450
+            curl -vvv https://onlinelibrary.wiley.com/doi/10.1002/sim.8756
+            curl -vvv https://bpspubs.onlinelibrary.wiley.com/doi/10.1111/bcp.15200
 
       - name: Check URLs with urlchecker 🔬
         run: |
