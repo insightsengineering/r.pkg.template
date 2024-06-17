@@ -694,9 +694,11 @@ jobs:
         if: inputs.skip-r-cmd-check != true
         run: |
           find ${{ env.PKGNAME }}.Rcheck -type f -regextype posix-egrep \
-            -regex '.*00install.out|.*00check.log|.*00build.out' -print0 | while IFS= read -r -d $'\0' file; do
-            printf "==================================\n$file\n==================================\n"
-            cat $file
+            -regex '.*00install.out|.*00check.log|.*00build.out|.*-Ex.Rout|.*tests/testthat\.Rout.*' \
+            -print0 | while IFS= read -r -d $'\0' file; do
+              echo "::group::$file"
+              cat $file
+              echo "::endgroup::"
           done
         shell: bash
 
