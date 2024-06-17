@@ -696,6 +696,7 @@ jobs:
           find ${{ env.PKGNAME }}.Rcheck -type f -regextype posix-egrep \
             -regex '.*00install.out|.*00check.log|.*00build.out|.*-Ex.Rout|.*tests/testthat\.Rout.*' \
             -print0 | while IFS= read -r -d $'\0' file; do
+              # Grouping allows to collapse/expand logs when needed.
               echo "::group::$file"
               cat $file
               echo "::endgroup::"
@@ -783,6 +784,18 @@ jobs:
         with:
           path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/${{ env.PKGBUILD }}
           name: ${{ env.PKGBUILD }}
+
+      - name: Upload logs artifact 🗞️
+        uses: actions/upload-artifact@v4
+        with:
+          path: |
+            ${{ env.PKGNAME }}.Rcheck/*00install.out
+            ${{ env.PKGNAME }}.Rcheck/*00check.log
+            ${{ env.PKGNAME }}.Rcheck/*00build.out
+            ${{ env.PKGNAME }}.Rcheck/*-Ex.Rout
+            ${{ env.PKGNAME }}.Rcheck/tests/testthat.Rout
+            ${{ env.PKGNAME }}.Rcheck/tests/testthat.Rout.fail
+          name: check-logs-${{ env.PKGNAME }}
 
   publish-junit-html-report:
     name: Publish JUnit HTML report 📰
