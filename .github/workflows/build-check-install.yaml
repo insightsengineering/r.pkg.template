@@ -795,7 +795,7 @@ jobs:
             ${{ env.PKGNAME }}.Rcheck/*-Ex.Rout
             ${{ env.PKGNAME }}.Rcheck/tests/testthat.Rout
             ${{ env.PKGNAME }}.Rcheck/tests/testthat.Rout.fail
-          name: check-logs-${{ env.PKGNAME }}
+          name: check-logs-${{ env.PKGNAME }}-${{ inputs.concurrency-group }}
 
   publish-junit-html-report:
     name: Publish JUnit HTML report 📰
