@@ -2,33 +2,54 @@
 name: WASM
 
 on:
-  push:
-    branches:
-      - wasm-poc
   workflow_call:
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
           Github token with write access to the repository
         required: false
+    inputs:
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: ""
 
 jobs:
   wasm:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - name: Get branch names 🌿
+          id: branch-name
+          uses: tj-actions/branch-names@v7
 
-    - name: Build wasm packages
-      uses: r-wasm/actions/build-rwasm@v1
-      with:
-        packages: |
-          insightsengineering/tern@v0.9.4
-          insightsengineering/teal.logger@v0.2.0
-          insightsengineering/chevron@v0.2.6
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v4.1.1
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
 
-    - name: Debug
-      run: |
-        apt-get update && apt-get install -yq tree
-        ls -la
-        tree _site
-        cat _site/bin/emscripten/contrib/4.4/PACKAGES
+      - name: Get package name 📦
+        run: |
+          echo "PKGNAME=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION))" >> $GITHUB_ENV
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+
+      - name: Debug
+        id: current-tag
+        run: |
+          echo "Building WASM for: ${{ github.repository_owner }}/${{ env.PKGNAME }}@${{ steps.branch-name.outputs.tag }}"
+        shell: bash
+
+      - name: Build wasm packages
+        uses: r-wasm/actions/build-rwasm@v1
+        with:
+          packages: |
+            ${{ github.repository_owner }}/${{ env.PKGNAME }}@${{ steps.branch-name.outputs.tag }}
+
+      - name: Debug
+        run: |
+          apt-get update && apt-get install -yq tree
+          ls -la
+          tree _site
+          cat _site/bin/emscripten/contrib/4.4/PACKAGES
