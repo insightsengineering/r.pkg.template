@@ -32,29 +32,24 @@ jobs:
       - name: Get package name 📦
         run: |
           echo "PKGNAME=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION))" >> $GITHUB_ENV
+          echo "Building WASM for: ${{ github.repository_owner }}/${{ env.PKGNAME }}@${{ steps.branch-name.outputs.tag }}"
         shell: bash
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
-      - name: Debug
-        id: current-tag
-        run: |
-          echo "Building WASM for: ${{ github.repository_owner }}/${{ env.PKGNAME }}@${{ steps.branch-name.outputs.tag }}"
-        shell: bash
-
-      - name: Build wasm packages
+      - name: Build WASM packages 🧭
         uses: r-wasm/actions/build-rwasm@v1
         with:
           packages: |
             ${{ github.repository_owner }}/${{ env.PKGNAME }}@${{ steps.branch-name.outputs.tag }}
 
-      - name: Debug
+      - name: Debug ⚙️
         run: |
           apt-get update && apt-get install -yq tree
           ls -la
           tree _site
           cat _site/bin/emscripten/contrib/4.4/PACKAGES
 
-      - name: Upload report for review ⬆
+      - name: Upload WASM packages ⬆
         uses: actions/upload-artifact@v4
         with:
           name: wasm-${{ env.PKGNAME }}
@@ -68,13 +63,13 @@ jobs:
           name: wasm-${{ env.PKGNAME }}
           path: wasm-${{ env.PKGNAME }}
 
-      - name: Debug
+      - name: Prepare WASM release artifact 🗜️
         run: |
           zip -r9 wasm-${{ env.PKGNAME }}.zip wasm-${{ env.PKGNAME }}
           ls -la
           tree .
 
-      - name: Check if release exists
+      - name: Check if release exists ⚙️
         id: check-if-release-exists
         uses: insightsengineering/release-existence-action@v1
 
@@ -84,7 +79,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           file: ./wasm-${{ env.PKGNAME }}.zip
-          asset_name: wasm-${{ env.PKGNAME }}
+          asset_name: wasm-${{ env.PKGNAME }}.zip
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.ref }}
           overwrite: true
