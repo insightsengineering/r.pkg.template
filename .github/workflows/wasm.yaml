@@ -1,6 +1,7 @@
 ---
-name: WASM
+name: WASM 🧭
 
+# TODO: should we support running this workflow in any other way?
 on:
   workflow_call:
     secrets:
