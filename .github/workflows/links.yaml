@@ -16,11 +16,16 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
-      additional_args:
+      lychee-additional-args:
         description: Additional arguments to pass to lychee
         required: false
         type: string
-        default: ""
+        default: "--exclude-private"
+      lychee-fail:
+        description: Fail workflow run on error (i.e. when lychee exit code is not 0)
+        required: false
+        type: boolean
+        default: false
       package-subdirectory:
         description: Subdirectory in the repository, where the R package is located.
         required: false
@@ -79,19 +84,20 @@ jobs:
           SKIP_INSTRUCTION: "[skip links]"
 
       - name: Check URLs in docs 🔬
-        uses: lycheeverse/lychee-action@v1.8.0
+        uses: lycheeverse/lychee-action@v1.10.0
         with:
           args: >-
-            --exclude-private
             --exclude "https://github.com.*.git|https://insightsengineering.github.io.*|lewagon.*|knightdave.*|.*users.noreply.github.com|lycheeverse.*"
             --verbose
             --no-progress
-            ${{ inputs.additional_args }}
+            ${{ inputs.lychee-additional-args }}
             **/*.md
             **/*.html
             **/*.Rmd
             **/*.yaml
             **/*.yml
+            *.md
+          fail: ${{ inputs.lychee-fail }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -137,7 +143,8 @@ jobs:
 
       - name: Check URLs with urlchecker 🔬
         run: |
-          bad_urls <- nrow(print(urlchecker::url_check(".")))
+          # For unexplained reasons, parallel = FALSE is required to prevent some false positives.
+          bad_urls <- nrow(print(urlchecker::url_check(".", parallel = FALSE)))
           if (bad_urls > 0) {
             stop("Looks like a total of ", bad_urls, " URL(s) were found! Please correct them.")
           }
