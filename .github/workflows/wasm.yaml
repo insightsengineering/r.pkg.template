@@ -66,10 +66,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: wasm-${{ env.PKGNAME }}
+          path: wasm-${{ env.PKGNAME }}.zip
 
       - name: Debug
         run: |
           ls -la
+          tree .
 
       - name: Check if release exists
         id: check-if-release-exists
