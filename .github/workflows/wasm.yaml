@@ -6,6 +6,11 @@ on:
     branches:
       - wasm-poc
   workflow_call:
+    secrets:
+      REPO_GITHUB_TOKEN:
+        description: |
+          Github token with write access to the repository
+        required: false
 
 jobs:
   wasm:
