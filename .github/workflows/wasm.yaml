@@ -4,11 +4,6 @@ name: WASM 🧭
 # TODO: should we support running this workflow in any other way?
 on:
   workflow_call:
-    secrets:
-      REPO_GITHUB_TOKEN:
-        description: |
-          Github token with write access to the repository
-        required: false
     inputs:
       package-subdirectory:
         description: Subdirectory in the repository, where the R package is located.
@@ -33,7 +28,6 @@ jobs:
       - name: Get package name 📦
         run: |
           echo "PKGNAME=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION))" >> $GITHUB_ENV
-          echo "Building WASM for: ${{ github.repository_owner }}/${{ env.PKGNAME }}@${{ steps.branch-name.outputs.tag }}"
         shell: bash
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
@@ -42,13 +36,6 @@ jobs:
         with:
           packages: |
             ${{ github.repository_owner }}/${{ env.PKGNAME }}@${{ steps.branch-name.outputs.tag }}
-
-      - name: Debug ⚙️
-        run: |
-          apt-get update && apt-get install -yq tree
-          ls -la
-          tree _site
-          cat _site/bin/emscripten/contrib/4.4/PACKAGES
 
       - name: Upload WASM packages ⬆
         uses: actions/upload-artifact@v4
@@ -73,8 +60,6 @@ jobs:
           steps.check-if-release-exists.outputs.release-exists == 'true'
         run: |
           zip -r9 wasm-${{ env.PKGNAME }}.zip wasm-${{ env.PKGNAME }}
-          ls -la
-          tree .
 
       - name: Upload WASM build to release 🔼
         if: >-
