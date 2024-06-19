@@ -66,10 +66,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: wasm-${{ env.PKGNAME }}
-          path: wasm-${{ env.PKGNAME }}.zip
+          path: wasm-${{ env.PKGNAME }}
 
       - name: Debug
         run: |
+          zip -r9 wasm-${{ env.PKGNAME }}.zip wasm-${{ env.PKGNAME }}
           ls -la
           tree .
 
@@ -77,13 +78,13 @@ jobs:
         id: check-if-release-exists
         uses: insightsengineering/release-existence-action@v1
 
-      # - name: Upload report to release 🔼
-      #   if: >-
-      #     steps.check-if-release-exists.outputs.release-exists == 'true'
-      #   uses: svenstaro/upload-release-action@v2
-      #   with:
-      #     file: ./validation_report.pdf
-      #     asset_name: wasm-${{ env.PKGNAME }}
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }}
-      #     tag: ${{ github.ref }}
-      #     overwrite: true
+      - name: Upload WASM build to release 🔼
+        if: >-
+          steps.check-if-release-exists.outputs.release-exists == 'true'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: ./wasm-${{ env.PKGNAME }}.zip
+          asset_name: wasm-${{ env.PKGNAME }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          overwrite: true
