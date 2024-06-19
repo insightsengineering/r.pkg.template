@@ -20,8 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get branch names 🌿
-          id: branch-name
-          uses: tj-actions/branch-names@v7
+        id: branch-name
+        uses: tj-actions/branch-names@v7
 
       - name: Checkout repo 🛎
         uses: actions/checkout@v4.1.1
