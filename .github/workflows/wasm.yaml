@@ -1,7 +1,10 @@
 ---
 name: WASM 🧭
 
+# Running this workflow is only supported for git tags.
+# TODO: should we fail the workflow if someone tries to run it not for tag?
 # TODO: should we support running this workflow in any other way?
+
 on:
   workflow_call:
     inputs:
