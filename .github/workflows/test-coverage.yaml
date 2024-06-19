@@ -419,7 +419,7 @@ jobs:
 
       - name: Upload coverage report to GitHub pages 🗞️
         if: needs.coverage.outputs.multiversion-docs == 'true'
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./coverage-report
@@ -429,7 +429,7 @@ jobs:
         if: >
           needs.coverage.outputs.is-latest-tag == 'true'
             && needs.coverage.outputs.multiversion-docs == 'true'
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./coverage-report
@@ -439,7 +439,7 @@ jobs:
         if: >
           needs.coverage.outputs.is-rc-tag == 'true'
             && needs.coverage.outputs.multiversion-docs == 'true'
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./coverage-report
@@ -447,7 +447,7 @@ jobs:
 
       - name: Upload coverage report to GitHub pages (non-multiversion) 🗞️
         if: needs.coverage.outputs.multiversion-docs == 'false'
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./coverage-report
