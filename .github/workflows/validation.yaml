@@ -127,11 +127,19 @@ jobs:
           direction: ${{ inputs.sd-direction }}
 
       - name: Build report 🏗
-        uses: insightsengineering/thevalidatoR@v2
+        uses: insightsengineering/thevalidatoR@debug-quarto
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           report_pkg_dir: ${{ env.package_subdirectory }}
+
+      - name: Debug
+        if: always()
+        run: |
+          apt update
+          apt install -yq tree
+          ls -la
+          tree .
 
       - name: Upload report for review ⬆
         if: github.ref != 'refs/heads/main'
@@ -161,7 +169,7 @@ jobs:
       - name: Upload report to release 🔼
         if: >-
           steps.check-if-release-exists.outputs.release-exists == 'true'
-        uses: svenstaro/upload-release-action@debug-quarto
+        uses: svenstaro/upload-release-action@v2
         with:
           file: ./validation_report.pdf
           asset_name: validation-report.pdf
