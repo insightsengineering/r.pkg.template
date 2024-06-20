@@ -16,6 +16,7 @@ on:
 
 jobs:
   wasm:
+    name: WASM 🧭
     runs-on: ubuntu-latest
     steps:
       - name: Get branch names 🌿
