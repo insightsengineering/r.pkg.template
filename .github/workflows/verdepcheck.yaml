@@ -32,6 +32,7 @@ on:
         description: Extra dependencies specified similarly to the `DESCRIPTION` file, i.e. `"<package name> (<operator> <version>)"` where both `<operator>` and `<version>` are optional. Multiple entries are possible separated by `";"`.
         required: false
         default: ""
+        type: string
       additional-env-vars:
         description: |
           Extra environment variables, as a 'key=value' pair, with each pair on a new line.
