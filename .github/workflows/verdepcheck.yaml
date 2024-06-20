@@ -101,12 +101,12 @@ jobs:
 
       - name: Dependency Test - ${{ env.strategy }} 🔢
         id: verdepcheck
-        uses: insightsengineering/r-verdepcheck-action@main
+        uses: insightsengineering/r-verdepcheck-action@add_extra
         with:
           github-token: ${{ steps.github-token.outputs.token }}
           check-args: ${{ inputs.check-args }}
           build-args: ${{ inputs.build-args }}
-          additional-env-vars:  ${{ inputs.additional-env-vars }}
+          additional-env-vars: ${{ inputs.additional-env-vars }}
           strategy: ${{ env.strategy }}
 
       - name: GChat notification 🔔
