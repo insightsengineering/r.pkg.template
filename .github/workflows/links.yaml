@@ -16,11 +16,29 @@ on:
   workflow_dispatch:
   workflow_call:
     inputs:
-      additional_args:
+      lychee-additional-args:
         description: Additional arguments to pass to lychee
         required: false
         type: string
+        default: "--exclude-private"
+      lychee-fail:
+        description: Fail workflow run on error (i.e. when lychee exit code is not 0)
+        required: false
+        type: boolean
+        default: false
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
         default: ""
+      link-checking-method:
+        description: |
+          Which link checking method should be used? Supported methods are:
+          lychee
+          urlchecker
+        required: false
+        type: string
+        default: "urlchecker"
 
 concurrency:
   group: links-${{ github.event.pull_request.number || github.ref }}
@@ -33,6 +51,7 @@ jobs:
     if: >
       !contains(github.event.commits[0].message, '[skip links]')
         && github.event.pull_request.draft == false
+        && inputs.link-checking-method == 'lychee'
     steps:
       - name: Get branch names 🌿
         id: branch-name
@@ -65,18 +84,69 @@ jobs:
           SKIP_INSTRUCTION: "[skip links]"
 
       - name: Check URLs in docs 🔬
-        uses: lycheeverse/lychee-action@v1.8.0
+        uses: lycheeverse/lychee-action@v1.10.0
         with:
           args: >-
-            --exclude-private
             --exclude "https://github.com.*.git|https://insightsengineering.github.io.*|lewagon.*|knightdave.*|.*users.noreply.github.com|lycheeverse.*"
             --verbose
             --no-progress
-            ${{ inputs.additional_args }}
+            ${{ inputs.lychee-additional-args }}
             **/*.md
             **/*.html
             **/*.Rmd
             **/*.yaml
             **/*.yml
+            *.md
+          fail: ${{ inputs.lychee-fail }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  urlchecker:
+    name: URL Checker 🔎
+    runs-on: ubuntu-latest
+    container:
+      image: rocker/tidyverse:latest
+    if: >
+      !contains(github.event.commits[0].message, '[skip links]')
+        && github.event.pull_request.draft == false
+        && inputs.link-checking-method == 'urlchecker'
+    steps:
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v7
+
+      - name: Checkout repo (PR) 🛎
+        uses: actions/checkout@v4.1.1
+        if: github.event_name == 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v4.1.1
+        if: github.event_name != 'pull_request'
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+
+      - name: Check commit message 💬
+        run: |
+          git config --global --add safe.directory $(pwd)
+          export head_commit_message="$(git show -s --format=%B | tr '\r\n' ' ' | tr '\n' ' ')"
+          echo "head_commit_message = $head_commit_message"
+          if [[ $head_commit_message == *"$SKIP_INSTRUCTION"* ]]; then
+            echo "Skip instruction detected - cancelling the workflow."
+            exit 1
+          fi
+        shell: bash
+        env:
+          SKIP_INSTRUCTION: "[skip links]"
+
+      - name: Check URLs with urlchecker 🔬
+        run: |
+          # For unexplained reasons, parallel = FALSE is required to prevent some false positives.
+          bad_urls <- nrow(print(urlchecker::url_check(".", parallel = FALSE)))
+          if (bad_urls > 0) {
+            stop("Looks like a total of ", bad_urls, " URL(s) were found! Please correct them.")
+          }
+        shell: Rscript {0}
+        working-directory: ${{ inputs.package-subdirectory }}
