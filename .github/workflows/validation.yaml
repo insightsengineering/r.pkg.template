@@ -139,9 +139,10 @@ jobs:
           apt update
           apt install -yq tree
           echo "Listing .quarto..."
-          ls -la .quarto
+          ls -la
+          ls -la .quarto || true
           echo "Listing template_files..."
-          ls -la template_files
+          ls -la template_files || true
           tree -a .
 
       - name: Quarto debug artifacts
