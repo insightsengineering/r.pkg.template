@@ -1,0 +1,76 @@
+---
+name: WASM 🧭
+
+on:
+  workflow_call:
+    inputs:
+      package-subdirectory:
+        description: Subdirectory in the repository, where the R package is located.
+        required: false
+        type: string
+        default: ""
+
+jobs:
+  wasm:
+    name: WASM 🧭
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Get branch names 🌿
+        id: branch-name
+        uses: tj-actions/branch-names@v7
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v4.1.1
+        with:
+          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          path: ${{ github.event.repository.name }}
+
+      - name: Get package name 📦
+        run: |
+          echo "PKGNAME=$(echo $(awk -F: '/Package:/{gsub(/[ ]+/,"") ; print $2}' DESCRIPTION))" >> $GITHUB_ENV
+        shell: bash
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+
+      - name: Build WASM packages 🧭
+        uses: r-wasm/actions/build-rwasm@v1
+        with:
+          packages: |
+            ${{ github.repository_owner }}/${{ env.PKGNAME }}@${{ steps.branch-name.outputs.tag }}
+
+      - name: Upload WASM packages ⬆
+        uses: actions/upload-artifact@v4
+        with:
+          name: wasm-${{ env.PKGNAME }}
+          path: |
+            _site/bin/emscripten/contrib/*/${{ env.PKGNAME }}*.tgz
+            _site/src/contrib/${{ env.PKGNAME }}*.tar.gz
+
+      - name: Check if release exists ⚙️
+        id: check-if-release-exists
+        uses: insightsengineering/release-existence-action@v1
+
+      - name: Download artifact ⏬
+        if: >-
+          steps.check-if-release-exists.outputs.release-exists == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          name: wasm-${{ env.PKGNAME }}
+          path: wasm-${{ env.PKGNAME }}
+
+      - name: Prepare WASM release artifact 🗜️
+        if: >-
+          steps.check-if-release-exists.outputs.release-exists == 'true'
+        run: |
+          zip -r9 wasm-${{ env.PKGNAME }}.zip wasm-${{ env.PKGNAME }}
+
+      - name: Upload WASM build to release 🔼
+        if: >-
+          steps.check-if-release-exists.outputs.release-exists == 'true'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: ./wasm-${{ env.PKGNAME }}.zip
+          asset_name: wasm-${{ env.PKGNAME }}.zip
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref }}
+          overwrite: true
