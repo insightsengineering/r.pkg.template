@@ -186,6 +186,15 @@ on:
         required: false
         type: boolean
         default: false
+      unit-test-report-directory:
+        description: |
+          Directory name on gh-pages branch where the unit test report should be uploaded.
+          For any additional unit test report directories to be retained by the pkgdown workflow
+          in the gh-pages branch, they have to be added to the additional-unit-test-report-directories
+          pkgdown workflow input.
+        required: false
+        type: string
+        default: "unit-test-report"
 
 concurrency:
   group: r-cmd-${{ inputs.concurrency-group }}-${{ github.event.pull_request.number || github.ref }}
@@ -832,7 +841,7 @@ jobs:
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
-          destination_dir: ${{ needs.build-install-check.outputs.current-branch-or-tag }}/unit-test-report
+          destination_dir: ${{ needs.build-install-check.outputs.current-branch-or-tag }}/${{ inputs.unit-test-report-directory }}
 
       - name: Upload JUnit HTML report to GitHub pages (latest-tag) 🏷️
         if: >
@@ -842,7 +851,7 @@ jobs:
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
-          destination_dir: ${{ inputs.latest-tag-alt-name }}/unit-test-report
+          destination_dir: ${{ inputs.latest-tag-alt-name }}/${{ inputs.unit-test-report-directory }}
 
       - name: Upload JUnit HTML report to GitHub pages (release-candidate) 🏷️
         if: >
@@ -852,7 +861,7 @@ jobs:
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
-          destination_dir: ${{ inputs.release-candidate-alt-name }}/unit-test-report
+          destination_dir: ${{ inputs.release-candidate-alt-name }}/${{ inputs.unit-test-report-directory }}
 
       - name: Upload JUnit HTML report to GitHub pages (non-multiversion) 🗞️
         if: needs.build-install-check.outputs.multiversion-docs == 'false'
@@ -860,7 +869,7 @@ jobs:
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
-          destination_dir: unit-test-report
+          destination_dir: ${{ inputs.unit-test-report-directory }}
 
   upload-release-assets:
     name: Upload build tar.gz
