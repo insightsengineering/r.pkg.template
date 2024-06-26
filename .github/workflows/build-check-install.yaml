@@ -792,7 +792,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/${{ env.PKGBUILD }}
-          name: ${{ env.PKGBUILD }}
+          name: ${{ env.PKGBUILD }}-${{ inputs.concurrency-group }}
 
       - name: Upload logs artifact 🗞️
         uses: actions/upload-artifact@v4
@@ -832,7 +832,7 @@ jobs:
       - name: Download JUnit HTML report as artifact ⤵️
         uses: actions/download-artifact@v4
         with:
-          name: unit-test-report
+          name: unit-test-report-${{ inputs.concurrency-group }}
           path: unit-test-report
 
       - name: Upload JUnit HTML report to GitHub pages 🗞️
@@ -893,7 +893,7 @@ jobs:
       - name: Download artifact ⏬
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.PKGBUILD }}
+          name: ${{ env.PKGBUILD }}-${{ inputs.concurrency-group }}
 
       - name: Check if release exists
         id: check-if-release-exists
