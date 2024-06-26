@@ -46,9 +46,9 @@ jobs:
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
-      - name: Setup custom dependencies
+      - name: Prepare DESCRIPTION file
         run: |
-          wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/599d71e3f1ca1b79237b199f316a745e6b533996/new_staged_deps.R
+          wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/5672eb997585893197b1ca659ca46fa89daeea1f/new_staged_deps.R
           git config --global --add safe.directory $(pwd)
           # Packages required by the new_staged_deps.R script:
           R -e 'install.packages(c("cli", "desc", "pkgdepends"))'
@@ -58,6 +58,9 @@ jobs:
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
+          needs: |
+            DepsDev
+            DepsBranch
       - uses: r-hub/actions/run-check@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
@@ -83,9 +86,9 @@ jobs:
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
-      - name: Setup custom dependencies
+      - name: Prepare DESCRIPTION file
         run: |
-          wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/599d71e3f1ca1b79237b199f316a745e6b533996/new_staged_deps.R
+          wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/5672eb997585893197b1ca659ca46fa89daeea1f/new_staged_deps.R
           git config --global --add safe.directory $(pwd)
           # Packages required by the new_staged_deps.R script:
           R -e 'install.packages(c("cli", "desc", "pkgdepends"))'
@@ -95,6 +98,9 @@ jobs:
         with:
           job-config: ${{ matrix.config.job-config }}
           token: ${{ secrets.RHUB_TOKEN }}
+          needs: |
+            DepsDev
+            DepsBranch
       - uses: r-hub/actions/run-check@v1
         with:
           job-config: ${{ matrix.config.job-config }}
