@@ -46,20 +46,19 @@ jobs:
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
-      # - uses: r-hub/actions/setup-deps@v1
-      #   with:
-      #     token: ${{ secrets.RHUB_TOKEN }}
-      #     job-config: ${{ matrix.config.job-config }}
       - name: Setup custom dependencies
         run: |
           wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/599d71e3f1ca1b79237b199f316a745e6b533996/new_staged_deps.R
           git config --global --add safe.directory $(pwd)
           # Packages required by the new_staged_deps.R script:
           R -e 'install.packages(c("cli", "desc", "pkgdepends"))'
-          # Packages required by r-hub/actions/run-check:
-          R -e 'install.packages(c("rcmdcheck"))'
           Rscript new_staged_deps.R
         shell: bash
+      - uses: r-hub/actions/setup-deps@v1
+        with:
+          token: ${{ secrets.RHUB_TOKEN }}
+          job-config: ${{ matrix.config.job-config }}
+          extra-packages: rcmdcheck
       - uses: r-hub/actions/run-check@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
@@ -85,20 +84,19 @@ jobs:
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
-      # - uses: r-hub/actions/setup-deps@v1
-      #   with:
-      #     job-config: ${{ matrix.config.job-config }}
-      #     token: ${{ secrets.RHUB_TOKEN }}
       - name: Setup custom dependencies
         run: |
           wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/599d71e3f1ca1b79237b199f316a745e6b533996/new_staged_deps.R
           git config --global --add safe.directory $(pwd)
           # Packages required by the new_staged_deps.R script:
           R -e 'install.packages(c("cli", "desc", "pkgdepends"))'
-          # Packages required by r-hub/actions/run-check:
-          R -e 'install.packages(c("rcmdcheck"))'
           Rscript new_staged_deps.R
         shell: bash
+      - uses: r-hub/actions/setup-deps@v1
+        with:
+          job-config: ${{ matrix.config.job-config }}
+          token: ${{ secrets.RHUB_TOKEN }}
+          extra-packages: rcmdcheck
       - uses: r-hub/actions/run-check@v1
         with:
           job-config: ${{ matrix.config.job-config }}
