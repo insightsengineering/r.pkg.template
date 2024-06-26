@@ -188,10 +188,11 @@ on:
         default: false
       unit-test-report-directory:
         description: |
-          Directory name on gh-pages branch where the unit test report should be uploaded.
-          For any additional unit test report directories to be retained by the pkgdown workflow
-          in the gh-pages branch, they have to be added to the additional-unit-test-report-directories
-          pkgdown workflow input.
+          Directory name on gh-pages branch where the unit test report will be uploaded.
+          If the unit test report directory is different than the default 'unit-test-report',
+          it has to be added to the additional-unit-test-report-directories pkgdown workflow input.
+          Additionally, if the non-default unit test report should be shown in the GitHub Pages
+          documentation drop-down, it has to be added to _pkgdown.yaml.
         required: false
         type: string
         default: "unit-test-report"
