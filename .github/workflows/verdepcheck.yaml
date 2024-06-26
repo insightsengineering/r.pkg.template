@@ -28,6 +28,14 @@ on:
           Strategy to test package dependencies. One of: min_isolate, min_cohort, release, max.
         required: true
         type: string
+      extra-deps:
+        description: |
+          Extra dependencies specified similarly as in the `DESCRIPTION` file,
+          i.e. `"<package name> (<operator> <version>)"` where both `<operator>`
+          and `<version>` are optional. Multiple entries are possible separated by `";"`.
+        required: false
+        default: ""
+        type: string
       additional-env-vars:
         description: |
           Extra environment variables, as a 'key=value' pair, with each pair on a new line.
@@ -104,10 +112,11 @@ jobs:
         uses: insightsengineering/r-verdepcheck-action@main
         with:
           github-token: ${{ steps.github-token.outputs.token }}
-          check-args: ${{ inputs.check-args }}
+          extra-deps: ${{ inputs.extra-deps }}
           build-args: ${{ inputs.build-args }}
-          additional-env-vars:  ${{ inputs.additional-env-vars }}
+          check-args: ${{ inputs.check-args }}
           strategy: ${{ env.strategy }}
+          additional-env-vars: ${{ inputs.additional-env-vars }}
 
       - name: GChat notification 🔔
         if: (failure() || cancelled()) && steps.verdepcheck.outcome != 'success' && env.gchat_webhook != ''
