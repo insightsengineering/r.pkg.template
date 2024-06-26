@@ -11,7 +11,8 @@ on:
         type: string
         # These platforms correspond roughly to CRAN package checks.
         # More information: https://github.com/insightsengineering/idr-tasks/issues/781
-        default: 'ubuntu-clang,ubuntu-gcc12,gcc13,windows,ubuntu-next,ubuntu-release,macos-arm64,macos,windows'
+        # default: 'ubuntu-clang,ubuntu-gcc12,gcc13,windows,ubuntu-next,ubuntu-release,macos-arm64,macos,windows'
+        default: 'ubuntu-next,ubuntu-release'
 
 jobs:
 
@@ -61,38 +62,38 @@ jobs:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
 
-  # other-platforms:
-  #   needs: setup
-  #   if: ${{ needs.setup.outputs.platforms != '[]' }}
-  #   runs-on: ${{ matrix.config.os }}
-  #   name: ${{ matrix.config.label }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       config: ${{ fromJson(needs.setup.outputs.platforms) }}
+  other-platforms:
+    needs: setup
+    if: ${{ needs.setup.outputs.platforms != '[]' }}
+    runs-on: ${{ matrix.config.os }}
+    name: ${{ matrix.config.label }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{ fromJson(needs.setup.outputs.platforms) }}
 
-  #   steps:
-  #     - uses: r-hub/actions/checkout@v1
-  #     - uses: r-hub/actions/setup-r@v1
-  #       with:
-  #         job-config: ${{ matrix.config.job-config }}
-  #         token: ${{ secrets.RHUB_TOKEN }}
-  #     - uses: r-hub/actions/platform-info@v1
-  #       with:
-  #         token: ${{ secrets.RHUB_TOKEN }}
-  #         job-config: ${{ matrix.config.job-config }}
-  #     # - uses: r-hub/actions/setup-deps@v1
-  #     #   with:
-  #     #     job-config: ${{ matrix.config.job-config }}
-  #     #     token: ${{ secrets.RHUB_TOKEN }}
-  #     - name: Setup custom dependencies
-  #       run: |
-  #         wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/f80c64bd2fd12513fda14685213765265ba7965c/new_staged_deps.R
-  #         git config --global --add safe.directory $(pwd)
-  #         R -e 'install.packages("cli")'
-  #         Rscript new_staged_deps.R
-  #       shell: bash
-  #     - uses: r-hub/actions/run-check@v1
-  #       with:
-  #         job-config: ${{ matrix.config.job-config }}
-  #         token: ${{ secrets.RHUB_TOKEN }}
+    steps:
+      - uses: r-hub/actions/checkout@v1
+      - uses: r-hub/actions/setup-r@v1
+        with:
+          job-config: ${{ matrix.config.job-config }}
+          token: ${{ secrets.RHUB_TOKEN }}
+      - uses: r-hub/actions/platform-info@v1
+        with:
+          token: ${{ secrets.RHUB_TOKEN }}
+          job-config: ${{ matrix.config.job-config }}
+      # - uses: r-hub/actions/setup-deps@v1
+      #   with:
+      #     job-config: ${{ matrix.config.job-config }}
+      #     token: ${{ secrets.RHUB_TOKEN }}
+      - name: Setup custom dependencies
+        run: |
+          wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/f80c64bd2fd12513fda14685213765265ba7965c/new_staged_deps.R
+          git config --global --add safe.directory $(pwd)
+          R -e 'install.packages("cli")'
+          Rscript new_staged_deps.R
+        shell: bash
+      - uses: r-hub/actions/run-check@v1
+        with:
+          job-config: ${{ matrix.config.job-config }}
+          token: ${{ secrets.RHUB_TOKEN }}
