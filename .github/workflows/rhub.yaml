@@ -52,7 +52,7 @@ jobs:
       #     job-config: ${{ matrix.config.job-config }}
       - name: Setup custom dependencies
         run: |
-          wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/f80c64bd2fd12513fda14685213765265ba7965c/new_staged_deps.R
+          wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/599d71e3f1ca1b79237b199f316a745e6b533996/new_staged_deps.R
           git config --global --add safe.directory $(pwd)
           R -e 'install.packages("cli")'
           Rscript new_staged_deps.R
@@ -88,7 +88,7 @@ jobs:
       #     token: ${{ secrets.RHUB_TOKEN }}
       - name: Setup custom dependencies
         run: |
-          wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/f80c64bd2fd12513fda14685213765265ba7965c/new_staged_deps.R
+          wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/599d71e3f1ca1b79237b199f316a745e6b533996/new_staged_deps.R
           git config --global --add safe.directory $(pwd)
           R -e 'install.packages("cli")'
           Rscript new_staged_deps.R
