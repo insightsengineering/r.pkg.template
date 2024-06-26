@@ -52,6 +52,7 @@ jobs:
       - name: Setup custom dependencies
         run: |
           wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/f80c64bd2fd12513fda14685213765265ba7965c/new_staged_deps.R
+          git config --global --add safe.directory $(pwd)
           Rscript new_staged_deps.R
         shell: bash
       - uses: r-hub/actions/run-check@v1
@@ -86,6 +87,7 @@ jobs:
       - name: Setup custom dependencies
         run: |
           wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/f80c64bd2fd12513fda14685213765265ba7965c/new_staged_deps.R
+          git config --global --add safe.directory $(pwd)
           Rscript new_staged_deps.R
         shell: bash
       - uses: r-hub/actions/run-check@v1
