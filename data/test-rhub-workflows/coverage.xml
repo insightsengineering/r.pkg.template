@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "https://raw.githubusercontent.com/cobertura/cobertura/master/cobertura/src/site/htdocs/xml/coverage-04.dtd">
-<coverage line-rate="0.7" branch-rate="0" lines-covered="14" lines-valid="20" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-06-26 15:08:53.123725">
+<coverage line-rate="0.7" branch-rate="0" lines-covered="14" lines-valid="20" branches-covered="0" branches-valid="0" complexity="0" version="3.6.4" timestamp="2024-06-26 15:13:09.421313">
   <sources>
     <source>/__w/r.pkg.template/r.pkg.template/r.pkg.template</source>
   </sources>
