@@ -12,7 +12,7 @@ on:
         # These platforms correspond roughly to CRAN package checks.
         # More information: https://github.com/insightsengineering/idr-tasks/issues/781
         # default: 'ubuntu-clang,ubuntu-gcc12,gcc13,windows,ubuntu-next,ubuntu-release,macos-arm64,macos,windows'
-        default: 'ubuntu-next,ubuntu-release,windows'
+        default: 'ubuntu-release,windows,macos,macos-arm64'
       lookup-refs:
         description: |
           List of package references to be used for the feature branch.
