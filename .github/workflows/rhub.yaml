@@ -50,11 +50,12 @@ jobs:
       - name: Setup R dependencies
         uses: insightsengineering/setup-r-dependencies@initialize-actions
 
-      - uses: r-hub/actions/setup-deps@v1
-        with:
-          token: ${{ secrets.RHUB_TOKEN }}
-          job-config: ${{ matrix.config.job-config }}
-          needs: DepsDev,DepsBranch
+      # - uses: r-hub/actions/setup-deps@v1
+      #   with:
+      #     token: ${{ secrets.RHUB_TOKEN }}
+      #     job-config: ${{ matrix.config.job-config }}
+      #     needs: DepsDev,DepsBranch
+
       - uses: r-hub/actions/run-check@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
@@ -84,11 +85,12 @@ jobs:
       - name: Setup R dependencies
         uses: insightsengineering/setup-r-dependencies@initialize-actions
 
-      - uses: r-hub/actions/setup-deps@v1
-        with:
-          job-config: ${{ matrix.config.job-config }}
-          token: ${{ secrets.RHUB_TOKEN }}
-          needs: DepsDev,DepsBranch
+      # - uses: r-hub/actions/setup-deps@v1
+      #   with:
+      #     job-config: ${{ matrix.config.job-config }}
+      #     token: ${{ secrets.RHUB_TOKEN }}
+      #     needs: DepsDev,DepsBranch
+
       - uses: r-hub/actions/run-check@v1
         with:
           job-config: ${{ matrix.config.job-config }}
