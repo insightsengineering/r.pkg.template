@@ -20,19 +20,9 @@ on:
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
-          Github token with read access to repositories, required for staged.dependencies installation
+          Github token with read access to repositories
         required: false
     inputs:
-      install-system-dependencies:
-        description: Check for and install system dependencies
-        required: false
-        default: false
-        type: boolean
-      enable-staged-dependencies-check:
-        description: Enable staged dependencies YAML check
-        required: false
-        default: false
-        type: boolean
       R_CHECK_FORCE_SUGGESTS:
         description: If true, give an error if suggested packages are not available
         required: false
@@ -117,11 +107,6 @@ on:
         required: false
         default: 1.0
         type: string
-      sd-direction:
-        description: The direction to use to install staged dependencies. Choose between 'upstream', 'downstream' and 'all'
-        required: false
-        type: string
-        default: upstream
       install-deps-from-package-repositories:
         description: |
           Set this to a comma-separated named list of R packages repositories to use for installing dependencies.
@@ -308,13 +293,11 @@ jobs:
           junit_xml_comparison_input="${{ inputs.junit-xml-comparison }}"
           junit_xml_positive_threshold="${{ inputs.junit-xml-positive-threshold }}"
           junit_xml_negative_threshold="${{ inputs.junit-xml-negative-threshold }}"
-          enable_sd="${{ inputs.enable-sd }}"
           echo "junit_xml_storage=${junit_xml_storage_input:-_junit_xml_reports}" >> $GITHUB_ENV
           echo "junit_xml_diff_branch=${junit_xml_diff_branch_input:-main}" >> $GITHUB_ENV
           echo "junit_xml_comparison=${junit_xml_comparison_input:-true}" >> $GITHUB_ENV
           echo "junit_xml_positive_threshold=${junit_xml_positive_threshold:-1.0}" >> $GITHUB_ENV
           echo "junit_xml_negative_threshold=${junit_xml_negative_threshold:-1.0}" >> $GITHUB_ENV
-          echo "enable_sd=${enable_sd:-true}" >> $GITHUB_ENV
         shell: bash
 
       - name: Restore npm cache 💰
@@ -345,13 +328,6 @@ jobs:
         run: npm i -g xunit-viewer
         shell: bash
 
-      - name: Restore SD cache 💰
-        if: inputs.install-deps-from-package-repositories == ''
-        uses: actions/cache@v4
-        with:
-          key: sd-${{ runner.os }}-${{ github.event.repository.name }}
-          path: ~/.staged.dependencies
-
       - name: Update R packages 🗓️
         if: >-
           inputs.update-r-packages == true
@@ -359,19 +335,15 @@ jobs:
           update.packages()
         shell: Rscript {0}
 
-      - name: Run Staged dependencies 🎦
-        if: >-
-          env.enable_sd == 'true'
-            && inputs.install-deps-from-package-repositories == ''
-        uses: insightsengineering/staged-dependencies-action@v1
-        env:
-          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
+      - name: Setup R dependencies
+        uses: insightsengineering/setup-r-dependencies@initialize-actions
         with:
-          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
-          enable-check: ${{ inputs.enable-staged-dependencies-check }}
-          run-system-dependencies: ${{ inputs.install-system-dependencies }}
-          direction: ${{ inputs.sd-direction }}
+          repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          github-token: ${{ steps.github-token.outputs.token }}
+          lookup-refs: ${{ inputs.lookup-refs }}
+          skip-install: true
 
+      # TODO to be removed?
       - name: Install dependencies from package repositories 🗄️
         if: inputs.install-deps-from-package-repositories != ''
         run: |
