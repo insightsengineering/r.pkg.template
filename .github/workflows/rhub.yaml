@@ -48,7 +48,7 @@ jobs:
           job-config: ${{ matrix.config.job-config }}
 
       - name: Setup R dependencies
-        uses: insightsengineering/setup-r-packages@initialize-actions
+        uses: insightsengineering/setup-r-dependencies@initialize-actions
 
       - uses: r-hub/actions/setup-deps@v1
         with:
@@ -82,7 +82,7 @@ jobs:
           job-config: ${{ matrix.config.job-config }}
 
       - name: Setup R dependencies
-        uses: insightsengineering/setup-r-packages@initialize-actions
+        uses: insightsengineering/setup-r-dependencies@initialize-actions
 
       - uses: r-hub/actions/setup-deps@v1
         with:
