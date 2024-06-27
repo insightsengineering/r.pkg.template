@@ -1,4 +1,5 @@
-# R-hub's generic GitHub Actions workflow file. Its canonical location is at
+# This workflow is based on R-hub's generic GitHub Actions workflow file.
+# Its canonical location is at
 # https://github.com/r-hub/actions/blob/main/workflows/rhub.yaml
 
 name: R-hub 🌐
@@ -11,6 +12,9 @@ on:
         type: string
         # These platforms correspond roughly to CRAN package checks.
         # More information: https://github.com/insightsengineering/idr-tasks/issues/781
+        # All supported R-hub platforms can be viewed by running: rhub::rhub_platforms()
+        # Container-based platforms (as opposed to VM-based Windows and macOS platforms)
+        # can be also viewed here: https://r-hub.github.io/containers/containers.html
         default: 'ubuntu-clang,ubuntu-gcc12,gcc13,ubuntu-next,ubuntu-release,macos-arm64,macos,windows'
       lookup-refs:
         description: |
@@ -47,6 +51,7 @@ jobs:
 
     steps:
       - uses: r-hub/actions/checkout@v1
+
       - uses: r-hub/actions/platform-info@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
@@ -81,10 +86,12 @@ jobs:
 
     steps:
       - uses: r-hub/actions/checkout@v1
+
       - uses: r-hub/actions/setup-r@v1
         with:
           job-config: ${{ matrix.config.job-config }}
           token: ${{ secrets.RHUB_TOKEN }}
+
       - uses: r-hub/actions/platform-info@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
