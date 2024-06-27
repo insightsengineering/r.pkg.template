@@ -19,6 +19,7 @@ on:
           Multiple entries in new lines or separated by commas.
         required: false
         default: ""
+        type: string
 
 jobs:
   setup:
