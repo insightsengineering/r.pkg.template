@@ -12,10 +12,15 @@ on:
         # These platforms correspond roughly to CRAN package checks.
         # More information: https://github.com/insightsengineering/idr-tasks/issues/781
         # default: 'ubuntu-clang,ubuntu-gcc12,gcc13,windows,ubuntu-next,ubuntu-release,macos-arm64,macos,windows'
-        default: 'ubuntu-next,ubuntu-release'
+        default: 'ubuntu-next,ubuntu-release,windows,macos'
+      lookup-refs:
+        description: |
+          List of package references to be used for the feature branch.
+          Multiple entries in new lines or separated by commas.
+        required: false
+        default: ""
 
 jobs:
-
   setup:
     runs-on: ubuntu-latest
     outputs:
@@ -49,12 +54,15 @@ jobs:
 
       - name: Setup R dependencies
         uses: insightsengineering/setup-r-dependencies@initialize-actions
+        with:
+          lookup-refs: ${{ inputs.lookup-refs }}
+          skip-install: true
 
-      # - uses: r-hub/actions/setup-deps@v1
-      #   with:
-      #     token: ${{ secrets.RHUB_TOKEN }}
-      #     job-config: ${{ matrix.config.job-config }}
-      #     needs: DepsDev,DepsBranch
+      - uses: r-hub/actions/setup-deps@v1
+        with:
+          token: ${{ secrets.RHUB_TOKEN }}
+          job-config: ${{ matrix.config.job-config }}
+          needs: DepsDev,DepsBranch
 
       - uses: r-hub/actions/run-check@v1
         with:
@@ -84,12 +92,15 @@ jobs:
 
       - name: Setup R dependencies
         uses: insightsengineering/setup-r-dependencies@initialize-actions
+        with:
+          lookup-refs: ${{ inputs.lookup-refs }}
+          skip-install: true
 
-      # - uses: r-hub/actions/setup-deps@v1
-      #   with:
-      #     job-config: ${{ matrix.config.job-config }}
-      #     token: ${{ secrets.RHUB_TOKEN }}
-      #     needs: DepsDev,DepsBranch
+      - uses: r-hub/actions/setup-deps@v1
+        with:
+          job-config: ${{ matrix.config.job-config }}
+          token: ${{ secrets.RHUB_TOKEN }}
+          needs: DepsDev,DepsBranch
 
       - uses: r-hub/actions/run-check@v1
         with:
