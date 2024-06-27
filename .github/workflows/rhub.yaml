@@ -46,14 +46,10 @@ jobs:
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
-      - name: Prepare DESCRIPTION file
-        run: |
-          wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/5672eb997585893197b1ca659ca46fa89daeea1f/new_staged_deps.R
-          git config --global --add safe.directory $(pwd)
-          # Packages required by the new_staged_deps.R script:
-          R -e 'install.packages(c("cli", "desc", "pkgdepends"))'
-          Rscript new_staged_deps.R
-        shell: bash
+
+      - name: Setup R dependencies
+        uses: insightsengineering/setup-r-packages@initialize-actions
+
       - uses: r-hub/actions/setup-deps@v1
         with:
           token: ${{ secrets.RHUB_TOKEN }}
@@ -84,14 +80,10 @@ jobs:
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
-      - name: Prepare DESCRIPTION file
-        run: |
-          wget https://gist.githubusercontent.com/pawelru/2efd7db65436a558ac050cefe23e3306/raw/5672eb997585893197b1ca659ca46fa89daeea1f/new_staged_deps.R
-          git config --global --add safe.directory $(pwd)
-          # Packages required by the new_staged_deps.R script:
-          R -e 'install.packages(c("cli", "desc", "pkgdepends"))'
-          Rscript new_staged_deps.R
-        shell: bash
+
+      - name: Setup R dependencies
+        uses: insightsengineering/setup-r-packages@initialize-actions
+
       - uses: r-hub/actions/setup-deps@v1
         with:
           job-config: ${{ matrix.config.job-config }}
