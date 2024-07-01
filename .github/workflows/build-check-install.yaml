@@ -363,7 +363,7 @@ jobs:
         if: >-
           env.enable_sd == 'true'
             && inputs.install-deps-from-package-repositories == ''
-        uses: insightsengineering/staged-dependencies-action@v2
+        uses: insightsengineering/staged-dependencies-action@v1
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:

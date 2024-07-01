@@ -117,7 +117,7 @@ jobs:
           path: ~/.staged.dependencies
 
       - name: Run Staged dependencies 🎦
-        uses: insightsengineering/staged-dependencies-action@v2
+        uses: insightsengineering/staged-dependencies-action@v1
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
