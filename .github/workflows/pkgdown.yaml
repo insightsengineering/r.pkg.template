@@ -269,10 +269,9 @@ jobs:
           # Remove any existing documentation for the git tag, but retain coverage report and
           # unit test reports which might have already been pushed to the gh-pages branch
           # by the coverage and build-check-install workflows respectively.
+          directories_to_retain="coverage-report,unit-test-report"
           if [[ "${{ inputs.additional-unit-test-report-directories }}" != "" ]]; then
-            directories_to_retain="coverage-report,unit-test-report,${{ inputs.additional-unit-test-report-directories }}"
-          else
-            directories_to_retain="coverage-report,unit-test-report"
+            directories_to_retain="${directories_to_retain},${{ inputs.additional-unit-test-report-directories }}"
           fi
           IFS=',' read -ra DIRECTORIES_TO_RETAIN <<< "$directories_to_retain"
           echo "The following directories will be retained:"
@@ -294,12 +293,16 @@ jobs:
               rm -rf "$file"
             fi
           done
+          echo "::group::gh-pages contents"
           echo "Current contents of $GH_PAGES_DIR:"
           ls -l $GH_PAGES_DIR
+          echo "::endgroup::"
           # Copy generated pkgdown documentation to gh-pages branch.
           cp -a ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/docs/. $GH_PAGES_DIR
+          echo "::group::gh-pages contents"
           echo "Current contents of $GH_PAGES_DIR:"
           ls -l $GH_PAGES_DIR
+          echo "::endgroup::"
           cd gh-pages
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
