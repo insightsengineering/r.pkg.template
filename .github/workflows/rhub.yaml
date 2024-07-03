@@ -15,8 +15,7 @@ on:
         # All supported R-hub platforms can be viewed by running: rhub::rhub_platforms()
         # Container-based platforms (as opposed to VM-based Windows and macOS platforms)
         # can be also viewed here: https://r-hub.github.io/containers/containers.html
-        # default: 'ubuntu-clang,ubuntu-gcc12,gcc13,ubuntu-next,ubuntu-release,macos-arm64,macos,windows'
-        default: 'ubuntu-clang,macos-arm64,macos,windows'
+        default: 'ubuntu-clang,ubuntu-gcc12,gcc13,ubuntu-next,ubuntu-release,macos-arm64,macos,windows'
       lookup-refs:
         description: |
           List of package references to be used for the feature branch.
@@ -59,7 +58,7 @@ jobs:
           job-config: ${{ matrix.config.job-config }}
 
       - name: Setup R dependencies
-        uses: insightsengineering/setup-r-dependencies@initialize-actions
+        uses: insightsengineering/setup-r-dependencies@main
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-install: true
@@ -99,7 +98,7 @@ jobs:
           job-config: ${{ matrix.config.job-config }}
 
       - name: Setup R dependencies
-        uses: insightsengineering/setup-r-dependencies@initialize-actions
+        uses: insightsengineering/setup-r-dependencies@main
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-install: true
