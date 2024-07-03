@@ -186,6 +186,16 @@ on:
         required: false
         type: boolean
         default: false
+      unit-test-report-directory:
+        description: |
+          Directory name on gh-pages branch where the unit test report will be uploaded.
+          If the unit test report directory is different than the default 'unit-test-report',
+          it has to be added to the additional-unit-test-report-directories pkgdown workflow input.
+          Additionally, if the non-default unit test report should be shown in the GitHub Pages
+          documentation drop-down, it has to be added to _pkgdown.yaml.
+        required: false
+        type: string
+        default: "unit-test-report"
 
 concurrency:
   group: r-cmd-${{ inputs.concurrency-group }}-${{ github.event.pull_request.number || github.ref }}
@@ -563,7 +573,7 @@ jobs:
             && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          name: unit-test-report
+          name: unit-test-report-${{ inputs.concurrency-group }}
           path: "index.html"
 
       - name: Set output ⚙️
@@ -783,7 +793,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/${{ env.PKGBUILD }}
-          name: ${{ env.PKGBUILD }}
+          name: ${{ env.PKGBUILD }}-${{ inputs.concurrency-group }}
 
       - name: Upload logs artifact 🗞️
         uses: actions/upload-artifact@v4
@@ -823,7 +833,7 @@ jobs:
       - name: Download JUnit HTML report as artifact ⤵️
         uses: actions/download-artifact@v4
         with:
-          name: unit-test-report
+          name: unit-test-report-${{ inputs.concurrency-group }}
           path: unit-test-report
 
       - name: Upload JUnit HTML report to GitHub pages 🗞️
@@ -832,7 +842,7 @@ jobs:
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
-          destination_dir: ${{ needs.build-install-check.outputs.current-branch-or-tag }}/unit-test-report
+          destination_dir: ${{ needs.build-install-check.outputs.current-branch-or-tag }}/${{ inputs.unit-test-report-directory }}
 
       - name: Upload JUnit HTML report to GitHub pages (latest-tag) 🏷️
         if: >
@@ -842,7 +852,7 @@ jobs:
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
-          destination_dir: ${{ inputs.latest-tag-alt-name }}/unit-test-report
+          destination_dir: ${{ inputs.latest-tag-alt-name }}/${{ inputs.unit-test-report-directory }}
 
       - name: Upload JUnit HTML report to GitHub pages (release-candidate) 🏷️
         if: >
@@ -852,7 +862,7 @@ jobs:
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
-          destination_dir: ${{ inputs.release-candidate-alt-name }}/unit-test-report
+          destination_dir: ${{ inputs.release-candidate-alt-name }}/${{ inputs.unit-test-report-directory }}
 
       - name: Upload JUnit HTML report to GitHub pages (non-multiversion) 🗞️
         if: needs.build-install-check.outputs.multiversion-docs == 'false'
@@ -860,7 +870,7 @@ jobs:
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
-          destination_dir: unit-test-report
+          destination_dir: ${{ inputs.unit-test-report-directory }}
 
   upload-release-assets:
     name: Upload build tar.gz
@@ -884,7 +894,7 @@ jobs:
       - name: Download artifact ⏬
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.PKGBUILD }}
+          name: ${{ env.PKGBUILD }}-${{ inputs.concurrency-group }}
 
       - name: Check if release exists
         id: check-if-release-exists
