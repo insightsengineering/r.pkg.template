@@ -242,4 +242,4 @@ jobs:
 
 This is a workflow based on the [official R-hub workflow](https://github.com/r-hub/actions/blob/main/workflows/rhub.yaml) with the main goal being to `R CMD check` the package on different environments corresponding to the CRAN checks.
 
-<img src="images/rhub.png"  width="60%">
+<img src="images/rhub-workflow.png"  width="60%">
