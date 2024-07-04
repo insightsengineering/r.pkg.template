@@ -24,6 +24,10 @@ on:
         default: ""
         type: string
 
+concurrency:
+  group: r-hub-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   setup:
     runs-on: ubuntu-latest
