@@ -57,7 +57,7 @@ jobs:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
 
-      - name: Setup R dependencies
+      - name: Prepare DESCRIPTION file
         uses: insightsengineering/setup-r-dependencies@main
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
