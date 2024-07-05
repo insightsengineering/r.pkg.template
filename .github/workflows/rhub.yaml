@@ -15,7 +15,24 @@ on:
         # All supported R-hub platforms can be viewed by running: rhub::rhub_platforms()
         # Container-based platforms (as opposed to VM-based Windows and macOS platforms)
         # can be also viewed here: https://r-hub.github.io/containers/containers.html
-        default: 'r-devel-linux-x86_64-debian-clang, r-devel-linux-x86_64-debian-gcc, gcc14, r-devel-windows-x86_64, r-patched-linux-x86_64, r-release-linux-x86_64, r-release-macos-arm64, r-release-macos-x86_64, r-release-windows-x86_64, r-oldrel-macos-arm64, r-oldrel-macos-x86_64, r-oldrel-windows-x86_64, linux, gc13, noSuggests, donttest'
+        # gcc14 = r-devel-linux-x86_64-fedora-gcc
+        default: >-
+          r-devel-linux-x86_64-debian-clang,
+          r-devel-linux-x86_64-debian-gcc,
+          gcc14,
+          r-devel-windows-x86_64,
+          r-patched-linux-x86_64,
+          r-release-linux-x86_64,
+          r-release-macos-arm64,
+          r-release-macos-x86_64,
+          r-release-windows-x86_64,
+          r-oldrel-macos-arm64,
+          r-oldrel-macos-x86_64,
+          r-oldrel-windows-x86_64,
+          linux,
+          gcc13,
+          noSuggests,
+          donttest
       lookup-refs:
         description: |
           List of package references to be used for the feature branch.
