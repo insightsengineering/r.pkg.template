@@ -793,7 +793,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/${{ env.PKGBUILD }}
-          name: ${{ env.PKGBUILD }}-${{ inputs.concurrency-group }}
+          name: ${{ env.PKGBUILD }}
+          overwrite: true
 
       - name: Upload logs artifact 🗞️
         uses: actions/upload-artifact@v4
@@ -894,7 +895,7 @@ jobs:
       - name: Download artifact ⏬
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.PKGBUILD }}-${{ inputs.concurrency-group }}
+          name: ${{ env.PKGBUILD }}
 
       - name: Check if release exists
         id: check-if-release-exists
