@@ -1,51 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/404.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/PULL_REQUEST_TEMPLATE.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/SECURITY.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/articles/hello.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/index.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/reference/hello.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/reference/plumber_api.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/reference/shiny_app.html</loc>
-  </url>
-  <url>
-    <loc>https://insightsengineering.github.io/r.pkg.template/workflows.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/404.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/CONTRIBUTING.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/LICENSE-text.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/PULL_REQUEST_TEMPLATE.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/SECURITY.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/articles/hello.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/articles/index.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/authors.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/index.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/news/index.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/reference/hello.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/reference/index.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/reference/plumber_api.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/reference/shiny_app.html</loc></url>
+<url><loc>https://insightsengineering.github.io/r.pkg.template/workflows.html</loc></url>
 </urlset>
+
