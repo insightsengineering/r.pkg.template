@@ -1,7 +1,7 @@
 Type: Package
 Package: r.pkg.template
 Title: R Package Template
-Version: 0.1.0.9176
+Version: 0.1.0.9177
 Date: 2024-08-14
 Authors@R:
     person("insightsengineering", , , "insightsengineering@example.com", role = c("aut", "cre"))
