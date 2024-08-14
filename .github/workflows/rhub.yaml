@@ -96,12 +96,10 @@ jobs:
           job-config: ${{ matrix.config.job-config }}
 
       - name: Prepare DESCRIPTION file
-        uses: insightsengineering/setup-r-dependencies@gh-access-token-for-rhub-workflow
+        uses: insightsengineering/setup-r-dependencies@main
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-install: true
-        env:
-          TEST1: "test23489"
 
       - uses: r-hub/actions/setup-deps@v1
         with:
@@ -127,6 +125,18 @@ jobs:
         config: ${{ fromJson(needs.setup.outputs.platforms) }}
 
     steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
       - uses: r-hub/actions/checkout@v1
 
       - uses: r-hub/actions/setup-r@v1
@@ -150,6 +160,8 @@ jobs:
           job-config: ${{ matrix.config.job-config }}
           token: ${{ secrets.RHUB_TOKEN }}
           needs: DepsDev,DepsBranch
+        env:
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
 
       - uses: r-hub/actions/run-check@v1
         with:
