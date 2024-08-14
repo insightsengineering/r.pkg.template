@@ -79,10 +79,12 @@ jobs:
           job-config: ${{ matrix.config.job-config }}
 
       - name: Prepare DESCRIPTION file
-        uses: insightsengineering/setup-r-dependencies@main
+        uses: insightsengineering/setup-r-dependencies@gh-access-token-for-rhub-workflow
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-install: true
+        env:
+          TEST1: "test23489"
 
       - uses: r-hub/actions/setup-deps@v1
         with:
