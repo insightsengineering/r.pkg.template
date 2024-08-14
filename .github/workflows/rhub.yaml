@@ -92,7 +92,6 @@ jobs:
 
       - uses: r-hub/actions/platform-info@v1
         with:
-          token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
 
       - name: Prepare DESCRIPTION file
@@ -103,7 +102,6 @@ jobs:
 
       - uses: r-hub/actions/setup-deps@v1
         with:
-          token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
           needs: DepsDev,DepsBranch
         env:
@@ -111,7 +109,6 @@ jobs:
 
       - uses: r-hub/actions/run-check@v1
         with:
-          token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
 
   other-platforms:
@@ -142,11 +139,9 @@ jobs:
       - uses: r-hub/actions/setup-r@v1
         with:
           job-config: ${{ matrix.config.job-config }}
-          token: ${{ secrets.RHUB_TOKEN }}
 
       - uses: r-hub/actions/platform-info@v1
         with:
-          token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
 
       - name: Setup R dependencies
@@ -158,7 +153,6 @@ jobs:
       - uses: r-hub/actions/setup-deps@v1
         with:
           job-config: ${{ matrix.config.job-config }}
-          token: ${{ secrets.RHUB_TOKEN }}
           needs: DepsDev,DepsBranch
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
@@ -166,4 +160,3 @@ jobs:
       - uses: r-hub/actions/run-check@v1
         with:
           job-config: ${{ matrix.config.job-config }}
-          token: ${{ secrets.RHUB_TOKEN }}
