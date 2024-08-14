@@ -91,15 +91,14 @@ on:
         description: An alternate name for the 'latest-tag' documentation item
         required: false
         type: string
-        default: ''
+        default: ""
       release-candidate-alt-name:
         description: An alternate name for the 'release-candidate' documentation item
         required: false
         type: string
-        default: ''
+        default: ""
       branches-or-tags-to-list:
-        description:
-          Which branches or tags should be listed under the
+        description: Which branches or tags should be listed under the
           'Versions' dropdown menu on the landing page?
           This input should be a regular expression in R.
         required: false
@@ -135,10 +134,6 @@ jobs:
         && github.event.pull_request.draft == false
     container:
       image: ghcr.io/insightsengineering/rstudio:latest
-
-    # Only one job can publish to gh-pages branch concurrently.
-    concurrency:
-      group: ghpages
 
     steps:
       - name: Setup token 🔑
@@ -308,6 +303,8 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config pull.rebase false
           git status
+          # Random delay
+          sleep $((RANDOM % 10))
           git pull origin gh-pages || true
           git add -f .
           git commit -m "Update pkgdown documentation ${{ github.sha }}" || true
@@ -333,9 +330,6 @@ jobs:
     name: Multi-version docs 📑
     needs: docs
     runs-on: ubuntu-latest
-    # Only one job can publish to gh-pages branch concurrently.
-    concurrency:
-      group: ghpages
     if: >
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         && !contains(github.event.commits[0].message, '[skip docs]')
@@ -384,7 +378,7 @@ jobs:
         with:
           name: pkgdown.zip
 
-      - name: Check if release exists
+      - name: Check if release exists ❓
         id: check-if-release-exists
         uses: insightsengineering/release-existence-action@v1
 
