@@ -99,6 +99,7 @@ jobs:
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-install: true
+          github-token: ${{ steps.github-token.outputs.token }}
 
       - uses: r-hub/actions/setup-deps@v1
         with:
@@ -149,6 +150,7 @@ jobs:
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-install: true
+          github-token: ${{ steps.github-token.outputs.token }}
 
       - uses: r-hub/actions/setup-deps@v1
         with:
