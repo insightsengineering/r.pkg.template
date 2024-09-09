@@ -157,6 +157,9 @@ jobs:
           # ℹ See `?pkgdepends::pkg_refs()` for supported package sources.
           repository-path: ${{ github.event.repository.name }}
 
+      - name: Restore DESCRIPTION ⚙️
+        run: git restore DESCRIPTION
+
       - name: Generate man pages 📄
         run: |
           logfile <- "roxygen_${{ github.event.repository.name }}.log"
