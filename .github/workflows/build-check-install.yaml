@@ -373,7 +373,9 @@ jobs:
         shell: bash
 
       - name: Restore SD cache 💰
-        if: inputs.install-deps-from-package-repositories == ''
+        if: >-
+          inputs.install-deps-from-package-repositories == ''
+            && inputs.deps-installation-method == 'staged-dependencies'
         uses: actions/cache@v4
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
@@ -408,7 +410,13 @@ jobs:
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           github-token: ${{ steps.github-token.outputs.token }}
-          repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          # Setting repository path to
+          # ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          # causes the following error:
+          # Error in `get_remote_types(refs)`:
+          # ! Cannot parse package: teal/.
+          # ℹ See `?pkgdepends::pkg_refs()` for supported package sources.
+          repository-path: ${{ github.event.repository.name }}
 
       - name: Install dependencies from package repositories 🗄️
         if: inputs.install-deps-from-package-repositories != ''
