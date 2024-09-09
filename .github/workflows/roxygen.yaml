@@ -42,13 +42,13 @@ on:
         type: string
         default: "."
       deps-installation-method:
-        description: Which method for installing R package dependencies to use?
-        required: true
-        type: choice
+        description: |
+          Which method for installing R package dependencies to use? Supported values are:
+          staged-dependencies
+          setup-r-dependencies
+        required: false
+        type: string
         default: staged-dependencies
-        options:
-          - staged-dependencies
-          - setup-r-dependencies
       lookup-refs:
         description: |
           List of package references to be used by setup-r-dependencies action if deps-installation-method == 'setup-r-dependencies'.
