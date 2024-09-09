@@ -145,7 +145,7 @@ jobs:
       - name: Setup R dependencies 🎦
         if: >-
           inputs.deps-installation-method == 'setup-r-dependencies'
-        uses: insightsengineering/setup-r-dependencies@v1
+        uses: insightsengineering/setup-r-dependencies@fix_paths
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           github-token: ${{ steps.github-token.outputs.token }}
