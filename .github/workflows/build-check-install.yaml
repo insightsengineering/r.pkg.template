@@ -142,6 +142,7 @@ on:
         description: |
           List of package references to be used by setup-r-dependencies action if deps-installation-method == 'setup-r-dependencies'.
         required: false
+        type: string
         default: ""
       unit-test-report-brand:
         description: Image URL to use in unit test report for branding. If empty, the default xunit-viewer brand will be used.

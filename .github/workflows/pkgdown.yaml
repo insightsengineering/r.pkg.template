@@ -132,6 +132,7 @@ on:
         description: |
           List of package references to be used by setup-r-dependencies action if deps-installation-method == 'setup-r-dependencies'.
         required: false
+        type: string
         default: ""
 
 concurrency:
