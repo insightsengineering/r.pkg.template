@@ -403,7 +403,7 @@ jobs:
       - name: Setup R dependencies 🎦
         if: >-
           inputs.deps-installation-method == 'setup-r-dependencies'
-          inputs.install-deps-from-package-repositories == ''
+          && inputs.install-deps-from-package-repositories == ''
         uses: insightsengineering/setup-r-dependencies@v1
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
