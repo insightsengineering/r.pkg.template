@@ -151,6 +151,7 @@ jobs:
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           github-token: ${{ steps.github-token.outputs.token }}
+          repository-path: ${{ env.package_subdirectory }}
 
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v2

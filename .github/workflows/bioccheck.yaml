@@ -162,6 +162,7 @@ jobs:
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           github-token: ${{ steps.github-token.outputs.token }}
+          repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Run BiocCheck ☣️
         uses: insightsengineering/bioc-check-action@v1
