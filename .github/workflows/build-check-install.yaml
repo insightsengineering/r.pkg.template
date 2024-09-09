@@ -126,8 +126,22 @@ on:
         description: |
           Set this to a comma-separated named list of R packages repositories to use for installing dependencies.
           Example: "R-universe=https://insightsengineering.r-universe.dev/,CRAN=https://cloud.r-project.org/"
+          If the value is non-empty, it takes precedence over deps-installation-method.
         required: false
         type: string
+        default: ""
+      deps-installation-method:
+        description: Which method for installing R package dependencies to use?
+        required: true
+        type: choice
+        default: staged-dependencies
+        options:
+          - staged-dependencies
+          - setup-r-dependencies
+      lookup-refs:
+        description: |
+          List of package references to be used by setup-r-dependencies action if deps-installation-method == 'setup-r-dependencies'.
+        required: false
         default: ""
       unit-test-report-brand:
         description: Image URL to use in unit test report for branding. If empty, the default xunit-viewer brand will be used.
@@ -177,6 +191,8 @@ on:
       enable-sd:
         description: |
           Whether the installation of package dependencies via staged.dependencies should be enabled.
+          Has no effect if deps-installation-method == 'setup-r-dependencies' or
+          install-deps-from-package-repositories is set to non-empty value.
         required: false
         type: boolean
         default: true
@@ -373,6 +389,7 @@ jobs:
         if: >-
           env.enable_sd == 'true'
             && inputs.install-deps-from-package-repositories == ''
+            && inputs.deps-installation-method == 'staged-dependencies'
         uses: insightsengineering/staged-dependencies-action@v2
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
@@ -381,6 +398,15 @@ jobs:
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
+
+      - name: Setup R dependencies 🎦
+        if: >-
+          inputs.deps-installation-method == 'setup-r-dependencies'
+          inputs.install-deps-from-package-repositories == ''
+        uses: insightsengineering/setup-r-dependencies@v1
+        with:
+          lookup-refs: ${{ inputs.lookup-refs }}
+          github-token: ${{ steps.github-token.outputs.token }}
 
       - name: Install dependencies from package repositories 🗄️
         if: inputs.install-deps-from-package-repositories != ''

@@ -41,6 +41,19 @@ on:
         required: false
         type: string
         default: "."
+      deps-installation-method:
+        description: Which method for installing R package dependencies to use?
+        required: true
+        type: choice
+        default: staged-dependencies
+        options:
+          - staged-dependencies
+          - setup-r-dependencies
+      lookup-refs:
+        description: |
+          List of package references to be used by setup-r-dependencies action if deps-installation-method == 'setup-r-dependencies'.
+        required: false
+        default: ""
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -109,12 +122,16 @@ jobs:
           SKIP_INSTRUCTION: "[skip roxygen]"
 
       - name: Restore SD cache 💰
+        if: >-
+          inputs.deps-installation-method == 'staged-dependencies'
         uses: actions/cache@v4
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
 
       - name: Run Staged dependencies 🎦
+        if: >-
+          inputs.deps-installation-method == 'staged-dependencies'
         uses: insightsengineering/staged-dependencies-action@v2
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
@@ -123,6 +140,14 @@ jobs:
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
+
+      - name: Setup R dependencies 🎦
+        if: >-
+          inputs.deps-installation-method == 'setup-r-dependencies'
+        uses: insightsengineering/setup-r-dependencies@v1
+        with:
+          lookup-refs: ${{ inputs.lookup-refs }}
+          github-token: ${{ steps.github-token.outputs.token }}
 
       - name: Generate man pages 📄
         run: |
