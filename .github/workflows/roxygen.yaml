@@ -159,6 +159,8 @@ jobs:
 
       - name: Restore DESCRIPTION ⚙️
         run: git restore DESCRIPTION
+        working-directory: ${{ github.event.repository.name }}
+        shell: bash
 
       - name: Generate man pages 📄
         run: |
