@@ -161,7 +161,7 @@ jobs:
           # Error in `get_remote_types(refs)`:
           # ! Cannot parse package: teal/.
           # ℹ See `?pkgdepends::pkg_refs()` for supported package sources.
-          repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          repository-path: ${{ github.event.repository.name }}
 
       # setup-r-dependencies makes modifications to DESCRIPTION which
       # should not be committed during Roxygen auto-update.
