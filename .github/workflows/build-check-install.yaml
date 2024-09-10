@@ -336,12 +336,14 @@ jobs:
           junit_xml_positive_threshold="${{ inputs.junit-xml-positive-threshold }}"
           junit_xml_negative_threshold="${{ inputs.junit-xml-negative-threshold }}"
           enable_sd="${{ inputs.enable-sd }}"
+          deps_installation_method="${{ inputs.deps-installation-method }}"
           echo "junit_xml_storage=${junit_xml_storage_input:-_junit_xml_reports}" >> $GITHUB_ENV
           echo "junit_xml_diff_branch=${junit_xml_diff_branch_input:-main}" >> $GITHUB_ENV
           echo "junit_xml_comparison=${junit_xml_comparison_input:-true}" >> $GITHUB_ENV
           echo "junit_xml_positive_threshold=${junit_xml_positive_threshold:-1.0}" >> $GITHUB_ENV
           echo "junit_xml_negative_threshold=${junit_xml_negative_threshold:-1.0}" >> $GITHUB_ENV
           echo "enable_sd=${enable_sd:-true}" >> $GITHUB_ENV
+          echo "deps_installation_method=${deps_installation_method:-staged-dependencies}" >> $GITHUB_ENV
         shell: bash
 
       - name: Restore npm cache 💰
@@ -375,7 +377,7 @@ jobs:
       - name: Restore SD cache 💰
         if: >-
           inputs.install-deps-from-package-repositories == ''
-            && inputs.deps-installation-method == 'staged-dependencies'
+            && env.deps_installation_method == 'staged-dependencies'
         uses: actions/cache@v4
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
@@ -392,7 +394,7 @@ jobs:
         if: >-
           env.enable_sd == 'true'
             && inputs.install-deps-from-package-repositories == ''
-            && inputs.deps-installation-method == 'staged-dependencies'
+            && env.deps_installation_method == 'staged-dependencies'
         uses: insightsengineering/staged-dependencies-action@v2
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
@@ -404,7 +406,7 @@ jobs:
 
       - name: Setup R dependencies 🎦
         if: >-
-          inputs.deps-installation-method == 'setup-r-dependencies'
+          env.deps_installation_method == 'setup-r-dependencies'
           && inputs.install-deps-from-package-repositories == ''
         uses: insightsengineering/setup-r-dependencies@fix_paths
         with:
