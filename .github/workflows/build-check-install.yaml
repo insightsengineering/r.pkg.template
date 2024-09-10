@@ -408,16 +408,10 @@ jobs:
         if: >-
           env.deps_installation_method == 'setup-r-dependencies'
           && inputs.install-deps-from-package-repositories == ''
-        uses: insightsengineering/setup-r-dependencies@fix_paths
+        uses: insightsengineering/setup-r-dependencies@v1
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           github-token: ${{ steps.github-token.outputs.token }}
-          # Setting repository path to
-          # ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
-          # causes the following error:
-          # Error in `get_remote_types(refs)`:
-          # ! Cannot parse package: teal/.
-          # ℹ See `?pkgdepends::pkg_refs()` for supported package sources.
           repository-path: ${{ github.event.repository.name }}
 
       - name: Install dependencies from package repositories 🗄️
