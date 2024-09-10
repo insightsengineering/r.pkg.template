@@ -418,7 +418,7 @@ jobs:
           # Error in `get_remote_types(refs)`:
           # ! Cannot parse package: teal/.
           # ℹ See `?pkgdepends::pkg_refs()` for supported package sources.
-          repository-path: ${{ github.event.repository.name }}
+          repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Install dependencies from package repositories 🗄️
         if: inputs.install-deps-from-package-repositories != ''
