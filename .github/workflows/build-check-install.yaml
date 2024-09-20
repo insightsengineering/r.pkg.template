@@ -203,13 +203,6 @@ concurrency:
 
 jobs:
   build-install-check:
-    # Token permissions
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
-      attestations: write
-
     strategy:
       fail-fast: false
       matrix:
