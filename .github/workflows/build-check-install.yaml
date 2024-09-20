@@ -463,6 +463,13 @@ jobs:
           subject-path: ${{ env.PKGBUILD }}
           github-token: ${{ steps.github-token.outputs.token }}
 
+      - name: Upload package build ⤴
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ env.PKGBUILD }}
+          name: ${{ env.PKGBUILD }}
+          overwrite: true
+
       - name: Run R CMD check 🏁
         run: |
           if [ "${{ inputs.skip-r-cmd-check }}" == "true" ]
