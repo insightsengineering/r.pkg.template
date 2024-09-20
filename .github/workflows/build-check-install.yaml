@@ -454,7 +454,7 @@ jobs:
           }
           fi
           R CMD build ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
-          cp ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/${{ env.PKGBUILD }} .
+          ls -la
         shell: bash
 
       - name: Generate artifact attestation
