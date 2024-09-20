@@ -203,6 +203,13 @@ concurrency:
 
 jobs:
   build-install-check:
+    # Token permissions
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+
     strategy:
       fail-fast: false
       matrix:
@@ -455,6 +462,12 @@ jobs:
           fi
           R CMD build ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
         shell: bash
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/${{ env.PKGBUILD }}
+          github-token: ${{ steps.github-token.outputs.token }}
 
       - name: Run R CMD check 🏁
         run: |
@@ -807,11 +820,6 @@ jobs:
             ${{ env.PKGNAME }}.Rcheck/tests/testthat.Rout
             ${{ env.PKGNAME }}.Rcheck/tests/testthat.Rout.fail
           name: check-logs-${{ env.PKGNAME }}-${{ inputs.concurrency-group }}
-
-      - name: Generate artifact attestation
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/${{ env.PKGBUILD }}
 
   publish-junit-html-report:
     name: Publish JUnit HTML report 📰
