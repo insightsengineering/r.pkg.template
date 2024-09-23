@@ -24,6 +24,12 @@ on:
         required: false
         default: ""
         type: string
+      lookup-refs:
+        description: |
+          Passed to setup-r-dependencies action.
+        required: false
+        default: ""
+        type: string
 
 jobs:
   revdepcheck:
@@ -84,12 +90,19 @@ jobs:
           echo "gchat_webhook=${{ secrets.GCHAT_WEBHOOK }}" >> $GITHUB_ENV
         shell: bash
 
+      - name: Prepare DESCRIPTION file
+        uses: insightsengineering/setup-r-dependencies@v1
+        with:
+          lookup-refs: ${{ inputs.lookup-refs }}
+          skip-desc-branch: true
+          github-token: ${{ steps.github-token.outputs.token }}
+
       - name: revdepcheck 🔄
         id: revdepcheck
-        uses: insightsengineering/r-revdepcheck-action@main
+        uses: insightsengineering/r-revdepcheck-action@fix_non_cran2
         with:
           github-token: ${{ steps.github-token.outputs.token }}
-          additional-env-vars:  ${{ inputs.additional-env-vars }}
+          additional-env-vars: ${{ inputs.additional-env-vars }}
 
       - name: GChat notification 🔔
         if: (failure() || cancelled()) && steps.revdepcheck.outcome != 'success' && env.gchat_webhook != ''
