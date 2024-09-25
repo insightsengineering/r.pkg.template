@@ -100,6 +100,7 @@ jobs:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-install: true
           github-token: ${{ steps.github-token.outputs.token }}
+          repository-list: "PPM@latest"
 
       - uses: r-hub/actions/setup-deps@v1
         with:
@@ -151,6 +152,7 @@ jobs:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-install: true
           github-token: ${{ steps.github-token.outputs.token }}
+          repository-list: "PPM@latest"
 
       - uses: r-hub/actions/setup-deps@v1
         with:
