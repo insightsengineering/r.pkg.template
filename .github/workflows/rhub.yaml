@@ -146,7 +146,7 @@ jobs:
         with:
           job-config: ${{ matrix.config.job-config }}
 
-      - name: Setup R dependencies
+      - name: Prepare DESCRIPTION file
         uses: insightsengineering/setup-r-dependencies@setup-binary-package-repository-for-different-platforms
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
