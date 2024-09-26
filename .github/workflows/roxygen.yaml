@@ -152,7 +152,7 @@ jobs:
       - name: Setup R dependencies 🎦
         if: >-
           env.deps_installation_method == 'setup-r-dependencies'
-        uses: insightsengineering/setup-r-dependencies@v1
+        uses: insightsengineering/setup-r-dependencies@fix/copy-and-restore-description
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           github-token: ${{ steps.github-token.outputs.token }}
