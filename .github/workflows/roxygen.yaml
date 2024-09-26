@@ -158,13 +158,6 @@ jobs:
           github-token: ${{ steps.github-token.outputs.token }}
           repository-path: ${{ github.event.repository.name }}
 
-      # setup-r-dependencies makes modifications to DESCRIPTION which
-      # should not be committed during Roxygen auto-update.
-      - name: Restore DESCRIPTION ⚙️
-        run: git restore DESCRIPTION
-        working-directory: ${{ github.event.repository.name }}
-        shell: bash
-
       - name: Generate man pages 📄
         run: |
           logfile <- "roxygen_${{ github.event.repository.name }}.log"
