@@ -51,7 +51,8 @@ on:
         default: staged-dependencies
       lookup-refs:
         description: |
-          List of package references to be used by setup-r-dependencies action if deps-installation-method == 'setup-r-dependencies'.
+          Passed to insightsengineering/setup-r-dependencies. See its documentation.
+          Used only if deps-installation-method == 'setup-r-dependencies'.
         required: false
         type: string
         default: ""
