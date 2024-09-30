@@ -90,10 +90,6 @@ jobs:
 
       - uses: r-hub/actions/checkout@v1
 
-      - uses: r-hub/actions/platform-info@v1
-        with:
-          job-config: ${{ matrix.config.job-config }}
-
       - name: Prepare DESCRIPTION file
         uses: insightsengineering/setup-r-dependencies@v1
         with:
@@ -101,6 +97,10 @@ jobs:
           skip-install: true
           github-token: ${{ steps.github-token.outputs.token }}
           restore-description: false
+
+      - uses: r-hub/actions/platform-info@v1
+        with:
+          job-config: ${{ matrix.config.job-config }}
 
       - uses: r-hub/actions/setup-deps@v1
         with:
