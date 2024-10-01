@@ -90,7 +90,7 @@ jobs:
           echo "gchat_webhook=${{ secrets.GCHAT_WEBHOOK }}" >> $GITHUB_ENV
         shell: bash
 
-      - name: Prepare DESCRIPTION file
+      - name: Install dependencies
         uses: insightsengineering/setup-r-dependencies@v1
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
