@@ -21,6 +21,9 @@ on:
         # Container-based platforms (as opposed to VM-based Windows and macOS platforms)
         # can be also viewed here: https://r-hub.github.io/containers/containers.html
         # gcc14 = r-devel-linux-x86_64-fedora-gcc
+        #
+        # "linux" check (linux (R-devel)) is temporarily disabled because of unexplained timeouts
+        # in setup-r-dependencies step "Modify DESCRIPTION file (development)"
         default: >-
           r-devel-linux-x86_64-debian-clang,
           r-devel-linux-x86_64-debian-gcc,
@@ -34,7 +37,6 @@ on:
           r-oldrel-macos-arm64,
           r-oldrel-macos-x86_64,
           r-oldrel-windows-x86_64,
-          linux,
           gcc13,
           noSuggests,
           donttest
