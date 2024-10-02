@@ -82,6 +82,20 @@ on:
         required: false
         type: string
         default: ""
+      deps-installation-method:
+        description: |
+          Which method for installing R package dependencies to use? Supported values are:
+          staged-dependencies
+          setup-r-dependencies
+        required: false
+        type: string
+        default: staged-dependencies
+      lookup-refs:
+        description: |
+          List of package references to be used by setup-r-dependencies action if deps-installation-method == 'setup-r-dependencies'.
+        required: false
+        type: string
+        default: ""
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -207,12 +221,16 @@ jobs:
           fi
 
       - name: Restore SD cache 💰
+        if: >-
+          inputs.deps-installation-method == 'staged-dependencies'
         uses: actions/cache@v4
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
 
       - name: Run Staged dependencies 🎦
+        if: >-
+          inputs.deps-installation-method == 'staged-dependencies'
         uses: insightsengineering/staged-dependencies-action@v2
         env:
           GITHUB_PAT: ${{ secrets.REPO_GITHUB_TOKEN }}
@@ -221,6 +239,15 @@ jobs:
           enable-check: ${{ inputs.enable-staged-dependencies-check }}
           run-system-dependencies: ${{ inputs.install-system-dependencies }}
           direction: ${{ inputs.sd-direction }}
+
+      - name: Setup R dependencies 🎦
+        if: >-
+          inputs.deps-installation-method == 'setup-r-dependencies'
+        uses: insightsengineering/setup-r-dependencies@v1
+        with:
+          lookup-refs: ${{ inputs.lookup-refs }}
+          github-token: ${{ steps.github-token.outputs.token }}
+          repository-path: ${{ github.event.repository.name }}
 
       - name: Install R package 🚧
         run: |

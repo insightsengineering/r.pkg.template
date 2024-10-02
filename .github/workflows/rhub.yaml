@@ -13,7 +13,7 @@ on:
         required: false
     inputs:
       config:
-        description: 'A comma separated list of R-hub platforms to use.'
+        description: "A comma separated list of R-hub platforms to use."
         type: string
         # These platforms correspond roughly to CRAN package checks.
         # More information: https://github.com/insightsengineering/idr-tasks/issues/781
@@ -21,6 +21,9 @@ on:
         # Container-based platforms (as opposed to VM-based Windows and macOS platforms)
         # can be also viewed here: https://r-hub.github.io/containers/containers.html
         # gcc14 = r-devel-linux-x86_64-fedora-gcc
+        #
+        # "linux" check (linux (R-devel)) is temporarily disabled because of unexplained timeouts
+        # in setup-r-dependencies step "Modify DESCRIPTION file (development)"
         default: >-
           r-devel-linux-x86_64-debian-clang,
           r-devel-linux-x86_64-debian-gcc,
@@ -34,7 +37,6 @@ on:
           r-oldrel-macos-arm64,
           r-oldrel-macos-x86_64,
           r-oldrel-windows-x86_64,
-          linux,
           gcc13,
           noSuggests,
           donttest
@@ -58,10 +60,10 @@ jobs:
       platforms: ${{ steps.rhub-setup.outputs.platforms }}
 
     steps:
-    - uses: r-hub/actions/setup@v1
-      with:
-        config: ${{ inputs.config }}
-      id: rhub-setup
+      - uses: r-hub/actions/setup@v1
+        with:
+          config: ${{ inputs.config }}
+        id: rhub-setup
 
   linux-containers:
     needs: setup
@@ -94,12 +96,12 @@ jobs:
         with:
           job-config: ${{ matrix.config.job-config }}
 
-      - name: Prepare DESCRIPTION file
-        uses: insightsengineering/setup-r-dependencies@v1
+      - uses: insightsengineering/setup-r-dependencies@v1
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-install: true
           github-token: ${{ steps.github-token.outputs.token }}
+          restore-description: false
 
       - uses: r-hub/actions/setup-deps@v1
         with:
@@ -145,12 +147,12 @@ jobs:
         with:
           job-config: ${{ matrix.config.job-config }}
 
-      - name: Setup R dependencies
-        uses: insightsengineering/setup-r-dependencies@v1
+      - uses: insightsengineering/setup-r-dependencies@v1
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-install: true
           github-token: ${{ steps.github-token.outputs.token }}
+          restore-description: false
 
       - uses: r-hub/actions/setup-deps@v1
         with:
