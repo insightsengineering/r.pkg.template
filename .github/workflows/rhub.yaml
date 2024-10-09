@@ -154,6 +154,7 @@ jobs:
           skip-install: true
           github-token: ${{ steps.github-token.outputs.token }}
           restore-description: false
+          install-quarto: "false"
 
       - uses: r-hub/actions/setup-deps@v1
         with:
