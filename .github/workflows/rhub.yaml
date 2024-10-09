@@ -148,7 +148,7 @@ jobs:
         with:
           job-config: ${{ matrix.config.job-config }}
 
-      - uses: insightsengineering/setup-r-dependencies@v1
+      - uses: insightsengineering/setup-r-dependencies@install_quarto_param
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-install: true
