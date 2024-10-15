@@ -65,7 +65,7 @@ on:
           drop-down. Similarly, if docs have been generated for the ref, but the ref is not
           listed in the vector, it will not appear in the drop-down.
         required: false
-        default: c("devel", "pre-release", "main", "latest-tag")
+        default: devel pre-release main latest-tag
         type: string
       default-landing-page:
         description:
