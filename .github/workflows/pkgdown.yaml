@@ -380,7 +380,7 @@ jobs:
         shell: bash
 
       - name: Create and publish docs ↗️
-        uses: insightsengineering/r-pkgdown-multiversion@v2
+        uses: insightsengineering/r-pkgdown-multiversion@v3
         with:
           path: ${{ github.event.repository.name }}
           default-landing-page: ${{ env.default-landing-page }}
