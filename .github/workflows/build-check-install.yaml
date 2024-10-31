@@ -440,7 +440,7 @@ jobs:
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           github-token: ${{ steps.github-token.outputs.token }}
-          repository-path: ${{ github.event.repository.name }}
+          repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           skip-desc-branch: ${{ inputs.skip-desc-branch }}
           skip-desc-dev: ${{ inputs.skip-desc-dev }}
           repository-list: ${{ inputs.repository-list }}
