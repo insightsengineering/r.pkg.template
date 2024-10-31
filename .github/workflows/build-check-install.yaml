@@ -144,6 +144,34 @@ on:
         required: false
         type: string
         default: ""
+      skip-desc-branch:
+        description: |
+          Passed to `insightsengineering/actions/setup-r-dependencies`.
+          Used only if deps-installation-method == 'setup-r-dependencies'.
+        required: false
+        type: boolean
+        default: false
+      skip-desc-dev:
+        description: |
+          Passed to `insightsengineering/actions/setup-r-dependencies`.
+          Used only if deps-installation-method == 'setup-r-dependencies'.
+        required: false
+        type: boolean
+        default: false
+      repository-list:
+        description: |
+          Passed to `insightsengineering/actions/setup-r-dependencies`.
+          Used only if deps-installation-method == 'setup-r-dependencies'.
+        required: false
+        type: string
+        default: "PPM@latest"
+      cache-version:
+        description: |
+          Passed to `insightsengineering/actions/setup-r-dependencies`.
+          Used only if deps-installation-method == 'setup-r-dependencies'.
+        required: true
+        type: string
+        default: "1"
       unit-test-report-brand:
         description: Image URL to use in unit test report for branding. If empty, the default xunit-viewer brand will be used.
         required: false
@@ -408,11 +436,15 @@ jobs:
         if: >-
           env.deps_installation_method == 'setup-r-dependencies'
           && inputs.install-deps-from-package-repositories == ''
-        uses: insightsengineering/setup-r-dependencies@v1
+        uses: insightsengineering/setup-r-dependencies@new_param_cache_version #@TODO: revert
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           github-token: ${{ steps.github-token.outputs.token }}
           repository-path: ${{ github.event.repository.name }}
+          skip-desc-branch: ${{ inputs.skip-desc-branch }}
+          skip-desc-dev: ${{ inputs.skip-desc-dev }}
+          repository-list: ${{ inputs.repository-list }}
+          cache-version: ${{ inputs.cache-version }}
 
       - name: Install dependencies from package repositories 🗄️
         if: inputs.install-deps-from-package-repositories != ''
