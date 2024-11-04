@@ -234,7 +234,7 @@ jobs:
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           github-token: ${{ steps.github-token.outputs.token }}
-          repository-path: ${{ github.event.repository.name }}
+          repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Install R package 🚧
         run: |

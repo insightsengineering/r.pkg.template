@@ -144,6 +144,34 @@ on:
         required: false
         type: string
         default: ""
+      skip-desc-branch:
+        description: |
+          Passed to `insightsengineering/actions/setup-r-dependencies`.
+          Used only if deps-installation-method == 'setup-r-dependencies'.
+        required: false
+        type: boolean
+        default: false
+      skip-desc-dev:
+        description: |
+          Passed to `insightsengineering/actions/setup-r-dependencies`.
+          Used only if deps-installation-method == 'setup-r-dependencies'.
+        required: false
+        type: boolean
+        default: false
+      repository-list:
+        description: |
+          Passed to `insightsengineering/actions/setup-r-dependencies`.
+          Used only if deps-installation-method == 'setup-r-dependencies'.
+        required: false
+        type: string
+        default: "PPM=PPM@latest"
+      cache-version:
+        description: |
+          Passed to `insightsengineering/actions/setup-r-dependencies`.
+          Used only if deps-installation-method == 'setup-r-dependencies'.
+        required: true
+        type: string
+        default: "1"
       unit-test-report-brand:
         description: Image URL to use in unit test report for branding. If empty, the default xunit-viewer brand will be used.
         required: false
@@ -412,7 +440,11 @@ jobs:
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           github-token: ${{ steps.github-token.outputs.token }}
-          repository-path: ${{ github.event.repository.name }}
+          repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          skip-desc-branch: ${{ inputs.skip-desc-branch }}
+          skip-desc-dev: ${{ inputs.skip-desc-dev }}
+          repository-list: ${{ inputs.repository-list }}
+          cache-version: ${{ inputs.cache-version }}
 
       - name: Install dependencies from package repositories 🗄️
         if: inputs.install-deps-from-package-repositories != ''
