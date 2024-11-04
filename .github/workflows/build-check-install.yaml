@@ -164,7 +164,7 @@ on:
           Used only if deps-installation-method == 'setup-r-dependencies'.
         required: false
         type: string
-        default: "PPM@latest"
+        default: "PPM=PPM@latest"
       cache-version:
         description: |
           Passed to `insightsengineering/actions/setup-r-dependencies`.
