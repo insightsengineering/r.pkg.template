@@ -169,7 +169,7 @@ on:
         description: |
           Passed to `insightsengineering/actions/setup-r-dependencies`.
           Used only if deps-installation-method == 'setup-r-dependencies'.
-        required: true
+        required: false
         type: string
         default: "1"
       unit-test-report-brand:
