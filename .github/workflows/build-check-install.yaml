@@ -146,28 +146,28 @@ on:
         default: ""
       skip-desc-branch:
         description: |
-          Passed to `insightsengineering/setup-r-dependencies/blob/main/action.yaml`.
+          Passed to `insightsengineering/setup-r-dependencies`.
           Used only if deps-installation-method == 'setup-r-dependencies'.
         required: false
         type: boolean
         default: false
       skip-desc-dev:
         description: |
-          Passed to `insightsengineering/setup-r-dependencies/blob/main/action.yaml`.
+          Passed to `insightsengineering/setup-r-dependencies`.
           Used only if deps-installation-method == 'setup-r-dependencies'.
         required: false
         type: boolean
         default: false
       repository-list:
         description: |
-          Passed to `insightsengineering/setup-r-dependencies/blob/main/action.yaml`.
+          Passed to `insightsengineering/setup-r-dependencies`.
           Used only if deps-installation-method == 'setup-r-dependencies'.
         required: false
         type: string
         default: "PPM=PPM@latest"
       cache-version:
         description: |
-          Passed to `insightsengineering/setup-r-dependencies/blob/main/action.yaml`.
+          Passed to `insightsengineering/setup-r-dependencies`.
           Used only if deps-installation-method == 'setup-r-dependencies'.
         required: false
         type: string
