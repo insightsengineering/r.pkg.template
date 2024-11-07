@@ -92,10 +92,11 @@ jobs:
 
       - name: Install dependencies
         uses: insightsengineering/setup-r-dependencies@v1
+        env:
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-desc-branch: true
-          github-token: ${{ steps.github-token.outputs.token }}
 
       - name: revdepcheck 🔄
         id: revdepcheck

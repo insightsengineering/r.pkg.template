@@ -244,9 +244,10 @@ jobs:
         if: >-
           inputs.deps-installation-method == 'setup-r-dependencies'
         uses: insightsengineering/setup-r-dependencies@v1
+        env:
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
-          github-token: ${{ steps.github-token.outputs.token }}
           repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Install R package 🚧
