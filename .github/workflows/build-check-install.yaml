@@ -436,10 +436,11 @@ jobs:
         if: >-
           env.deps_installation_method == 'setup-r-dependencies'
           && inputs.install-deps-from-package-repositories == ''
-        uses: insightsengineering/setup-r-dependencies@v1
+        uses: insightsengineering/setup-r-dependencies@rm_param_github_token
+        env:
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
-          github-token: ${{ steps.github-token.outputs.token }}
           repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           skip-desc-branch: ${{ inputs.skip-desc-branch }}
           skip-desc-dev: ${{ inputs.skip-desc-dev }}

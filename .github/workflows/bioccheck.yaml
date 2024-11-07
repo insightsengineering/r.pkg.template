@@ -158,10 +158,11 @@ jobs:
       - name: Setup R dependencies 🎦
         if: >-
           inputs.deps-installation-method == 'setup-r-dependencies'
-        uses: insightsengineering/setup-r-dependencies@v1
+        uses: insightsengineering/setup-r-dependencies@rm_param_github_token
+        env:
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
-          github-token: ${{ steps.github-token.outputs.token }}
           repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Run BiocCheck ☣️

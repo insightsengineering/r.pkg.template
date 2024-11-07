@@ -96,11 +96,12 @@ jobs:
         with:
           job-config: ${{ matrix.config.job-config }}
 
-      - uses: insightsengineering/setup-r-dependencies@v1
+      - uses: insightsengineering/setup-r-dependencies@rm_param_github_token
+        env:
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-install: true
-          github-token: ${{ steps.github-token.outputs.token }}
           restore-description: false
           install-quarto: "false"
 
@@ -148,11 +149,12 @@ jobs:
         with:
           job-config: ${{ matrix.config.job-config }}
 
-      - uses: insightsengineering/setup-r-dependencies@v1
+      - uses: insightsengineering/setup-r-dependencies@rm_param_github_token
+        env:
+          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           skip-install: true
-          github-token: ${{ steps.github-token.outputs.token }}
           restore-description: false
           install-quarto: "false"
 
