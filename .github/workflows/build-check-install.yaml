@@ -841,8 +841,7 @@ jobs:
         if: >
           (inputs.disable-unit-test-reports != 'true' ||
             startsWith(github.ref, 'refs/tags/v')) &&
-            github.event_name != 'pull_request' &&
-            inputs.disable-package-rebuild-and-upload != 'true'
+            github.event_name != 'pull_request'
         run: |
           # Undo changes to DESCRIPTION and tests/testthat.R
           git checkout DESCRIPTION
@@ -855,7 +854,13 @@ jobs:
             export $(tr '\n' ' ' < /tmp/dotenv.env)
           }
           fi
-          R CMD build .
+          if [ "${{ inputs.disable-package-rebuild-and-upload }}" != "true" ]
+          then {
+            R CMD build .
+          } else {
+            echo "🙅🏼‍♀️ Not rebuilding package for uploads"
+          }
+          fi
         shell: bash
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
