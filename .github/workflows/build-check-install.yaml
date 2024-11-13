@@ -441,7 +441,7 @@ jobs:
         if: >-
           env.deps_installation_method == 'setup-r-dependencies'
           && inputs.install-deps-from-package-repositories == ''
-        uses: insightsengineering/setup-r-dependencies@dependency_resolution@main
+        uses: insightsengineering/setup-r-dependencies@test_branch_names
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
