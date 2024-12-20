@@ -46,6 +46,14 @@ on:
         required: false
         default: ""
         type: string
+      additional-repos:
+        description: |
+          Optional value that add R repositories for a given strategy (multiple repos per strategy can be defined by separating with a comma).
+          Example usage:
+            additional-repos: https://repo1.example.com,https://repo2.example.com
+        required: false
+        default: ""
+        type: string
 
 jobs:
   dependency-test:
@@ -117,6 +125,7 @@ jobs:
           check-args: ${{ inputs.check-args }}
           strategy: ${{ env.strategy }}
           additional-env-vars: ${{ inputs.additional-env-vars }}
+          additional-repos: ${{ inputs.additional-repos }}
 
       - name: GChat notification 🔔
         if: (failure() || cancelled()) && steps.verdepcheck.outcome != 'success' && env.gchat_webhook != ''
