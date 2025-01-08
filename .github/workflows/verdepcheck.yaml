@@ -48,9 +48,8 @@ on:
         type: string
       additional-repos:
         description: |
-          Optional value that add R repositories for a given strategy (multiple repos per strategy can be defined by separating with a comma).
-          Example usage:
-            additional-repos: https://repo1.example.com,https://repo2.example.com
+          Optional value that add R repositories for a given strategy. Multiple entries are possible separated by `";"`.
+            additional-repos: https://repo1.example.com;https://repo2.example.com
         required: false
         default: ""
         type: string
