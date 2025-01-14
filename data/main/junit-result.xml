@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="api" timestamp="2025-01-14T14:00:52Z" hostname="8ff6ee5b67ae" tests="1" skipped="0" failures="0" errors="0" time="3.983">
-    <testcase time="3.983" classname="api" name="API_greets_the_person"/>
+  <testsuite name="api" timestamp="2025-01-14T14:11:28Z" hostname="46ca91579f15" tests="1" skipped="0" failures="0" errors="0" time="3.98">
+    <testcase time="3.98" classname="api" name="API_greets_the_person"/>
   </testsuite>
-  <testsuite name="hello" timestamp="2025-01-14T14:00:56Z" hostname="8ff6ee5b67ae" tests="1" skipped="0" failures="0" errors="0" time="0.077">
+  <testsuite name="hello" timestamp="2025-01-14T14:11:32Z" hostname="46ca91579f15" tests="1" skipped="0" failures="0" errors="0" time="0.077">
     <testcase time="0.077" classname="hello" name="hello_greets_the_entity"/>
   </testsuite>
-  <testsuite name="shiny" timestamp="2025-01-14T14:00:56Z" hostname="8ff6ee5b67ae" tests="1" skipped="0" failures="0" errors="0" time="2.392">
-    <testcase time="2.392" classname="shiny" name="The_Shiny_App_returns_a_proper_greeting"/>
+  <testsuite name="shiny" timestamp="2025-01-14T14:11:32Z" hostname="46ca91579f15" tests="1" skipped="0" failures="0" errors="0" time="2.38">
+    <testcase time="2.38" classname="shiny" name="The_Shiny_App_returns_a_proper_greeting"/>
   </testsuite>
 </testsuites>
