@@ -47,6 +47,11 @@ on:
         required: false
         default: ""
         type: string
+      extra-packages:
+        description: Passed to `r-hub/actions/setup-deps`.
+        required: false
+        default: ""
+        type: string
 
 concurrency:
   group: r-hub-${{ github.event.pull_request.number || github.ref }}
@@ -108,6 +113,7 @@ jobs:
       - uses: r-hub/actions/setup-deps@v1
         with:
           job-config: ${{ matrix.config.job-config }}
+          extra-packages: ${{ inputs.extra-packages }}, any::rcmdcheck
           needs: DepsDev,DepsBranch
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
@@ -161,6 +167,7 @@ jobs:
       - uses: r-hub/actions/setup-deps@v1
         with:
           job-config: ${{ matrix.config.job-config }}
+          extra-packages: ${{ inputs.extra-packages }}, any::rcmdcheck
           needs: DepsDev,DepsBranch
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
