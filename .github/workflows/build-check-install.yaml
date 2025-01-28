@@ -515,6 +515,37 @@ jobs:
           path: "${{ inputs.additional-caches }}"
           key: additional-caches-${{ runner.os }}
 
+      - name: Check only affected modules
+        if: startsWith(${{ github.event.repository.name }}, "teal.modules.") && github.event_name == 'pull_request'
+        run: |
+          # Get the list of files that have changed
+          files=$(git diff --name-only main..)
+
+          # Base directories
+          src_dir="R/"
+          test_dir="tests/testthat/"
+
+          # Loop through each modified file and determine which tests to run
+          for file in $files; do
+
+              # Extract the base name of the file, examples:
+              # tests/testthat/test-shinytest2-foo.R -> foo
+              # R/foo.R -> foo
+              base_name=$(basename "$file" .R | sed s/test-shinytest2-//g)
+
+              # Find matching test files
+              test_files=$(grep -l "$base_name" "$test_dir"test-shinytest2-*.R)
+
+              if [ -z "$test_files" ]; then
+                  echo "No test files found for modified file about $base_name."
+              else
+                  echo "${file} matches ${test_files}"
+                  sed -i 's/skip_if_too_deep(5)/skip_if_too_deep(3)/g' "$test_files"
+              fi
+          done
+          TESTING_DEPTH=3
+        shell: bash
+
       - name: Build R package 🏗
         run: |
           if [ "${{ inputs.additional-env-vars }}" != "" ]
