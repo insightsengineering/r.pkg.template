@@ -96,7 +96,7 @@ jobs:
         with:
           job-config: ${{ matrix.config.job-config }}
 
-      - uses: insightsengineering/setup-r-dependencies@v1
+      - uses: r-lib/actions/setup-r-dependencies@v2
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
@@ -149,7 +149,7 @@ jobs:
         with:
           job-config: ${{ matrix.config.job-config }}
 
-      - uses: insightsengineering/setup-r-dependencies@v1
+      - uses: r-lib/actions/setup-r-dependencies@v2
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:

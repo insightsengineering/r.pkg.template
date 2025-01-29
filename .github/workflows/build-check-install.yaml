@@ -146,28 +146,28 @@ on:
         default: ""
       skip-desc-branch:
         description: |
-          Passed to `insightsengineering/setup-r-dependencies`.
+          Passed to `r-lib/setup-r-dependencies`.
           Used only if deps-installation-method == 'setup-r-dependencies'.
         required: false
         type: boolean
         default: false
       skip-desc-dev:
         description: |
-          Passed to `insightsengineering/setup-r-dependencies`.
+          Passed to `r-lib/setup-r-dependencies`.
           Used only if deps-installation-method == 'setup-r-dependencies'.
         required: false
         type: boolean
         default: false
       repository-list:
         description: |
-          Passed to `insightsengineering/setup-r-dependencies`.
+          Passed to `r-lib/setup-r-dependencies`.
           Used only if deps-installation-method == 'setup-r-dependencies'.
         required: false
         type: string
         default: "PPM=PPM@latest"
       cache-version:
         description: |
-          Passed to `insightsengineering/setup-r-dependencies`.
+          Passed to `r-lib/setup-r-dependencies`.
           Used only if deps-installation-method == 'setup-r-dependencies'.
         required: false
         type: string
@@ -441,7 +441,7 @@ jobs:
         if: >-
           env.deps_installation_method == 'setup-r-dependencies'
           && inputs.install-deps-from-package-repositories == ''
-        uses: insightsengineering/setup-r-dependencies@v1
+        uses: r-lib/actions/setup-r-dependencies@v2
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:

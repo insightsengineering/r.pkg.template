@@ -51,7 +51,7 @@ on:
         default: staged-dependencies
       lookup-refs:
         description: |
-          Passed to insightsengineering/setup-r-dependencies. See its documentation.
+          Passed to r-lib/setup-r-dependencies. See its documentation.
           Used only if deps-installation-method == 'setup-r-dependencies'.
         required: false
         type: string
@@ -152,7 +152,7 @@ jobs:
       - name: Setup R dependencies 🎦
         if: >-
           env.deps_installation_method == 'setup-r-dependencies'
-        uses: insightsengineering/setup-r-dependencies@v1
+        uses: r-lib/actions/setup-r-dependencies@v2
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:

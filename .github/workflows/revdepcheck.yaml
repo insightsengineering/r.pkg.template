@@ -91,7 +91,7 @@ jobs:
         shell: bash
 
       - name: Install dependencies
-        uses: insightsengineering/setup-r-dependencies@v1
+        uses: r-lib/actions/setup-r-dependencies@v2
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
@@ -100,7 +100,7 @@ jobs:
 
       - name: revdepcheck 🔄
         id: revdepcheck
-        uses: insightsengineering/r-revdepcheck-action@main
+        uses: r-lib/r-revdepcheck-action@main
         with:
           github-token: ${{ steps.github-token.outputs.token }}
           additional-env-vars: ${{ inputs.additional-env-vars }}
