@@ -138,40 +138,13 @@ on:
         required: false
         type: string
         default: staged-dependencies
-      lookup-refs:
-        description: |
-          List of package references to be used by setup-r-dependencies action if deps-installation-method == 'setup-r-dependencies'.
-        required: false
-        type: string
-        default: ""
-      skip-desc-branch:
-        description: |
-          Passed to `r-lib/setup-r-dependencies`.
-          Used only if deps-installation-method == 'setup-r-dependencies'.
-        required: false
-        type: boolean
-        default: false
-      skip-desc-dev:
-        description: |
-          Passed to `r-lib/setup-r-dependencies`.
-          Used only if deps-installation-method == 'setup-r-dependencies'.
-        required: false
-        type: boolean
-        default: false
-      repository-list:
-        description: |
-          Passed to `r-lib/setup-r-dependencies`.
-          Used only if deps-installation-method == 'setup-r-dependencies'.
-        required: false
-        type: string
-        default: "PPM=PPM@latest"
       cache-version:
         description: |
-          Passed to `r-lib/setup-r-dependencies`.
+          Passed to `r-lib/actions/setup-r-dependencies`.
           Used only if deps-installation-method == 'setup-r-dependencies'.
         required: false
         type: string
-        default: "1"
+        default: 1
       unit-test-report-brand:
         description: Image URL to use in unit test report for branding. If empty, the default xunit-viewer brand will be used.
         required: false

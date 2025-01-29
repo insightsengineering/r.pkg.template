@@ -40,13 +40,6 @@ on:
           gcc13,
           noSuggests,
           donttest
-      lookup-refs:
-        description: |
-          List of package references to be used for the feature branch.
-          Multiple entries in new lines or separated by commas.
-        required: false
-        default: ""
-        type: string
 
 concurrency:
   group: r-hub-${{ github.event.pull_request.number || github.ref }}

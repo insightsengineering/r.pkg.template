@@ -49,13 +49,6 @@ on:
         required: false
         type: string
         default: staged-dependencies
-      lookup-refs:
-        description: |
-          Passed to r-lib/setup-r-dependencies. See its documentation.
-          Used only if deps-installation-method == 'setup-r-dependencies'.
-        required: false
-        type: string
-        default: ""
     secrets:
       REPO_GITHUB_TOKEN:
         description: |

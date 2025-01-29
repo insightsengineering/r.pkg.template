@@ -128,12 +128,6 @@ on:
         required: false
         type: string
         default: staged-dependencies
-      lookup-refs:
-        description: |
-          List of package references to be used by setup-r-dependencies action if deps-installation-method == 'setup-r-dependencies'.
-        required: false
-        type: string
-        default: ""
 
 concurrency:
   group: docs-${{ github.event.pull_request.number || github.ref }}
