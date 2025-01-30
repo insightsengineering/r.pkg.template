@@ -418,11 +418,7 @@ jobs:
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          lookup-refs: ${{ inputs.lookup-refs }}
           repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
-          skip-desc-branch: ${{ inputs.skip-desc-branch }}
-          skip-desc-dev: ${{ inputs.skip-desc-dev }}
-          repository-list: ${{ inputs.repository-list }}
           cache-version: ${{ inputs.cache-version }}
 
       - name: Install dependencies from package repositories 🗄️

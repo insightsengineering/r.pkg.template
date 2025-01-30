@@ -145,7 +145,6 @@ jobs:
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          lookup-refs: ${{ inputs.lookup-refs }}
           repository-path: ${{ env.package_subdirectory }}
 
       - name: Build report 🏗

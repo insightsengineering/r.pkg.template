@@ -94,9 +94,6 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
-        with:
-          lookup-refs: ${{ inputs.lookup-refs }}
-          skip-desc-branch: true
 
       - name: revdepcheck 🔄
         id: revdepcheck

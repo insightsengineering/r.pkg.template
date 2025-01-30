@@ -149,7 +149,6 @@ jobs:
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          lookup-refs: ${{ inputs.lookup-refs }}
           repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Generate man pages 📄
