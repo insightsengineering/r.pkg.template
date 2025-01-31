@@ -532,18 +532,25 @@ jobs:
               # tests/testthat/test-shinytest2-foo.R -> foo
               # R/foo.R -> foo
               base_name=$(basename "$file" .R | sed s/test-shinytest2-//g)
+              # Find matching test files (parenthesis to not match arguments)
+              test_files=$(grep -l "$base_name(" "$test_dir"test-shinytest2-*.R)
 
-              # Find matching test files
-              test_files=$(grep -l "$base_name" "$test_dir"test-shinytest2-*.R)
-
-              if [ -z "$test_files" ]; then
-                  echo "No test files found for modified file about $base_name."
-              else
-                  echo "${file} matches ${test_files}"
+              # Modify in place so that only modified modules are tested.
+              if [[ -n "$test_files" ]]
+              then {
                   sed -i 's/skip_if_too_deep(5)/skip_if_too_deep(3)/g' "$test_files"
-              fi
+                  TESTING_DEPTH=3
+              } else {
+                  # Flag for helpers
+                  helper_modified="yes"
+              } fi
+
+              # R file without corresponding test file: assume it affects all
+              if [[ -n "$helper_modified" ]]
+              then {
+                  TESTING_DEPTH=5
+              } fi
           done
-          TESTING_DEPTH=3
         shell: bash
 
       - name: Build R package 🏗
