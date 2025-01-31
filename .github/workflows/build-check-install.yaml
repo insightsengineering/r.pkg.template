@@ -518,8 +518,8 @@ jobs:
       - name: Check only affected modules
         if: startsWith(${{ github.event.repository.name }}, "teal.modules.") && github.event_name == 'pull_request'
         run: |
-          # Get the list of files that have changed
-          files=$(git diff --name-only main..)
+          # Get the list of R files that have changed
+          files=$(git diff --name-only main.. -- tests/* R/*.R)
 
           # Base directories
           src_dir="R/"
