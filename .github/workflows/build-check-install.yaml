@@ -535,6 +535,7 @@ jobs:
               base_name=$(basename "$file" .R | sed s/test-shinytest2-//g)
               # Find matching test files (parenthesis to not match arguments)
               test_files=$(grep -l "$base_name(" "$test_dir"test-shinytest2-*.R)
+              td=$TESTING_DEPTH
 
               # Modify in place so that only modified modules are tested.
               if [[ -n "$test_files" ]]
@@ -546,10 +547,10 @@ jobs:
                   helper_modified="yes"
               } fi
 
-              # R file without corresponding test file: assume it affects all
+              # R file without corresponding test file: reset the testing depth
               if [[ -n "$helper_modified" ]]
               then {
-                  TESTING_DEPTH=5
+                  TESTING_DEPTH=td
               } fi
           done
         shell: bash
