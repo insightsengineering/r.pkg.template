@@ -515,7 +515,7 @@ jobs:
           path: "${{ inputs.additional-caches }}"
           key: additional-caches-${{ runner.os }}
 
-      - name: Check only affected modules
+      - name: Check only affected modules 🎯
         if: startsWith(${{ github.event.repository.name }}, "teal.modules.") && github.event_name == 'pull_request'
         uses: actions/checkout@v4.1.1
         run: |
