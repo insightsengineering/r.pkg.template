@@ -522,12 +522,10 @@ jobs:
 
           # Debugging
 
-          # https://github.com/pylint-dev/pylint/blob/acf7705968da21b0396a6532cd8e8b0f1f8cc806/.github/workflows/changelog.yml#L64
-          git fetch --no-tags origin +refs/heads/${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
-          git branch
 
           # Get the list of R files that have changed
-          files=$(git diff --name-only main...${{ github.head_ref }} -- tests/* R/*.R)
+          # https://github.com/cloudnativeto/envoy/blob/de67446fa8af973761bb4716f5143d73643baf8b/.github/workflows/get_build_targets.sh_bak#L9
+          files=$(git diff --name-only HEAD FETCH_HEAD -- tests/* R/*.R)
 
           # Base directories
           src_dir="R/"
