@@ -516,7 +516,7 @@ jobs:
           key: additional-caches-${{ runner.os }}
 
       - name: Check only affected modules 🎯
-        if: startsWith(${{ github.event.repository.name }}, "teal.modules.") && github.event_name == 'pull_request'
+        if: startsWith(${{ github.event.repository.name }}, 'teal.modules.') && github.event_name == 'pull_request'
         run: |
           # Set working directory where the git repo is
           cd ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
@@ -524,7 +524,7 @@ jobs:
           # Debugging
 
           git remote -v
-          git fetch origin main
+          git pull origin main
           git branch
 
           # Get the list of R files that have changed
