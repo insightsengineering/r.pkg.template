@@ -297,7 +297,7 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
-          fetch-depth: 0
+          fetch-depth: 2
 
       - name: Checkout repo 🛎
         uses: actions/checkout@v4.1.1
@@ -514,14 +514,6 @@ jobs:
         with:
           path: "${{ inputs.additional-caches }}"
           key: additional-caches-${{ runner.os }}
-
-      - name: Checkout default branch (PR) ⚙️
-        uses: actions/checkout@v4.1.1
-        if: github.event_name == 'pull_request'
-        with:
-          path: ${{ github.event.repository.name }}
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          fetch-depth: 1
 
       - name: Check only affected modules 🎯
         if: startsWith(${{ github.event.repository.name }}, "teal.modules.") && github.event_name == 'pull_request'
