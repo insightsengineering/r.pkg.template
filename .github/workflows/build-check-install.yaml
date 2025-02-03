@@ -528,7 +528,7 @@ jobs:
           git branch
 
           # Get the list of R files that have changed
-          files=$(git diff --name-only main.. -- tests/* R/*.R)
+          files=$(git diff --name-only main...${{ github.head_ref }} -- tests/* R/*.R)
 
           # Base directories
           src_dir="R/"
