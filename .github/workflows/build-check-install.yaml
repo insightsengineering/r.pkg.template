@@ -294,7 +294,6 @@ jobs:
         uses: actions/checkout@v4.1.1
         if: github.event_name == 'pull_request'
         with:
-          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           fetch-depth: 0
@@ -523,8 +522,8 @@ jobs:
 
           # Debugging
 
-          git remote -v
-          git pull origin main
+          # https://github.com/pylint-dev/pylint/blob/acf7705968da21b0396a6532cd8e8b0f1f8cc806/.github/workflows/changelog.yml#L64
+          git fetch --no-tags origin +refs/heads/${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
           git branch
 
           # Get the list of R files that have changed
