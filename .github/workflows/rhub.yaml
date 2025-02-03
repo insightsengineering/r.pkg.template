@@ -93,8 +93,6 @@ jobs:
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          skip-install: true
-          restore-description: false
           install-quarto: "false"
 
       - uses: r-hub/actions/setup-deps@v1
@@ -145,8 +143,6 @@ jobs:
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          skip-install: true
-          restore-description: false
           install-quarto: "false"
 
       - uses: r-hub/actions/setup-deps@v1
