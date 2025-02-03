@@ -524,7 +524,10 @@ jobs:
           # Debugging
           pwd
           ls -lh
+          ls -lh ..
           git branch
+          git -C .. branch
+
 
           # Get the list of R files that have changed
           files=$(git diff --name-only main.. -- tests/* R/*.R)
