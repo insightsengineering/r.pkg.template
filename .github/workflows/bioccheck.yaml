@@ -156,7 +156,7 @@ jobs:
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Run BiocCheck ☣️
         uses: insightsengineering/bioc-check-action@v1

@@ -145,7 +145,7 @@ jobs:
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          repository-path: ${{ env.package_subdirectory }}
+          working-directory: ${{ env.package_subdirectory }}
 
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v2
