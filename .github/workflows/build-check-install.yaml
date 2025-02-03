@@ -523,7 +523,7 @@ jobs:
 
           # Debugging
 
-          git fetch --all
+          git fetch origin main
           git branch
 
           # Get the list of R files that have changed
