@@ -297,7 +297,7 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
-          fetch-depth: 2
+          fetch-depth: 0
 
       - name: Checkout repo 🛎
         uses: actions/checkout@v4.1.1
@@ -522,12 +522,9 @@ jobs:
           cd ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
           # Debugging
-          pwd
-          ls -lh
-          ls -lh ..
-          git branch
-          git -C .. branch
 
+          git fetch --all
+          git branch
 
           # Get the list of R files that have changed
           files=$(git diff --name-only main.. -- tests/* R/*.R)
