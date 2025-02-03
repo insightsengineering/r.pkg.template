@@ -517,6 +517,7 @@ jobs:
 
       - name: Setup git checkout ⚙️
         uses: actions/checkout@v4.1.1
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Check only affected modules 🎯
         if: startsWith(${{ github.event.repository.name }}, "teal.modules.") && github.event_name == 'pull_request'
