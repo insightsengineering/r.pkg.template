@@ -229,6 +229,7 @@ jobs:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
           working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          needs: "website"
 
       - name: Install R package 🚧
         run: |
