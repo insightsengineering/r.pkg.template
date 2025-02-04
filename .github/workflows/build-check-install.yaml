@@ -550,6 +550,8 @@ jobs:
               } else {
                   # Flag for helpers
                   helper_modified="yes"
+                  git restore .
+                  break
               } fi
 
               # R file without corresponding test file: reset the testing depth
