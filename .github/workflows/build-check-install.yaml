@@ -250,7 +250,7 @@ on:
         description: |
           Should shinytests2 tests only run per modified teal module? If enabled if only there is a module modificated only that shinytest2 file will be tested.
         required: false
-        type: string
+        type: boolean
         default: false
 
 concurrency:
@@ -521,17 +521,30 @@ jobs:
           key: additional-caches-${{ runner.os }}
 
       - name: Check only affected modules 🎯
-        if: ${{ inputs.fast-tests }} == 'true' && github.event_name == 'pull_request'
+        if: inputs.fast-tests == 'true' && github.event_name == 'pull_request'
         run: |
           # Set working directory where the git repo is
           cd ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
-          test_all=$(git show -s --pretty=%B | grep -F "[run-all-tests]" )
+          # Exit early if tag is on commit message even if it set to true
+          test_all=$( git log -1 --pretty=%B | grep -F "[run-all-tests]" )
+          if [ -z "$test_all" ]
+          then {
+            echo "Last commit message forces to test everything."
+            exit 0
+          } fi
+
           test_dir="tests/testthat/"
 
           # Get the list of R files that have changed
           # https://github.com/cloudnativeto/envoy/blob/de67446fa8af973761bb4716f5143d73643baf8b/.github/workflows/get_build_targets.sh_bak#L9
           files=$(git diff --name-only HEAD FETCH_HEAD -- $test_dir R/*.R)
+
+          if [ -n "files" ]
+          then {
+            echo "No R files affected: test everything."
+            exit 0
+          } fi
 
           # Loop through each modified file and determine which tests to run
           for file in $files; do
