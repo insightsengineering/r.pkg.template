@@ -527,7 +527,7 @@ jobs:
           cd ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
 
-          test_all=git log -1 --pretty=%B | grep -F " [run-all-tests] "
+          test_all=$(git log -1 --pretty=%B | grep -F " [run-all-tests] ")
 
           # Get the list of R files that have changed
           # https://github.com/cloudnativeto/envoy/blob/de67446fa8af973761bb4716f5143d73643baf8b/.github/workflows/get_build_targets.sh_bak#L9
