@@ -521,7 +521,7 @@ jobs:
           key: additional-caches-${{ runner.os }}
 
       - name: Check only affected modules 🎯
-        if: inputs.fast-tests == 'true' && github.event_name == 'pull_request'
+        if: inputs.fast-tests == true && github.event_name == 'pull_request'
         run: |
           # Set working directory where the git repo is
           cd ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
