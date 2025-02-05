@@ -534,7 +534,6 @@ jobs:
           files=$(git diff --name-only HEAD FETCH_HEAD -- tests/* R/*.R)
 
           # Base directories
-          src_dir="R/"
           test_dir="tests/testthat/"
 
           # Loop through each modified file and determine which tests to run
@@ -549,7 +548,7 @@ jobs:
               td=$TESTING_DEPTH
 
               # Modify in place so that only modified modules are tested.
-              if [[ -n "$test_files" && ! -n "$test_all" ]];
+              if [ -n "$test_files" ] && [ -z "$test_all" ];
               then {
                   sed -i 's/skip_if_too_deep(5)/skip_if_too_deep(3)/g' "$test_files"
                   TESTING_DEPTH=3
@@ -563,9 +562,9 @@ jobs:
               } fi
 
               # R file without corresponding test file: reset the testing depth
-              if [[ -n "$helper_modified" || -n "$test_all" ]];
+              if [ -n "$helper_modified" ] || [ -n "$test_all" ];
               then {
-                  TESTING_DEPTH=td;
+                  TESTING_DEPTH=$td;
               } fi
           done
         shell: bash
