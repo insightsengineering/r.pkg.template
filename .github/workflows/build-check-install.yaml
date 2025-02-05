@@ -521,13 +521,13 @@ jobs:
           key: additional-caches-${{ runner.os }}
 
       - name: Check only affected modules 🎯
-        if: ${{ inputs.fast-tests }} != 'true' && startsWith(${{ github.event.repository.name }}, 'teal.') && github.event_name == 'pull_request'
+        if: ${{ inputs.fast-tests }} == 'true' && github.event_name == 'pull_request'
         run: |
           # Set working directory where the git repo is
           cd ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
 
-          test_all=$(git log -1 --pretty=%B | grep -F " [run-all-tests] ")
+          test_all=$(git show -s --pretty=%B | grep -F "[run-all-tests]")
 
           # Get the list of R files that have changed
           # https://github.com/cloudnativeto/envoy/blob/de67446fa8af973761bb4716f5143d73643baf8b/.github/workflows/get_build_targets.sh_bak#L9
@@ -564,6 +564,7 @@ jobs:
               # R file without corresponding test file: reset the testing depth
               if [ -n "$helper_modified" ] || [ -n "$test_all" ];
               then {
+                  echo "Skip step or helper modifications detected."
                   TESTING_DEPTH=$td;
               } fi
           done
