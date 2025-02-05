@@ -556,7 +556,7 @@ jobs:
               } else {
                   # Flag for helpers
                   helper_modified="yes"
-                  git restore .
+                  git restore $test_dir
                   echo "Run all tests"
                   break;
               } fi
