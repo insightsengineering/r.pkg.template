@@ -523,8 +523,7 @@ jobs:
       - name: Check only affected modules 🎯
         if: inputs.fast-tests == true
         run: |
-          # Set working directory where the git repo is
-          cd ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          ls
 
           # Exit early if tag is on commit message even if it set to true
           test_all=$( git log -1 --pretty=%B | grep -F "[run-all-tests]" )
@@ -540,7 +539,7 @@ jobs:
           # https://github.com/cloudnativeto/envoy/blob/de67446fa8af973761bb4716f5143d73643baf8b/.github/workflows/get_build_targets.sh_bak#L9
           files=$(git diff --name-only HEAD FETCH_HEAD -- $test_dir R/*.R)
 
-          if [ -n "files" ]
+          if [ -n "$files" ]
           then {
             echo "No R files affected: test everything."
             exit 0
