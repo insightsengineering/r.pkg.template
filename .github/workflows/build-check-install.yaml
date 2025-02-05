@@ -549,23 +549,23 @@ jobs:
               td=$TESTING_DEPTH
 
               # Modify in place so that only modified modules are tested.
-              if [[ -n "$test_files" && ! -n "$test_all"]]
+              if [[ -n "$test_files" && ! -n "$test_all" ]];
               then {
                   sed -i 's/skip_if_too_deep(5)/skip_if_too_deep(3)/g' "$test_files"
                   TESTING_DEPTH=3
-                  echo "Testing with shinytest2 for $test_files"
+                  echo "Testing with shinytest2 for $test_files";
               } else {
                   # Flag for helpers
                   helper_modified="yes"
                   git restore .
                   echo "Run all tests"
-                  break
+                  break;
               } fi
 
               # R file without corresponding test file: reset the testing depth
-              if [[ -n "$helper_modified" || -n "$test_all"]]
+              if [[ -n "$helper_modified" || -n "$test_all" ]];
               then {
-                  TESTING_DEPTH=td
+                  TESTING_DEPTH=td;
               } fi
           done
         shell: bash
