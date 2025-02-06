@@ -595,6 +595,7 @@ jobs:
                   TESTING_DEPTH=$td;
               } fi
           done
+        shell: bash
 
       - name: Build R package 🏗
         run: |
