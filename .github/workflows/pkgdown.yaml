@@ -236,6 +236,7 @@ jobs:
         with:
           lookup-refs: ${{ inputs.lookup-refs }}
           repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          needs: "website"
 
       - name: Install R package 🚧
         run: |
