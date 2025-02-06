@@ -527,24 +527,12 @@ jobs:
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
         run: |
           # Bash script run
-          if ! command -v git > /dev/null 2>&1
-          then
-              echo "git could not be found"
-              exit 0
-          fi
-          if ! command -v grep > /dev/null 2>&1
-          then
-              echo "grep could not be found"
-              exit 0
-          fi
-          if ! command -v sed > /dev/null 2>&1
-          then
-              echo "sed could not be found"
-              exit 0
-          fi
+          commit_msg=$( git log -1 --pretty=%B )
 
+          echo "Commit msg is ${commit_msg}"
           # Exit early if tag is on commit message even if it set to true
-          test_all=$( git log -1 --pretty=%B | grep -F "[run-all-tests]" )
+          test_all=$( echo "${commit_msg}" | grep -zvF "[run-all-tests]" | tr -d '\0')
+
           if [ -z "$test_all" ]
           then {
             echo "Last commit message forces to test everything."
