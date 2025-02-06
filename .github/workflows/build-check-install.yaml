@@ -543,9 +543,9 @@ jobs:
 
           # Get the list of R files that have changed
           # https://github.com/cloudnativeto/envoy/blob/de67446fa8af973761bb4716f5143d73643baf8b/.github/workflows/get_build_targets.sh_bak#L9
-          files=$(git diff --name-only HEAD FETCH_HEAD -- $test_dir R/*.R)
+          files=$(git diff --name-only main.. -- $test_dir R/*.R)
 
-          if [ -n "$files" ]
+          if [ -z "$files" ]
           then {
             echo "No R files affected: test everything."
             exit 0
@@ -553,6 +553,8 @@ jobs:
 
           # Loop through each modified file and determine which tests to run
           for file in $files; do
+
+              echo "Check for $file"
 
               # Extract the base name of the file, examples:
               # tests/testthat/test-shinytest2-foo.R -> foo
@@ -563,11 +565,12 @@ jobs:
               td=$TESTING_DEPTH
 
               # Modify in place so that only modified modules are tested.
-              if [ -n "$test_files" ] && [ -z "$test_all" ];
+              if [ -n "$test_files" ] && [ -n "$test_all" ];
               then {
                   sed -i 's/skip_if_too_deep(5)/skip_if_too_deep(3)/g' "$test_files"
-                  TESTING_DEPTH=3
+                  export TESTING_DEPTH="3"
                   echo "Testing with shinytest2 for $test_files";
+                  echo "Settin testing_depth=$TESTING_DEPTH"
               } else {
                   # Flag for helpers
                   helper_modified="yes"
@@ -577,12 +580,13 @@ jobs:
               } fi
 
               # R file without corresponding test file: reset the testing depth
-              if [ -n "$helper_modified" ] || [ -n "$test_all" ];
+              if [ -n "$helper_modified" ] || [ -z "$test_all" ];
               then {
                   echo "Skip step or helper modifications detected."
-                  TESTING_DEPTH=$td;
+                  export TESTING_DEPTH="$td";
               } fi
           done
+          echo Using "TESTING_DEPTH=${TESTING_DEPTH}"
         shell: bash
 
       - name: Build R package 🏗
