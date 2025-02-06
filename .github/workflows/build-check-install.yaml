@@ -522,10 +522,24 @@ jobs:
 
       - name: Check only affected modules 🎯
         if: inputs.fast-tests == true
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
         run: |
-          cd ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
-          ls
-          pwd
+          # Bash script run
+          if ! command -v git 2>&1 >/dev/null
+          then
+              echo "git could not be found"
+              exit 1
+          fi
+          if ! command -v grep 2>&1 >/dev/null
+          then
+              echo "grep could not be found"
+              exit 1
+          fi
+          if ! command -v sed 2>&1 >/dev/null
+          then
+              echo "sed could not be found"
+              exit 1
+          fi
 
           # Exit early if tag is on commit message even if it set to true
           test_all=$( git log -1 --pretty=%B | grep -F "[run-all-tests]" )
@@ -579,7 +593,6 @@ jobs:
                   TESTING_DEPTH=$td;
               } fi
           done
-        shell: bash
 
       - name: Build R package 🏗
         run: |
