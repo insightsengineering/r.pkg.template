@@ -525,20 +525,20 @@ jobs:
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
         run: |
           # Bash script run
-          if ! command -v git 2>&1 >/dev/null
+          if ! command -v git > /dev/null 2>&1
           then
               echo "git could not be found"
-              exit 1
+              exit 0
           fi
-          if ! command -v grep 2>&1 >/dev/null
+          if ! command -v grep > /dev/null 2>&1
           then
               echo "grep could not be found"
-              exit 1
+              exit 0
           fi
-          if ! command -v sed 2>&1 >/dev/null
+          if ! command -v sed > /dev/null 2>&1
           then
               echo "sed could not be found"
-              exit 1
+              exit 0
           fi
 
           # Exit early if tag is on commit message even if it set to true
