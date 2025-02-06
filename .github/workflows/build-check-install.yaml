@@ -248,7 +248,9 @@ on:
         default: false
       fast-tests:
         description: |
-          Should shinytests2 tests only run per modified teal module? If enabled if only there is a module modificated only that shinytest2 file will be tested.
+          Should shinytests2 tests only run per modified teal module?
+          If enabled if only there is a module modificated only that shinytest2 file will be tested.
+          Can be ignored if used [run-all-tests] on the commit message.
         required: false
         type: boolean
         default: false
