@@ -525,9 +525,10 @@ jobs:
       - name: Get changed files 📃
         id: changed-files
         uses: tj-actions/changed-files@v45
-        files: |
-          tests/testthat/**.R
-          R/**.R
+        with:
+          files: |
+            tests/testthat/**.R
+            R/**.R
 
       - name: Check only affected modules 🎯
         if: inputs.fast-tests == true
