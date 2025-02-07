@@ -521,10 +521,19 @@ jobs:
         with:
           path: "${{ inputs.additional-caches }}"
           key: additional-caches-${{ runner.os }}
+          steps:
+      - name: Get changed files 📃
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        files: |
+          tests/testthat/**.R
+          R/**.R
 
       - name: Check only affected modules 🎯
         if: inputs.fast-tests == true
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
           # Bash script run
           commit_msg=$( git log -1 --pretty=%B )
@@ -540,28 +549,15 @@ jobs:
           } fi
 
           test_dir="tests/testthat/"
-          git status
-          git stash
-          git config pull.rebase true
-          remote_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
-          git pull "$remote_repo" main
-          git stash pop
 
-          git branch
-
-          # Get the list of R files that have changed
-          # https://github.com/cloudnativeto/envoy/blob/de67446fa8af973761bb4716f5143d73643baf8b/.github/workflows/get_build_targets.sh_bak#L9
-          files=$( git diff main.. --name-only -- "$test_dir"/*.R R/*.R )
-          echo "$files"
-
-          if [ -z "$files" ]
+          if [ -z "${ALL_CHANGED_FILES} ]
           then {
             echo "No R files affected: test everything."
             exit 0
           } fi
 
           # Loop through each modified file and determine which tests to run
-          for file in $files; do
+          for file in "${ALL_CHANGED_FILES}"; do
 
               echo "Check for $file"
 
