@@ -542,6 +542,7 @@ jobs:
           test_dir="tests/testthat/"
           git branch
           git remote -v
+          git config pull.rebase true
           remote_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git pull "$remote_repo" main
           git branch
