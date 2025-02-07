@@ -248,8 +248,8 @@ on:
         default: false
       fast-tests:
         description: |
-          Should shinytests2 tests only run per modified teal module?
-          If enabled if only there is a module modificated only that shinytest2 file will be tested.
+          Should shinytests2 tests only run per modified module?
+          If enabled and there is a module modificated only that shinytest2 file will be tested.
           Can be ignored if used [run-all-tests] on the commit message.
         required: false
         type: boolean
@@ -526,6 +526,7 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v45
         with:
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           files: |
             tests/testthat/**.R
             R/**.R
