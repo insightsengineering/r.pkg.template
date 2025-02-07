@@ -540,13 +540,14 @@ jobs:
           } fi
 
           test_dir="tests/testthat/"
-          git branch
-          git remote -v
+          git status
+          git stash
           git config pull.rebase true
           remote_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git pull "$remote_repo" main
+          git stash pop
+
           git branch
-          git status
 
           # Get the list of R files that have changed
           # https://github.com/cloudnativeto/envoy/blob/de67446fa8af973761bb4716f5143d73643baf8b/.github/workflows/get_build_targets.sh_bak#L9
