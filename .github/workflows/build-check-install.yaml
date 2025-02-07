@@ -541,7 +541,9 @@ jobs:
 
           test_dir="tests/testthat/"
           git branch
-          git pull main
+          git remote -v
+          remote_repo="https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git pull "$remote_repo" main
           git branch
           git status
 
