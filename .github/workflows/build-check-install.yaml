@@ -246,9 +246,9 @@ on:
         required: false
         type: boolean
         default: false
-      fast-tests:
+      selected-shinytests:
         description: |
-          Should shinytests2 tests only run per modified module?
+          Should shinytests2 tests only run per modified corresponding R file in R/ folder?
           If enabled and there is a module modificated only that shinytest2 file will be tested.
           Can be ignored if used [run-all-tests] on the commit message.
         required: false
@@ -524,6 +524,7 @@ jobs:
           steps:
       - name: Get changed files 📃
         id: changed-files
+        if: inputs.selected-shinytests == true
         uses: tj-actions/changed-files@v45
         with:
           path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
@@ -533,7 +534,7 @@ jobs:
             R/*.R
 
       - name: Check only affected modules 🎯
-        if: inputs.fast-tests == true
+        if: inputs.selected-shinytests == true
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
