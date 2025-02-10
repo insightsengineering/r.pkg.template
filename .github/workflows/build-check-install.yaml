@@ -250,7 +250,8 @@ on:
         description: |
           Should shinytests2 tests only run per modified corresponding R file in R/ folder?
           If enabled and there is a module modificated only that shinytest2 file will be tested.
-          Can be ignored if used [run-all-tests] on the commit message.
+          Might not apply to most packages! Because it replaces skip_if_too_deep(5) to skip_if_too_deep(3).
+          Will be ignored if the commit message contains [run-all-tests].
         required: false
         type: boolean
         default: false
