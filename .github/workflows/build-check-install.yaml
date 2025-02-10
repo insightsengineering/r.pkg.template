@@ -527,9 +527,10 @@ jobs:
         uses: tj-actions/changed-files@v45
         with:
           path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          base_sha: "main"
           files: |
-            tests/testthat/**.R
-            R/**.R
+            tests/testthat/*.R
+            R/*.R
 
       - name: Check only affected modules 🎯
         if: inputs.fast-tests == true
@@ -558,6 +559,15 @@ jobs:
             exit 0
           } fi
 
+          # Set default TESTING_DEPTH
+          td=$TESTING_DEPTH
+          if [ -z "$td" ]
+          then {
+            echo "No TESTING_DEPTH default"
+            td=5
+          } fi
+
+          echo "$ALL_CHANGED_FILES"
           # Loop through each modified file and determine which tests to run
           for file in $ALL_CHANGED_FILES; do
 
@@ -569,7 +579,6 @@ jobs:
               base_name=$(basename "$file" .R | sed s/test-shinytest2-//g)
               # Find matching test files (parenthesis to not match arguments)
               test_files=$(grep -l "$base_name(" "$test_dir"test-shinytest2-*.R)
-              td=$TESTING_DEPTH
 
               # Modify in place so that only modified modules are tested.
               if [ -n "$test_files" ];
@@ -594,8 +603,8 @@ jobs:
           done
 
           # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#setting-an-environment-variable
-          echo "TESTING_DEPTH=${TESTING_DEPTH}" >> "$GITHUB_ENV"
           echo Using "TESTING_DEPTH=${TESTING_DEPTH}"
+          echo "TESTING_DEPTH=${TESTING_DEPTH}" >> "$GITHUB_ENV"
         shell: bash
 
       - name: Build R package 🏗
