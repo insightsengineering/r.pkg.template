@@ -540,7 +540,7 @@ jobs:
           # Bash script run
           commit_msg=$( git log -1 --pretty=%B )
 
-          echo "Commit msg is ${commit_msg}"
+          echo "Commit msg is: ${commit_msg}"
           # Exit early if tag is on commit message even if it set to true
           test_all=$( echo "${commit_msg}" | grep -zvF "[run-all-tests]" | tr -d '\0')
 
@@ -552,7 +552,7 @@ jobs:
 
           test_dir="tests/testthat/"
 
-          if [ -z "${ALL_CHANGED_FILES}" ]
+          if [ -z "$ALL_CHANGED_FILES" ]
           then {
             echo "No R files affected: test everything."
             exit 0
@@ -572,12 +572,11 @@ jobs:
               td=$TESTING_DEPTH
 
               # Modify in place so that only modified modules are tested.
-              if [ -n "$test_files" ] && [ -n "$test_all" ];
+              if [ -n "$test_files" ];
               then {
                   sed -i 's/skip_if_too_deep(5)/skip_if_too_deep(3)/g' "$test_files"
-                  export TESTING_DEPTH="3"
+                  TESTING_DEPTH="3"
                   echo "Testing with shinytest2 for $test_files";
-                  echo "Settin testing_depth=$TESTING_DEPTH"
               } else {
                   # Flag for helpers
                   helper_modified="yes"
@@ -590,9 +589,12 @@ jobs:
               if [ -n "$helper_modified" ] || [ -z "$test_all" ];
               then {
                   echo "Skip step or helper modifications detected."
-                  export TESTING_DEPTH="$td";
+                  TESTING_DEPTH="$td";
               } fi
           done
+
+          # https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#setting-an-environment-variable
+          echo "TESTING_DEPTH=${TESTING_DEPTH}" >> "$GITHUB_ENV"
           echo Using "TESTING_DEPTH=${TESTING_DEPTH}"
         shell: bash
 
