@@ -552,14 +552,14 @@ jobs:
 
           test_dir="tests/testthat/"
 
-          if [ -z "${ALL_CHANGED_FILES} ]
+          if [ -z "${ALL_CHANGED_FILES}" ]
           then {
             echo "No R files affected: test everything."
             exit 0
           } fi
 
           # Loop through each modified file and determine which tests to run
-          for file in "${ALL_CHANGED_FILES}"; do
+          for file in $ALL_CHANGED_FILES; do
 
               echo "Check for $file"
 
