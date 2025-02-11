@@ -44,6 +44,7 @@ jobs:
         checking examples .* NOTE
         checking Rd line widths .* NOTE
         checking top-level files .* NOTE
+        checking files in ‘vignettes’ .* NOTE
   coverage:
     name: Coverage 📔
     needs: [release, docs]
