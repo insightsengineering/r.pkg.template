@@ -63,6 +63,7 @@ on:
             checking for unstated dependencies in vignettes ... NOTE( )+\'.*\' import not declared from
             checking dependencies in R code ... NOTE( )+Namespace in Imports field not imported from
             checking installed package size ... NOTE( )+installed size is
+            checking files in ‘vignettes’ ... NOTE( )+VignetteBuilder field missing
         required: false
         default: ""
         type: string
