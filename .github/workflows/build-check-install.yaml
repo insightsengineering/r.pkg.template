@@ -597,16 +597,17 @@ jobs:
                 if [ -n "$test_files" ];
                   then {
                       sed -i 's/skip_if_too_deep(5)/skip_if_too_deep(3)/g' "$test_files"
-                      TESTING_DEPTH="3"
-                      echo "Testing with shinytest2 for $test_files";
+                      echo "TESTING_DEPTH=3" >> "$GITHUB_ENV"
+                      echo "Testing with shinytest2 only for $test_files";
                   } else {
                       echo "Something unexpected happened"
                   } fi
               } fi
           done
 
-          echo Using "TESTING_DEPTH=${TESTING_DEPTH}"
+          echo "Using TESTING_DEPTH=${TESTING_DEPTH}"
           echo "TESTING_DEPTH=${TESTING_DEPTH}" >> "$GITHUB_ENV"
+          git status
         shell: bash
 
       - name: Build R package 🏗
