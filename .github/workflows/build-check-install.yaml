@@ -659,9 +659,14 @@ jobs:
 
       - name: Read-only R CMD check
         run: |
+          mkdir install
+          mkdir built
           ls -la
           tar -xzvf ${{ env.PKGBUILD }} -C built
+          R CMD INSTALL -l ./install built/${{ env.PKGNAME }} > ${{ env.PKGNAME }}.log 2>&1
+          chmod 500 built/${{ env.PKGNAME }}
           ls -la built
+          R CMD check -l ./install --install=check:${{ env.PKGNAME }}.log built/${{ env.PKGNAME }}
         shell: bash
 
       - name: Fetch report from ${{ env.junit_xml_storage }} ⤵️
