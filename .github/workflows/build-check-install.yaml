@@ -664,8 +664,9 @@ jobs:
           ls -la
           tar -xzvf ${{ env.PKGBUILD }} -C built
           R CMD INSTALL -l ./install built/${{ env.PKGNAME }} > ${{ env.PKGNAME }}.log 2>&1
-          chmod 500 built/${{ env.PKGNAME }}
-          ls -la built
+          chmod -R 400 built/${{ env.PKGNAME }}
+          chmod 700 built/${{ env.PKGNAME }}
+          ls -la built/${{ env.PKGNAME }}
           R CMD check -l ./install --install=check:${{ env.PKGNAME }}.log built/${{ env.PKGNAME }}
         shell: bash
 
