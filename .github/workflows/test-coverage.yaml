@@ -480,3 +480,51 @@ jobs:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./coverage-report
           destination_dir: coverage-report
+
+  publish-gh-pages:
+    name: Publish GitHub Pages
+    runs-on: ubuntu-latest
+    needs: publish-coverage-report
+    if: >
+      needs.coverage.outputs.publish-coverage-html-report == 'true'
+        && github.event_name != 'pull_request'
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Setup token 🔑
+        id: github-token
+        run: |
+          if [ "${{ secrets.REPO_GITHUB_TOKEN }}" == "" ]; then
+            echo "REPO_GITHUB_TOKEN is empty. Substituting it with GITHUB_TOKEN."
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          else
+            echo "Using REPO_GITHUB_TOKEN."
+            echo "token=${{ secrets.REPO_GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+
+      - name: Checkout repo 🛎
+        uses: actions/checkout@v4.1.1
+        with:
+          ref: "gh-pages"
+          token: ${{ steps.github-token.outputs.token }}
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          token: ${{ steps.github-token.outputs.token }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          token: ${{ steps.github-token.outputs.token }}
