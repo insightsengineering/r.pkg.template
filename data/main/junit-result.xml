@@ -1,12 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="api" timestamp="2025-02-18T07:59:13Z" hostname="5936ffb84ef3" tests="1" skipped="0" failures="0" errors="0" time="3.941">
-    <testcase time="3.941" classname="api" name="API_greets_the_person"/>
+  <testsuite name="api" timestamp="2025-03-15T23:09:12Z" hostname="a0ecd8950ac3" tests="1" skipped="0" failures="0" errors="0" time="3.927">
+    <testcase time="3.927" classname="api" name="API_greets_the_person"/>
   </testsuite>
-  <testsuite name="hello" timestamp="2025-02-18T07:59:17Z" hostname="5936ffb84ef3" tests="1" skipped="0" failures="0" errors="0" time="0.074">
+  <testsuite name="hello" timestamp="2025-03-15T23:09:16Z" hostname="a0ecd8950ac3" tests="1" skipped="0" failures="0" errors="0" time="0.074">
     <testcase time="0.0739999999999998" classname="hello" name="hello_greets_the_entity"/>
   </testsuite>
-  <testsuite name="shiny" timestamp="2025-02-18T07:59:17Z" hostname="5936ffb84ef3" tests="1" skipped="0" failures="0" errors="0" time="2.436">
-    <testcase time="2.436" classname="shiny" name="The_Shiny_App_returns_a_proper_greeting"/>
+  <testsuite name="shiny" timestamp="2025-03-15T23:09:16Z" hostname="a0ecd8950ac3" tests="1" skipped="0" failures="0" errors="1" time="1.97">
+    <testcase time="1.97" classname="shiny" name="The_Shiny_App_returns_a_proper_greeting">
+      <error type="error" message="Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout,  ('test-shiny.R:3:3')">Error in `app_initialize(self, private, app_dir = app_dir, ..., load_timeout = load_timeout, 
+    timeout = timeout, wait = wait, expect_values_screenshot_args = expect_values_screenshot_args, 
+    screenshot_args = screenshot_args, check_names = check_names, 
+    name = name, variant = variant, view = view, height = height, 
+    width = width, seed = seed, clean_logs = clean_logs, shiny_args = shiny_args, 
+    render_args = render_args, options = options)`: code: -32602
+  message: Target position can only be set for new windows
+
+
+ℹ You can inspect the failed AppDriver object via `rlang::last_error()$app`
+ℹ AppDriver logs:
+{shinytest2} R info   23:09:18.12 Start AppDriver initialization
+{shinytest2} R info   23:09:18.18 Starting Shiny app
+{shinytest2} R info   23:09:18.80 Creating new ChromoteSession
+{shinytest2} R info   23:09:18.83 Error while initializing AppDriver:
+                                  code: -32602
+                                    message: Target position can only be set for new windows
+{shiny}      R stderr ----------- Loading required package: shiny
+{shiny}      R stderr ----------- Running application in test mode.
+{shiny}      R stderr ----------- 
+{shiny}      R stderr ----------- Listening on http://127.0.0.1:6268
+
+
+Caused by error in `callback()`:
+! code: -32602
+  message: Target position can only be set for new windows
+Backtrace:
+     ▆
+  1. ├─AppDriver$new(...) at test-shiny.R:3:3
+  2. │ └─shinytest2 (local) initialize(...)
+  3. │   └─shinytest2:::app_initialize(...)
+  4. │     ├─base::withCallingHandlers(...)
+  5. │     └─shinytest2:::app_initialize_(self, private, ..., view = view)
+  6. │       └─chromote::default_chromote_object()$new_session()
+  7. │         └─chromote:::create_session(...)
+  8. │           └─ChromoteSession$new(...)
+  9. │             └─chromote (local) initialize(...)
+ 10. │               └─self$wait_for(p)
+ 11. │                 └─self$parent$wait_for(p)
+ 12. │                   └─chromote:::synchronize(p, loop = private$child_loop)
+ 13. │                     ├─promises::with_promise_domain(...)
+ 14. │                     │ └─domain$wrapSync(expr)
+ 15. │                     │   └─base::force(expr)
+ 16. │                     ├─base::tryCatch(...)
+ 17. │                     │ └─base (local) tryCatchList(expr, classes, parentenv, handlers)
+ 18. │                     │   └─base (local) tryCatchOne(expr, names, parentenv, handlers[[1L]])
+ 19. │                     │     └─base (local) doTryCatch(return(expr), name, parentenv, handler)
+ 20. │                     └─base::stop(value)
+ 21. └─shinytest2 (local) `&lt;fn&gt;`(`&lt;smplErrr&gt;`)
+ 22.   └─shinytest2:::app_abort(...)
+ 23.     └─rlang::abort(..., app = self, call = call)</error>
+    </testcase>
   </testsuite>
 </testsuites>
