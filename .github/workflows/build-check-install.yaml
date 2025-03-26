@@ -273,7 +273,6 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       !contains(github.event.commits[0].message, '[skip r-cmd]')
-        && github.event.pull_request.draft == false
     container:
       image: ${{ matrix.config.image }}:${{ matrix.config.tag }}
     outputs:
@@ -464,13 +463,14 @@ jobs:
       - name: Install dependencies from package repositories 🗄️
         if: inputs.install-deps-from-package-repositories != ''
         run: |
-          split_to_map <- function(args) {
-            tmp <- strsplit(x = unlist(strsplit(args, ",")), "=")
-            content <- unlist(lapply(tmp, function(x) x[2]))
-            names(content) <- unlist(lapply(tmp, function(x) x[1]))
-            return(content)
-          }
-          devtools::install_dev_deps(".", repos = split_to_map("${{ inputs.install-deps-from-package-repositories }}"))
+          if (!require("pak")) install.packages("pak", upgrade = "never")
+          package_repositories <- "${{ inputs.install-deps-from-package-repositories }}"
+          pairs <- strsplit(package_repositories, ",")[[1]]
+          urls <- sapply(strsplit(pairs, "="), `[`, 2)
+          lapply(urls, function(x){pak::repo_add(x)})
+          cat("Currently configured pak repositories:\n")
+          pak::repo_get()
+          pak::local_install_dev_deps(root = ".", upgrade = FALSE)
         shell: Rscript {0}
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
