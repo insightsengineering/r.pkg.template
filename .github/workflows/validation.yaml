@@ -155,7 +155,7 @@ jobs:
           repository-path: ${{ env.package_subdirectory }}
 
       - name: Build report 🏗
-        uses: insightsengineering/thevalidatoR@v2
+        uses: insightsengineering/thevalidatoR@chore/debug-validation-report-failure
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
