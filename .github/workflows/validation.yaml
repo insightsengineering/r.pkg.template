@@ -46,12 +46,6 @@ on:
         required: false
         type: string
         default: staged-dependencies
-      lookup-refs:
-        description: |
-          List of package references to be used by setup-r-dependencies action if deps-installation-method == 'setup-r-dependencies'.
-        required: false
-        type: string
-        default: ""
     secrets:
       REPO_GITHUB_TOKEN:
         description: |
@@ -147,12 +141,11 @@ jobs:
       - name: Setup R dependencies 🎦
         if: >-
           inputs.deps-installation-method == 'setup-r-dependencies'
-        uses: insightsengineering/setup-r-dependencies@v1
+        uses: r-lib/actions/setup-r-dependencies@v2
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          lookup-refs: ${{ inputs.lookup-refs }}
-          repository-path: ${{ env.package_subdirectory }}
+          working-directory: ${{ env.package_subdirectory }}
 
       - name: Build report 🏗
         uses: insightsengineering/thevalidatoR@v2
