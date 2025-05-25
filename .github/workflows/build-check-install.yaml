@@ -220,6 +220,15 @@ on:
         required: false
         type: boolean
         default: false
+      selected-shinytests:
+        description: |
+          Should shinytests2 tests only run per modified corresponding R file in R/ folder?
+          If enabled and there is a module modificated only that shinytest2 file will be tested.
+          Might not apply to most packages! Because it replaces skip_if_too_deep(5) to skip_if_too_deep(3).
+          Will be ignored if the commit message contains [run-all-tests].
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   group: r-cmd-${{ inputs.concurrency-group }}-${{ github.event.pull_request.number || github.ref }}
@@ -268,7 +277,6 @@ jobs:
         uses: actions/checkout@v4.1.1
         if: github.event_name == 'pull_request'
         with:
-          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           path: ${{ github.event.repository.name }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           fetch-depth: 0
@@ -484,6 +492,89 @@ jobs:
         with:
           path: "${{ inputs.additional-caches }}"
           key: additional-caches-${{ runner.os }}
+          steps:
+      - name: Get changed files 📃
+        id: changed-files
+        if: inputs.selected-shinytests == true
+        # v45.0.8
+        uses: tj-actions/changed-files@a284dc1814e3fd07f2e34267fc8f81227ed29fb8
+        with:
+          path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          base_sha: "main"
+          files: |
+            tests/testthat/*.R
+            R/*.R
+
+      - name: Check only affected modules 🎯
+        if: inputs.selected-shinytests == true
+        working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          # Bash script run
+          commit_msg=$( git log -1 --pretty=%B )
+
+          # Set default TESTING_DEPTH
+          td=$TESTING_DEPTH
+          if [ -z "$td" ]
+          then {
+            echo "No TESTING_DEPTH default."
+            echo "Setting TESTING_DEPTH=5"
+            echo "TESTING_DEPTH=5" >> "$GITHUB_ENV"
+            td=5
+          } fi
+
+          echo "Commit msg is: ${commit_msg}"
+          # Exit early if tag is on commit message even if it set to true
+          test_all=$( echo "${commit_msg}" | grep -zvF "[run-all-tests]" | tr -d '\0')
+
+          if [ -z "$test_all" ]
+          then {
+            echo "Last commit message forces to test everything."
+            echo "Using TESTING_DEPTH=$td"
+            echo "TESTING_DEPTH=$td" >> "$GITHUB_ENV"
+            exit 0
+          } fi
+
+          test_dir="tests/testthat/"
+
+          if [ -z "$ALL_CHANGED_FILES" ]
+          then {
+            echo "No R files affected: test everything."
+            echo Using "TESTING_DEPTH=$td"
+            echo "TESTING_DEPTH=$td" >> "$GITHUB_ENV"
+            exit 0
+          } fi
+
+          # Loop through each modified file and determine which tests to run
+          for file in $ALL_CHANGED_FILES; do
+
+              echo "Check for $file."
+
+              # Extract the base name of the file, examples:
+              # tests/testthat/test-shinytest2-foo.R -> foo
+              # R/foo.R -> foo
+              base_name=$(basename "$file" .R | sed s/test-shinytest2-//g)
+              # Find matching test files (parenthesis to not match arguments)
+              test_files=$(grep -l "$base_name(" "$test_dir"test-shinytest2-*.R || echo "")
+              # Modify in place so that only modified modules are tested.
+              if [ -z "$test_files" ];
+              then {
+                  git restore $test_dir
+                  echo "Run all tests: Helpers modifications detected."
+                  TESTING_DEPTH="$td";
+                  break;
+              } else {
+                  sed -i 's/skip_if_too_deep(5)/skip_if_too_deep(3)/g' "$test_files"
+                  TESTING_DEPTH=3
+                  echo "TESTING_DEPTH=3" >> "$GITHUB_ENV"
+                  echo "Testing with shinytest2 only for $test_files";
+              } fi
+          done
+
+          echo "At the end, using TESTING_DEPTH=${TESTING_DEPTH}"
+          echo "TESTING_DEPTH=${TESTING_DEPTH}" >> "$GITHUB_ENV"
+        shell: bash
 
       - name: Build R package 🏗
         run: |

@@ -46,7 +46,7 @@ jobs:
           github_token: ${{ steps.github-token.outputs.token }}
           last_commit_age_days: ${{ inputs.last-commit-age-days }}
           # Additional precaution against deleting main branch.
-          ignore_branches: main
+          ignore_branches: main,gh-pages,_xml_coverage_reports,_junit_xml_reports
           dry_run: no
 
       - name: Show deleted branches 🌿
