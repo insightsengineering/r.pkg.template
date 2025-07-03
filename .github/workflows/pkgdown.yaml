@@ -76,6 +76,12 @@ on:
         required: false
         default: main
         type: string
+      update-r-packages:
+        description: |
+          Whether R packages installed in the container should be updated to their latest version from CRAN/BioC.
+        required: false
+        type: boolean
+        default: false
       sd-direction:
         description: The direction to use to install staged dependencies. Choose between 'upstream', 'downstream' and 'all'
         required: false
@@ -214,6 +220,13 @@ jobs:
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
+
+      - name: Update R packages 🗓️
+        if: >-
+          inputs.update-r-packages == true
+        run: |
+          update.packages(ask=FALSE)
+        shell: Rscript {0}
 
       - name: Run Staged dependencies 🎦
         if: >-

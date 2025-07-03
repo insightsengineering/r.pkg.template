@@ -429,7 +429,7 @@ jobs:
         if: >-
           inputs.update-r-packages == true
         run: |
-          update.packages()
+          update.packages(ask=FALSE)
         shell: Rscript {0}
 
       - name: Run Staged dependencies 🎦
