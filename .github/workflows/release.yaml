@@ -67,7 +67,7 @@ jobs:
 
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v7
+        uses: tj-actions/branch-names@v9.0.0
 
       - name: Check if running for rc tag 🏷️
         id: rc-tag
