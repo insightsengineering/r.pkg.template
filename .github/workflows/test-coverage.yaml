@@ -138,7 +138,7 @@ jobs:
 
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v7
+        uses: tj-actions/branch-names@v9.0.0
 
       - name: Checkout gh-pages 🛎
         if: >-
@@ -358,7 +358,7 @@ jobs:
     steps:
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v7
+        uses: tj-actions/branch-names@v9.0.0
 
       - name: Checkout repo (PR) 🛎
         uses: actions/checkout@v4.1.1

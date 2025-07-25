@@ -170,7 +170,7 @@ jobs:
 
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v7
+        uses: tj-actions/branch-names@v9.0.0
 
       - name: Get current branch or tag 🏷️
         id: current-branch-or-tag
