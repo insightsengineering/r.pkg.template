@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="api" timestamp="2025-07-30T09:52:27Z" hostname="bb355e39570c" tests="1" skipped="0" failures="0" errors="0" time="4.076">
+    <testcase time="4.076" classname="api" name="API_greets_the_person"/>
+  </testsuite>
+  <testsuite name="hello" timestamp="2025-07-30T09:52:31Z" hostname="bb355e39570c" tests="1" skipped="0" failures="0" errors="0" time="0.077">
+    <testcase time="0.077" classname="hello" name="hello_greets_the_entity"/>
+  </testsuite>
+  <testsuite name="shiny" timestamp="2025-07-30T09:52:31Z" hostname="bb355e39570c" tests="1" skipped="1" failures="0" errors="0" time="0.057">
+    <testcase time="0.0569999999999995" classname="shiny" name="The_Shiny_App_returns_a_proper_greeting">
+      <skipped message="Reason: On CRAN ('test-shiny.R:3:3')"/>
+    </testcase>
+  </testsuite>
+</testsuites>
