@@ -50,7 +50,7 @@ jobs:
         uses: actions/checkout@v4.1.1
         if: github.event_name != 'pull_request'
         with:
-          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          ref: ${{ steps.branch-name.outputs.current_branch }}
 
       - name: Check commit message 💬
         run: |

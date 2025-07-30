@@ -61,7 +61,7 @@ jobs:
       - name: Checkout repo 🛎
         uses: actions/checkout@v4.1.1
         with:
-          ref: ${{ steps.branch-name.outputs.head_ref_branch }}
+          ref: ${{ steps.branch-name.outputs.current_branch }}
           fetch-depth: 1
 
       - name: Restore cache 💰
