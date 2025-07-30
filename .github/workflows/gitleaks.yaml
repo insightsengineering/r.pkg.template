@@ -51,6 +51,12 @@ jobs:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
+      - name: Debug
+        run: |
+          echo "Current branch: ${{ steps.branch-name.outputs.current_branch }}"
+          echo "Head ref branch: ${{ steps.branch-name.outputs.head_ref_branch }}"
+        shell: bash
+
       - name: Checkout repo 🛎
         uses: actions/checkout@v4.1.1
         if: github.event_name != 'pull_request'
