@@ -84,7 +84,7 @@ jobs:
           SKIP_INSTRUCTION: "[skip links]"
 
       - name: Check URLs in docs 🔬
-        uses: lycheeverse/lychee-action@v1.10.0
+        uses: lycheeverse/lychee-action@v2.0.2
         with:
           args: >-
             --exclude "https://github.com.*.git|https://insightsengineering.github.io.*|lewagon.*|knightdave.*|.*users.noreply.github.com|lycheeverse.*"
