@@ -620,7 +620,7 @@ jobs:
             export $(tr '\n' ' ' < /tmp/dotenv.env)
           }
           fi
-          R CMD build ${{ inputs.additional-r-cmd-check-params }} \
+          R CMD build ${{ inputs.additional-r-cmd-build-params }} \
             ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
         shell: bash
 
@@ -954,7 +954,7 @@ jobs:
           fi
           if [ "${{ inputs.disable-package-rebuild-and-upload }}" != "true" ]
           then {
-            R CMD build ${{ inputs.additional-r-cmd-check-params }} .
+            R CMD build ${{ inputs.additional-r-cmd-build-params }} .
           } else {
             echo "🙅🏼‍♀️ Not rebuilding package for uploads"
           }
