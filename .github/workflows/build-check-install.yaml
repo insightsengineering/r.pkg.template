@@ -67,6 +67,11 @@ on:
         required: false
         default: ""
         type: string
+      additional-r-cmd-build-params:
+        description: Additional flags or parameters to add to R CMD build
+        required: false
+        default: ""
+        type: string
       additional-r-cmd-check-params:
         description: Additional flags or parameters to add to R CMD check
         required: false
@@ -615,7 +620,8 @@ jobs:
             export $(tr '\n' ' ' < /tmp/dotenv.env)
           }
           fi
-          R CMD build ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
+          R CMD build ${{ inputs.additional-r-cmd-build-params }} \
+            ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
         shell: bash
 
       - name: Run R CMD check 🏁
@@ -948,7 +954,7 @@ jobs:
           fi
           if [ "${{ inputs.disable-package-rebuild-and-upload }}" != "true" ]
           then {
-            R CMD build .
+            R CMD build ${{ inputs.additional-r-cmd-build-params }} .
           } else {
             echo "🙅🏼‍♀️ Not rebuilding package for uploads"
           }
