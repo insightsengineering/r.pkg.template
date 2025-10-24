@@ -144,40 +144,13 @@ on:
         required: false
         type: string
         default: staged-dependencies
-      lookup-refs:
-        description: |
-          List of package references to be used by setup-r-dependencies action if deps-installation-method == 'setup-r-dependencies'.
-        required: false
-        type: string
-        default: ""
-      skip-desc-branch:
-        description: |
-          Passed to `insightsengineering/setup-r-dependencies`.
-          Used only if deps-installation-method == 'setup-r-dependencies'.
-        required: false
-        type: boolean
-        default: false
-      skip-desc-dev:
-        description: |
-          Passed to `insightsengineering/setup-r-dependencies`.
-          Used only if deps-installation-method == 'setup-r-dependencies'.
-        required: false
-        type: boolean
-        default: false
-      repository-list:
-        description: |
-          Passed to `insightsengineering/setup-r-dependencies`.
-          Used only if deps-installation-method == 'setup-r-dependencies'.
-        required: false
-        type: string
-        default: "PPM=PPM@latest"
       cache-version:
         description: |
-          Passed to `insightsengineering/setup-r-dependencies`.
+          Passed to `r-lib/actions/setup-r-dependencies`.
           Used only if deps-installation-method == 'setup-r-dependencies'.
         required: false
         type: string
-        default: "1"
+        default: 1
       unit-test-report-brand:
         description: Image URL to use in unit test report for branding. If empty, the default xunit-viewer brand will be used.
         required: false
@@ -455,15 +428,11 @@ jobs:
         if: >-
           env.deps_installation_method == 'setup-r-dependencies'
           && inputs.install-deps-from-package-repositories == ''
-        uses: insightsengineering/setup-r-dependencies@v1
+        uses: r-lib/actions/setup-r-dependencies@v2
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          lookup-refs: ${{ inputs.lookup-refs }}
-          repository-path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
-          skip-desc-branch: ${{ inputs.skip-desc-branch }}
-          skip-desc-dev: ${{ inputs.skip-desc-dev }}
-          repository-list: ${{ inputs.repository-list }}
+          working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
           cache-version: ${{ inputs.cache-version }}
 
       - name: Install dependencies from package repositories 🗄️

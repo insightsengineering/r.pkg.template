@@ -40,13 +40,6 @@ on:
           gcc13,
           noSuggests,
           donttest
-      lookup-refs:
-        description: |
-          List of package references to be used for the feature branch.
-          Multiple entries in new lines or separated by commas.
-        required: false
-        default: ""
-        type: string
 
 concurrency:
   group: r-hub-${{ github.event.pull_request.number || github.ref }}
@@ -96,13 +89,10 @@ jobs:
         with:
           job-config: ${{ matrix.config.job-config }}
 
-      - uses: insightsengineering/setup-r-dependencies@v1
+      - uses: r-lib/actions/setup-r-dependencies@v2
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          lookup-refs: ${{ inputs.lookup-refs }}
-          skip-install: true
-          restore-description: false
           install-quarto: "false"
 
       - uses: r-hub/actions/setup-deps@v1
@@ -149,13 +139,10 @@ jobs:
         with:
           job-config: ${{ matrix.config.job-config }}
 
-      - uses: insightsengineering/setup-r-dependencies@v1
+      - uses: r-lib/actions/setup-r-dependencies@v2
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
         with:
-          lookup-refs: ${{ inputs.lookup-refs }}
-          skip-install: true
-          restore-description: false
           install-quarto: "false"
 
       - uses: r-hub/actions/setup-deps@v1
