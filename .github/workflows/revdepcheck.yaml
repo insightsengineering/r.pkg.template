@@ -92,7 +92,7 @@ jobs:
 
       - name: revdepcheck 🔄
         id: revdepcheck
-        uses: insightsengineering/r-revdepcheck-action@add_debug_logging
+        uses: insightsengineering/r-revdepcheck-action@main
         with:
           github-token: ${{ steps.github-token.outputs.token }}
           additional-env-vars: ${{ inputs.additional-env-vars }}
