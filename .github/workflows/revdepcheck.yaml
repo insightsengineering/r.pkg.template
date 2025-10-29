@@ -90,14 +90,6 @@ jobs:
           echo "gchat_webhook=${{ secrets.GCHAT_WEBHOOK }}" >> $GITHUB_ENV
         shell: bash
 
-      - name: Install dependencies
-        uses: insightsengineering/setup-r-dependencies@v1
-        env:
-          GITHUB_PAT: ${{ steps.github-token.outputs.token }}
-        with:
-          lookup-refs: ${{ inputs.lookup-refs }}
-          skip-desc-branch: true
-
       - name: revdepcheck 🔄
         id: revdepcheck
         uses: insightsengineering/r-revdepcheck-action@main
