@@ -585,7 +585,12 @@ jobs:
           # Loop through each modified file and determine which tests to run
           for file in $ALL_CHANGED_FILES; do
 
-              echo "Check for $file."
+              echo "Check for ${file}."
+              # Skip files that were renamed or deleted
+              if [ ! -f $file ]; then {
+                echo "File not found!"
+                continue
+              } fi
 
               # Extract the base name of the file, examples:
               # tests/testthat/test-shinytest2-foo.R -> foo
