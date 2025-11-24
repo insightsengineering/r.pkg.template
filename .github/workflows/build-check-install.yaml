@@ -545,7 +545,8 @@ jobs:
         if: inputs.selected-shinytests == true
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
         env:
-          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          ADDED: ${{ steps.changed-files.outputs.added }}
+          MODIFIED: ${{ steps.changed-files.outputs.modified_files }}
         run: |
           # Bash script run
           commit_msg=$( git log -1 --pretty=%B )
@@ -574,6 +575,7 @@ jobs:
 
           test_dir="tests/testthat/"
 
+          ALL_CHANGED_FILES="${ADDED} ${MODIFIED}"
           if [ -z "$ALL_CHANGED_FILES" ]
           then {
             echo "No R files affected: test everything."
@@ -585,7 +587,12 @@ jobs:
           # Loop through each modified file and determine which tests to run
           for file in $ALL_CHANGED_FILES; do
 
-              echo "Check for $file."
+              echo "Check for ${file}."
+              # Skip files that were renamed or deleted
+              if [ ! -f $file ]; then {
+                echo "File not found!"
+                continue
+              } fi
 
               # Extract the base name of the file, examples:
               # tests/testthat/test-shinytest2-foo.R -> foo
