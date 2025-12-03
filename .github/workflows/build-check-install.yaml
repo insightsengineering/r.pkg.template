@@ -556,9 +556,9 @@ jobs:
           if [ -z "$td" ]
           then {
             echo "No TESTING_DEPTH default."
-            echo "Setting TESTING_DEPTH=5"
-            echo "TESTING_DEPTH=5" >> "$GITHUB_ENV"
-            td=5
+            TESTING_DEPTH=5
+            echo "Setting TESTING_DEPTH=${TESTING_DEPTH}"
+            echo "TESTING_DEPTH=${TESTING_DEPTH}" >> "$GITHUB_ENV"
           } fi
 
           echo "Commit msg is: ${commit_msg}"
@@ -568,8 +568,8 @@ jobs:
           if [ -z "$test_all" ]
           then {
             echo "Last commit message forces to test everything."
-            echo "Using TESTING_DEPTH=$td"
-            echo "TESTING_DEPTH=$td" >> "$GITHUB_ENV"
+            echo "Using TESTING_DEPTH=${TESTING_DEPTH}"
+            echo "TESTING_DEPTH=${TESTING_DEPTH}" >> "$GITHUB_ENV"
             exit 0
           } fi
 
@@ -579,8 +579,8 @@ jobs:
           if [ -z "$ALL_CHANGED_FILES" ]
           then {
             echo "No R files affected: test everything."
-            echo Using "TESTING_DEPTH=$td"
-            echo "TESTING_DEPTH=$td" >> "$GITHUB_ENV"
+            echo Using "TESTING_DEPTH=${TESTING_DEPTH}"
+            echo "TESTING_DEPTH=${TESTING_DEPTH}" >> "$GITHUB_ENV"
             exit 0
           } fi
 
@@ -589,7 +589,7 @@ jobs:
 
               echo "Check for ${file}."
               # Skip files that were renamed or deleted
-              if [ ! -f $file ]; then {
+              if [ ! -f "$file" ]; then {
                 echo "File not found!"
                 continue
               } fi
@@ -605,12 +605,12 @@ jobs:
               then {
                   git restore $test_dir
                   echo "Run all tests: Helpers modifications detected."
-                  TESTING_DEPTH="$td";
+                  TESTING_DEPTH="${td}";
                   break;
               } else {
                   sed -i 's/skip_if_too_deep(5)/skip_if_too_deep(3)/g' "$test_files"
                   TESTING_DEPTH=3
-                  echo "TESTING_DEPTH=3" >> "$GITHUB_ENV"
+                  echo "TESTING_DEPTH=${TESTING_DEPTH}" >> "$GITHUB_ENV"
                   echo "Testing with shinytest2 only for $test_files";
               } fi
           done
