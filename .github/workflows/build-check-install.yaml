@@ -589,7 +589,7 @@ jobs:
 
               echo "Check for ${file}."
               # Skip files that were renamed or deleted
-              if [ ! -f $file ]; then {
+              if [ ! -f "$file" ]; then {
                 echo "File not found!"
                 continue
               } fi
