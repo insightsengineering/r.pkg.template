@@ -23,7 +23,6 @@ Suggests:
     testthat (>= 3.0)
 VignetteBuilder:
     knitr
-biocViews:
 Encoding: UTF-8
 Language: en-US
 LazyData: true
