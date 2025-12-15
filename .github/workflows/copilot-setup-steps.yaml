@@ -2,11 +2,10 @@ name: Copilot Agent Setup
 
 # Configure the environment for GitHub Copilot coding agent
 # This ensures R is available when the agent works on this repository
-# Uses native R installation (containers may cause compatibility issues with Copilot's setup)
+# Installs R using the standard GitHub Actions setup
 
 on:
   workflow_dispatch:
-  workflow_call:
 
 jobs:
   copilot-setup-steps:
@@ -39,4 +38,3 @@ jobs:
       
       # Additional steps for the Copilot agent would be invoked here
       # The agent will have access to R in this environment
-
