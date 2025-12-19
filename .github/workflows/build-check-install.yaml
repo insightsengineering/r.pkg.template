@@ -553,11 +553,12 @@ jobs:
           commit_msg=$( git log -1 --pretty=%B )
 
           # Set default TESTING_DEPTH
-          td=$TESTING_DEPTH
-          if [ -z "$td" ]
+          WORKFLOW_TESTING_DEPTH=$TESTING_DEPTH
+          if [ -z "$WORKFLOW_TESTING_DEPTH" ]
           then {
             echo "No TESTING_DEPTH default."
             TESTING_DEPTH=5
+            WORKFLOW_TESTING_DEPTH=5
             echo "Setting TESTING_DEPTH=${TESTING_DEPTH}"
             echo "TESTING_DEPTH=${TESTING_DEPTH}" >> "$GITHUB_ENV"
           } fi
@@ -606,12 +607,11 @@ jobs:
               then {
                   git restore $test_dir
                   echo "Run all tests: Helpers modifications detected."
-                  TESTING_DEPTH="${td}";
+                  TESTING_DEPTH="${WORKFLOW_TESTING_DEPTH}";
                   break;
               } else {
                   sed -i 's/skip_if_too_deep(5)/skip_if_too_deep(3)/g' "$test_files"
                   TESTING_DEPTH=3
-                  echo "TESTING_DEPTH=${TESTING_DEPTH}" >> "$GITHUB_ENV"
                   echo "Testing with shinytest2 only for $test_files";
               } fi
           done
