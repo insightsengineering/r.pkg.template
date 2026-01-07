@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testsuites>
-  <testsuite name="api" timestamp="2025-12-15T10:02:28Z" hostname="164735f4431f" tests="1" skipped="0" failures="0" errors="0" time="4.055">
-    <testcase time="4.055" classname="api" name="API_greets_the_person"/>
+  <testsuite name="api" timestamp="2026-01-07T13:27:18Z" hostname="23132af6054d" tests="1" skipped="0" failures="0" errors="0" time="4.005">
+    <testcase time="4.005" classname="api" name="API_greets_the_person"/>
   </testsuite>
-  <testsuite name="hello" timestamp="2025-12-15T10:02:32Z" hostname="164735f4431f" tests="1" skipped="0" failures="0" errors="0" time="0.089">
-    <testcase time="0.0890000000000004" classname="hello" name="hello_greets_the_entity"/>
+  <testsuite name="hello" timestamp="2026-01-07T13:27:22Z" hostname="23132af6054d" tests="1" skipped="0" failures="0" errors="0" time="0.083">
+    <testcase time="0.0830000000000002" classname="hello" name="hello_greets_the_entity"/>
   </testsuite>
-  <testsuite name="shiny" timestamp="2025-12-15T10:02:32Z" hostname="164735f4431f" tests="1" skipped="1" failures="0" errors="0" time="0.066">
-    <testcase time="0.0659999999999998" classname="shiny" name="The_Shiny_App_returns_a_proper_greeting">
+  <testsuite name="shiny" timestamp="2026-01-07T13:27:22Z" hostname="23132af6054d" tests="1" skipped="1" failures="0" errors="0" time="0.06">
+    <testcase time="0.0600000000000005" classname="shiny" name="The_Shiny_App_returns_a_proper_greeting">
       <skipped message="Reason: On CRAN ('test-shiny.R:3:3')"/>
     </testcase>
   </testsuite>
