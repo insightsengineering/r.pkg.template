@@ -303,10 +303,10 @@ jobs:
 
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v9.0.0
+        uses: tj-actions/branch-names@e497ceb8ccd43fd9573cf2e375216625bc411d1f # v9.0.0
 
       - name: Checkout repo (PR) 🛎
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         if: github.event_name == 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
@@ -315,7 +315,7 @@ jobs:
           fetch-depth: 0
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         if: github.event_name != 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.current_branch }}
@@ -340,7 +340,7 @@ jobs:
           inputs.publish-unit-test-report-gh-pages == true
             && github.event_name != 'pull_request'
         id: checkout-gh-pages
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: gh-pages
           path: gh-pages
@@ -398,7 +398,7 @@ jobs:
         if: >-
           inputs.publish-unit-test-report-gh-pages == true
             && github.event_name != 'pull_request'
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           key: npm-${{ runner.os }}-${{ github.job }}
           restore-keys: |
@@ -409,7 +409,7 @@ jobs:
         if: >-
           inputs.publish-unit-test-report-gh-pages == true
             && github.event_name != 'pull_request'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         id: npm-cache
         with:
           node-version: 20
@@ -426,7 +426,7 @@ jobs:
         if: >-
           inputs.install-deps-from-package-repositories == ''
             && env.deps_installation_method == 'staged-dependencies'
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
@@ -525,7 +525,7 @@ jobs:
 
       - name: Restore any additional caches 📥
         if: inputs.additional-caches != ''
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: "${{ inputs.additional-caches }}"
           key: additional-caches-${{ runner.os }}
@@ -674,7 +674,7 @@ jobs:
 
       - name: Fetch report from ${{ env.junit_xml_storage }} ⤵️
         if: env.junit_xml_comparison == 'true'
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           path: ${{ env.junit_xml_storage }}
           fetch-depth: 0
@@ -711,7 +711,7 @@ jobs:
 
       - name: Push storage branch ${{ env.junit_xml_storage }} 🗄️
         if: env.junit_xml_comparison == 'true'
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@4cc74773234f74829a8c21bc4d69dd4be9cfa599 # master
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           branch: ${{ env.junit_xml_storage }}
@@ -721,7 +721,7 @@ jobs:
 
       - name: Check whether JUnit XML report exists 🚦
         id: check-junit-xml
-        uses: andstor/file-existence-action@v3
+        uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3
         with:
           files: "${{ env.PKGNAME }}.Rcheck/tests/testthat/junit-result.xml"
 
@@ -747,7 +747,7 @@ jobs:
           steps.check-junit-xml.outputs.files_exists == 'true'
             && inputs.publish-unit-test-report-gh-pages == true
             && github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: unit-test-report-${{ inputs.concurrency-group }}
           path: "index.html"
@@ -761,7 +761,7 @@ jobs:
         run: echo "junit-upload=true" >> $GITHUB_OUTPUT
 
       - name: Publish Unit Test Summary 📑
-        uses: EnricoMi/publish-unit-test-result-action@v2
+        uses: EnricoMi/publish-unit-test-result-action@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2
         id: test-results
         # Second line of the condition skips the step if workflow is running in a fork.
         if: |
@@ -773,7 +773,7 @@ jobs:
 
       - name: Fetch JUnit XML reports from ${{ env.junit_xml_storage }} ⤵️
         if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           path: ${{ env.junit_xml_storage }}
           fetch-depth: 0
@@ -803,7 +803,7 @@ jobs:
 
       - name: Push JUnit XML report to ${{ env.junit_xml_storage }} 📄
         if: steps.check-junit-xml.outputs.files_exists == 'true' && env.junit_xml_comparison == 'true'
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@4cc74773234f74829a8c21bc4d69dd4be9cfa599 # master
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           branch: ${{ env.junit_xml_storage }}
@@ -857,7 +857,7 @@ jobs:
           env.junit_xml_comparison_result_method == 'comment' &&
           !github.event.pull_request.head.repo.fork &&
           github.event_name == 'pull_request'
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@773744901bac0e8cbb5a0dc842800d45e9b2b405 # v2
         with:
           header: markdown-table
           path: output.md
@@ -870,7 +870,7 @@ jobs:
           env.junit_xml_comparison_result_method == 'artifact' &&
           !github.event.pull_request.head.repo.fork &&
           github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           path: output-artifact.md
           name: junit-xml-report-comparison
@@ -976,14 +976,14 @@ jobs:
         if: >
           startsWith(github.ref, 'refs/tags/v') &&
             inputs.disable-package-rebuild-and-upload != 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/${{ env.PKGBUILD }}
           name: ${{ env.PKGBUILD }}
           overwrite: true
 
       - name: Upload logs artifact 🗞️
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           path: |
             ${{ env.PKGNAME }}.Rcheck/*00install.out
@@ -1018,14 +1018,14 @@ jobs:
         shell: bash
 
       - name: Download JUnit HTML report as artifact ⤵️
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: unit-test-report-${{ inputs.concurrency-group }}
           path: unit-test-report
 
       - name: Upload JUnit HTML report to GitHub pages 🗞️
         if: needs.build-install-check.outputs.multiversion-docs == 'true'
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
@@ -1035,7 +1035,7 @@ jobs:
         if: >
           needs.build-install-check.outputs.is-latest-tag == 'true'
             && needs.build-install-check.outputs.multiversion-docs == 'true'
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
@@ -1045,7 +1045,7 @@ jobs:
         if: >
           needs.build-install-check.outputs.is-rc-tag == 'true'
             && needs.build-install-check.outputs.multiversion-docs == 'true'
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
@@ -1053,7 +1053,7 @@ jobs:
 
       - name: Upload JUnit HTML report to GitHub pages (non-multiversion) 🗞️
         if: needs.build-install-check.outputs.multiversion-docs == 'false'
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./unit-test-report
@@ -1070,7 +1070,7 @@ jobs:
 
     steps:
       - name: Checkout repo 🛎
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Get package build filename 📦
         run: |
@@ -1079,7 +1079,7 @@ jobs:
         shell: bash
 
       - name: Download artifact ⏬
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: ${{ env.PKGBUILD }}
 
@@ -1090,7 +1090,7 @@ jobs:
       - name: Upload binaries to release 🔼
         if: >-
           steps.check-if-release-exists.outputs.release-exists == 'true'
-        uses: svenstaro/upload-release-action@v2
+        uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de # v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ env.PKGBUILD }}

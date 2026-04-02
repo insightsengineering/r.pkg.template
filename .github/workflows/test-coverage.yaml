@@ -138,14 +138,14 @@ jobs:
 
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v9.0.0
+        uses: tj-actions/branch-names@e497ceb8ccd43fd9573cf2e375216625bc411d1f # v9.0.0
 
       - name: Checkout gh-pages 🛎
         if: >-
           github.event_name != 'pull_request'
             && inputs.publish-coverage-report-gh-pages == true
         id: checkout-gh-pages
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: gh-pages
           path: gh-pages
@@ -181,7 +181,7 @@ jobs:
         shell: bash
 
       - name: Checkout repo (PR) 🛎
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         if: github.event_name == 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
@@ -189,7 +189,7 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         if: github.event_name != 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.current_branch }}
@@ -223,7 +223,7 @@ jobs:
       - name: Restore SD cache 💰
         if: >-
           inputs.deps-installation-method == 'staged-dependencies'
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
@@ -311,7 +311,7 @@ jobs:
 
       - name: Check whether coverage reports exists 💭
         id: check_coverage_reports
-        uses: andstor/file-existence-action@v3
+        uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3
         with:
           files: >-
             ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/coverage.xml,
@@ -330,7 +330,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload report 🔼
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: coverage-report
           path: |
@@ -358,10 +358,10 @@ jobs:
     steps:
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v9.0.0
+        uses: tj-actions/branch-names@e497ceb8ccd43fd9573cf2e375216625bc411d1f # v9.0.0
 
       - name: Checkout repo (PR) 🛎
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         if: github.event_name == 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.head_ref_branch }}
@@ -369,7 +369,7 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         if: github.event_name != 'pull_request'
         with:
           ref: ${{ steps.branch-name.outputs.current_branch }}
@@ -390,7 +390,7 @@ jobs:
           SKIP_INSTRUCTION: "[skip coverage]"
 
       - name: Restore SD cache 💰
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           key: sd-${{ runner.os }}-${{ github.event.repository.name }}
           path: ~/.staged.dependencies
@@ -437,7 +437,7 @@ jobs:
         shell: bash
 
       - name: Download coverage report as artifact ⤵️
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: coverage-report
           path: coverage-report
@@ -447,7 +447,7 @@ jobs:
 
       - name: Upload coverage report to GitHub pages 🗞️
         if: needs.coverage.outputs.multiversion-docs == 'true'
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./coverage-report
@@ -457,7 +457,7 @@ jobs:
         if: >
           needs.coverage.outputs.is-latest-tag == 'true'
             && needs.coverage.outputs.multiversion-docs == 'true'
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./coverage-report
@@ -467,7 +467,7 @@ jobs:
         if: >
           needs.coverage.outputs.is-rc-tag == 'true'
             && needs.coverage.outputs.multiversion-docs == 'true'
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./coverage-report
@@ -475,7 +475,7 @@ jobs:
 
       - name: Upload coverage report to GitHub pages (non-multiversion) 🗞️
         if: needs.coverage.outputs.multiversion-docs == 'false'
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4
         with:
           github_token: ${{ steps.github-token.outputs.token }}
           publish_dir: ./coverage-report

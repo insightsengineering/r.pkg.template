@@ -58,10 +58,10 @@ jobs:
 
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v9.0.0
+        uses: tj-actions/branch-names@e497ceb8ccd43fd9573cf2e375216625bc411d1f # v9.0.0
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: ${{ steps.branch-name.outputs.current_branch }}
           token: ${{ steps.github-token.outputs.token }}
@@ -105,7 +105,7 @@ jobs:
 
       - name: Check if a pre-commit config exists
         id: precommit-config-exists
-        uses: andstor/file-existence-action@v3
+        uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3
         with:
           files: ".pre-commit-config.yaml"
 
@@ -113,7 +113,7 @@ jobs:
         if: |
           inputs.disable-precommit-autoupdate != 'true' &&
             steps.precommit-config-exists.outputs.files_exists == 'true'
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: '3.12'
 
@@ -149,7 +149,7 @@ jobs:
 
       - name: Commit and push changes 📌
         if: ${{ env.NEW_PKG_VERSION }}
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
         with:
           commit_message: "[skip actions] Bump version to ${{ env.NEW_PKG_VERSION }}"
           file_pattern: "${{ steps.file-pattern.outputs.file-pattern }}"
