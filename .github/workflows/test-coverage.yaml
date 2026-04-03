@@ -320,7 +320,7 @@ jobs:
 
       - name: Post coverage report 🗞
         if: steps.check_coverage_reports.outputs.files_exists == 'true'
-        uses: insightsengineering/coverage-action@v2
+        uses: insightsengineering/coverage-action@v3
         with:
           path: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}/coverage.xml
           threshold: 80

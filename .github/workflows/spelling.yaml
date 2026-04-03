@@ -98,7 +98,7 @@ jobs:
         shell: bash
 
       - name: Run Spellcheck 👟
-        uses: insightsengineering/r-spellcheck-action@v2
+        uses: insightsengineering/r-spellcheck-action@v3
         with:
           exclude: ${{ inputs.exclude }}
           path: ${{ env.package_subdirectory }}
