@@ -60,7 +60,7 @@ jobs:
       platforms: ${{ steps.rhub-setup.outputs.platforms }}
 
     steps:
-      - uses: r-hub/actions/setup@v1
+      - uses: r-hub/actions/setup@41d32aff3f6bd4ded6b81dcc9b4da3d0bc2a6aec # v1
         with:
           config: ${{ inputs.config }}
         id: rhub-setup
@@ -90,9 +90,9 @@ jobs:
           fi
         shell: bash
 
-      - uses: r-hub/actions/checkout@v1
+      - uses: r-hub/actions/checkout@41d32aff3f6bd4ded6b81dcc9b4da3d0bc2a6aec # v1
 
-      - uses: r-hub/actions/platform-info@v1
+      - uses: r-hub/actions/platform-info@41d32aff3f6bd4ded6b81dcc9b4da3d0bc2a6aec # v1
         with:
           job-config: ${{ matrix.config.job-config }}
 
@@ -105,14 +105,14 @@ jobs:
           restore-description: false
           install-quarto: "false"
 
-      - uses: r-hub/actions/setup-deps@v1
+      - uses: r-hub/actions/setup-deps@41d32aff3f6bd4ded6b81dcc9b4da3d0bc2a6aec # v1
         with:
           job-config: ${{ matrix.config.job-config }}
           needs: DepsDev,DepsBranch
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
 
-      - uses: r-hub/actions/run-check@v1
+      - uses: r-hub/actions/run-check@41d32aff3f6bd4ded6b81dcc9b4da3d0bc2a6aec # v1
         with:
           job-config: ${{ matrix.config.job-config }}
 
@@ -139,13 +139,13 @@ jobs:
           fi
         shell: bash
 
-      - uses: r-hub/actions/checkout@v1
+      - uses: r-hub/actions/checkout@41d32aff3f6bd4ded6b81dcc9b4da3d0bc2a6aec # v1
 
-      - uses: r-hub/actions/setup-r@v1
+      - uses: r-hub/actions/setup-r@41d32aff3f6bd4ded6b81dcc9b4da3d0bc2a6aec # v1
         with:
           job-config: ${{ matrix.config.job-config }}
 
-      - uses: r-hub/actions/platform-info@v1
+      - uses: r-hub/actions/platform-info@41d32aff3f6bd4ded6b81dcc9b4da3d0bc2a6aec # v1
         with:
           job-config: ${{ matrix.config.job-config }}
 
@@ -158,13 +158,13 @@ jobs:
           restore-description: false
           install-quarto: "false"
 
-      - uses: r-hub/actions/setup-deps@v1
+      - uses: r-hub/actions/setup-deps@41d32aff3f6bd4ded6b81dcc9b4da3d0bc2a6aec # v1
         with:
           job-config: ${{ matrix.config.job-config }}
           needs: DepsDev,DepsBranch
         env:
           GITHUB_PAT: ${{ steps.github-token.outputs.token }}
 
-      - uses: r-hub/actions/run-check@v1
+      - uses: r-hub/actions/run-check@41d32aff3f6bd4ded6b81dcc9b4da3d0bc2a6aec # v1
         with:
           job-config: ${{ matrix.config.job-config }}

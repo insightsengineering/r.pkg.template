@@ -79,10 +79,10 @@ jobs:
 
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v9.0.0
+        uses: tj-actions/branch-names@e497ceb8ccd43fd9573cf2e375216625bc411d1f # v9.0.0
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: ${{ steps.branch-name.outputs.current_branch }}
           fetch-depth: 1
@@ -108,7 +108,7 @@ jobs:
         shell: bash
 
       - name: Restore cache 💰
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           key: verdepcheck-${{ runner.os }}-${{ github.event.repository.name }}-${{ env.strategy }}
           path: |
@@ -136,14 +136,14 @@ jobs:
 
       - name: Upload lock file ⤴️
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: "lock-file-${{ env.strategy }}"
           path: pkg.lock
 
       - name: Upload output file ⤴️
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: "res-${{ env.strategy }}"
           path: res.RDS

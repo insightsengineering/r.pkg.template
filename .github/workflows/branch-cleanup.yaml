@@ -37,10 +37,10 @@ jobs:
         shell: bash
 
       - name: Checkout Code 🛎
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
       - name: Cleanup branches 🌿
-        uses: phpdocker-io/github-actions-delete-abandoned-branches@v1
+        uses: phpdocker-io/github-actions-delete-abandoned-branches@d8e3635360bd492315571df30f15f55c98a28434 # v1
         id: delete-branches
         with:
           github_token: ${{ steps.github-token.outputs.token }}

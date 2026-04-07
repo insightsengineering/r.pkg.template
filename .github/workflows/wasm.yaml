@@ -18,10 +18,10 @@ jobs:
     steps:
       - name: Get branch names 🌿
         id: branch-name
-        uses: tj-actions/branch-names@v9.0.0
+        uses: tj-actions/branch-names@e497ceb8ccd43fd9573cf2e375216625bc411d1f # v9.0.0
 
       - name: Checkout repo 🛎
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           ref: ${{ steps.branch-name.outputs.current_branch }}
           path: ${{ github.event.repository.name }}
@@ -33,13 +33,13 @@ jobs:
         working-directory: ${{ github.event.repository.name }}/${{ inputs.package-subdirectory }}
 
       - name: Build WASM packages 🧭
-        uses: r-wasm/actions/build-rwasm@v1
+        uses: r-wasm/actions/build-rwasm@193ba7b53fed3d8daaf59a8249c3f4a7f31ba728 # v1
         with:
           packages: |
             ${{ github.repository_owner }}/${{ env.PKGNAME }}@${{ steps.branch-name.outputs.tag }}
 
       - name: Upload WASM packages ⬆
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: wasm-${{ env.PKGNAME }}
           path: |
@@ -53,7 +53,7 @@ jobs:
       - name: Download artifact ⏬
         if: >-
           steps.check-if-release-exists.outputs.release-exists == 'true'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: wasm-${{ env.PKGNAME }}
           path: wasm-${{ env.PKGNAME }}
@@ -67,7 +67,7 @@ jobs:
       - name: Upload WASM build to release 🔼
         if: >-
           steps.check-if-release-exists.outputs.release-exists == 'true'
-        uses: svenstaro/upload-release-action@v2
+        uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de # v2
         with:
           file: ./wasm-${{ env.PKGNAME }}.zip
           asset_name: wasm-${{ env.PKGNAME }}.zip
